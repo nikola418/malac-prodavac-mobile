@@ -71,7 +71,8 @@ class AdvertisingProductViewModel @Inject constructor(
                     availableAtLatitude = state.product?.availableAtLatitude,
                     availableAtLongitude = state.product?.availableAtLongitude,
                     availableFromHours = state.product?.availableFromHours,
-                    availableTillHours = state.product?.availableTillHours
+                    availableTillHours = state.product?.availableTillHours,
+                    available = state.product?.available
                 )
 
                 updateProduct(state.product?.id!!, updateProduct)

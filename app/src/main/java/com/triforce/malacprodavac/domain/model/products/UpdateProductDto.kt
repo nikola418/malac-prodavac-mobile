@@ -15,4 +15,5 @@ data class UpdateProductDto(
     val availableAtLongitude: Double?,
     val availableFromHours: Double?,
     val availableTillHours: Double?,
+    val available: Boolean?,
 )

@@ -33,6 +33,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.CachePolicy
@@ -40,6 +41,8 @@ import coil.request.ImageRequest
 import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.domain.model.products.Product
+import com.triforce.malacprodavac.presentation.add_edit_product.editProduct.EditProductEvent
+import com.triforce.malacprodavac.presentation.add_edit_product.editProduct.EditProductViewModel
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Gray
 import com.triforce.malacprodavac.ui.theme.MP_Green
@@ -53,7 +56,8 @@ import kotlinx.coroutines.Dispatchers
 @Composable
 fun MyProductsPreviewItem(
     product: Product?,
-    navController: NavController
+    navController: NavController,
+    editViewModel: EditProductViewModel = hiltViewModel()
 ) {
     if (product != null) {
         var isToggleChecked by remember { mutableStateOf(product.available) }
@@ -148,7 +152,14 @@ fun MyProductsPreviewItem(
                                 checked = isToggleChecked,
                                 onCheckedChange = {
                                     if (!it) showDialog.value = true
-                                    else isToggleChecked = it
+                                    else {
+                                        isToggleChecked = it
+                                        editViewModel.onEvent(
+                                            EditProductEvent.ToggleAvailable(
+                                                product
+                                            )
+                                        )
+                                    }
                                 },
                                 colors = SwitchDefaults.colors(
                                     checkedThumbColor = MP_GreenDark,
@@ -183,6 +194,11 @@ fun MyProductsPreviewItem(
                                             onClick = {
                                                 isToggleChecked = false
                                                 showDialog.value = false
+                                                editViewModel.onEvent(
+                                                    EditProductEvent.ToggleAvailable(
+                                                        product
+                                                    )
+                                                )
                                             },
                                             colors = ButtonDefaults.buttonColors(
                                                 containerColor = MP_Green
