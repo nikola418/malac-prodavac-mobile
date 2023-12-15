@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.triforce.malacprodavac.presentation.components.ShowHighlightedProducts
 import com.triforce.malacprodavac.presentation.myProducts.MyProductsViewModel
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Green
@@ -103,11 +102,7 @@ fun MyProductsContentScreen(
                             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                         }
                     } else {
-                        ShowHighlightedProducts(
-                            products = state.products,
-                            navController,
-                            bottomNavigation = false
-                        )
+                        MyProductsPreview(products = state.products, navController = navController)
                     }
                 } else {
                     Box(modifier = Modifier.fillMaxSize()) {

@@ -102,16 +102,8 @@ class MyProductsViewModel @Inject constructor(
             val query = FilterBuilder.buildFilterQueryMap(
                 Filter(
                     filter = listOf(
-                        SingleFilter(
-                            "shopId",
-                            FilterOperation.Eq,
-                            shopId
-                        ),
-                        SingleFilter(
-                            "title",
-                            FilterOperation.IContains,
-                            searchText
-                        )
+                        SingleFilter("shopId", FilterOperation.Eq, shopId),
+                        SingleFilter("title", FilterOperation.IContains, searchText)
                     ),
                     order = if (orderId == -1) null else listOf(
                         SingleOrder(
