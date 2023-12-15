@@ -7,10 +7,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.triforce.malacprodavac.domain.model.products.reviews.CreateReviewDto
+import com.triforce.malacprodavac.domain.model.products.reviews.reviewReplies.CreateReviewReplyDto
 import com.triforce.malacprodavac.domain.model.shops.Shop
 import com.triforce.malacprodavac.domain.repository.ShopRepository
 import com.triforce.malacprodavac.domain.repository.products.ProductRepository
 import com.triforce.malacprodavac.domain.use_case.product.replies.ReviewUseCase
+import com.triforce.malacprodavac.domain.use_case.product.replies.replies.CreateReviewReply
+import com.triforce.malacprodavac.domain.use_case.product.replies.replies.ReviewReplyUseCase
 import com.triforce.malacprodavac.domain.use_case.profile.Profile
 import com.triforce.malacprodavac.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,6 +44,10 @@ class ProductViewModel @Inject constructor(
 
             is ProductEvent.CreateReview -> {
                 createReview(event.text, event.rating)
+            }
+
+            is ProductEvent.CreateReplyReview -> {
+
             }
         }
     }
@@ -125,6 +132,31 @@ class ProductViewModel @Inject constructor(
                 }
         }
     }
+
+//    private fun createReplyReview(text: String, reviewId: Int) {
+//        viewModelScope.launch {
+//            ReviewReplyUseCase.createReviewReply.invoke(state.product!!.id, reviewId, CreateReviewReplyDto(text))
+//                .collect { result ->
+//                    when (result) {
+//                        is Resource.Error -> {
+//                            state = state.copy(createReviewError = result.message)
+//                        }
+//
+//                        is Resource.Loading -> {
+//                            state = state.copy()
+//                        }
+//
+//                        is Resource.Success -> {
+//                            result.data?.let {
+//                                state = state.copy(
+//                                    reviews = listOf(*state.reviews!!.toTypedArray(), it)
+//                                )
+//                            }
+//                        }
+//                    }
+//                }
+//        }
+//    }
 
     private fun getShop(shopId: Int) {
         viewModelScope.launch {

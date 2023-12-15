@@ -20,6 +20,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,17 +53,25 @@ fun ProductScreenContent(
     padding: PaddingValues
 ) {
     var isCreateReviewOpen by remember { mutableStateOf(false) }
+    var isCreateReplyReviewOpen by remember { mutableStateOf(false) }
 
     val openCreateReviewDialog = { isCreateReviewOpen = true }
     val closeCreateReviewDialog = { isCreateReviewOpen = false }
+    val openCreateReplyReviewDialog = { isCreateReplyReviewOpen = true }
+    val closeCreateReplyReviewDialog = { isCreateReplyReviewOpen = false }
 
     val createReviewCallback = { text: String, rating: Int ->
         viewModel.onEvent(ProductEvent.CreateReview(text, rating))
     }
 
+    val createReplyReviewCallback = { text: String ->
+        viewModel.onEvent(ProductEvent.CreateReview(text, 3))
+    }
+
     val state = viewModel.state
     val product = state.product
     val shop = state.shop
+    val user = state.user
 
     val colorForeground = MP_Green
     val colorBackground = MP_GreenLight
@@ -91,6 +100,10 @@ fun ProductScreenContent(
 
             if (isCreateReviewOpen) {
                 CreateReviewDialog(closeCreateReviewDialog, createReviewCallback)
+            }
+
+            if (isCreateReplyReviewOpen) {
+                CreateReplyReviewDialog(closeCreateReplyReviewDialog, createReplyReviewCallback)
             }
 
             LinearGradient(color1 = colorForeground, color2 = colorBackground)
@@ -142,10 +155,20 @@ fun ProductScreenContent(
                     ) {
                         items(state.reviews) { review ->
                             Column {
-                                Text(
-                                    text = review.text.ifEmpty { "Korisnik nije ostavio komentar" },
-                                    softWrap = true,
-                                )
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = review.text.ifEmpty { "Korisnik nije ostavio komentar" },
+                                        softWrap = true,
+                                    )
+                                    if(user?.roles!!.contains("Shop")) {
+                                        IconButton(onClick = openCreateReplyReviewDialog) {
+                                            Icon(Icons.Filled.Replay, contentDescription = "Create Reply a Review")
+                                        }
+                                    }
+                                }
                                 RatingStars(
                                     rating = review.rating.toDouble()
                                 )
