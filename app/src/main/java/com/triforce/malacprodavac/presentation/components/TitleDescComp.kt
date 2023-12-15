@@ -20,8 +20,6 @@ import com.triforce.malacprodavac.ui.theme.MP_Black
 fun TitleDescComp(
     title: String,
     description: String,
-    colorTitle: Color,
-    colorDesc: Color,
 ){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

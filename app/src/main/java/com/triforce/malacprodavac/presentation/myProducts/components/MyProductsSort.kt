@@ -1,4 +1,4 @@
-package com.triforce.malacprodavac.presentation.components
+package com.triforce.malacprodavac.presentation.myProducts.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -20,18 +20,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import com.triforce.malacprodavac.presentation.highlightSection.HighlightSectionEvent
-import com.triforce.malacprodavac.presentation.highlightSection.HighlightSectionViewModel
+import com.triforce.malacprodavac.presentation.myProducts.MyProductsEvent
+import com.triforce.malacprodavac.presentation.myProducts.MyProductsViewModel
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
 
 @Composable
-fun SortAndFilter(
-    viewModel: HighlightSectionViewModel
+fun MyProductsSort(
+    viewModel: MyProductsViewModel
 ) {
     var showSort by remember { mutableStateOf(false) }
 
@@ -40,7 +37,6 @@ fun SortAndFilter(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .padding(horizontal = 30.dp)
-            .padding(bottom = 16.dp)
             .fillMaxWidth()
     ) {
         Row(
@@ -69,14 +65,14 @@ fun SortAndFilter(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .width(170.dp)
-            ){
+            ) {
                 Text(
                     text = "Rastuće",
                     style = MaterialTheme.typography.body2,
                     color = MP_Black,
                     modifier = Modifier
                         .clickable {
-                            viewModel.onEvent(HighlightSectionEvent.OrderBy(1))
+                            viewModel.onEvent(MyProductsEvent.OrderBy(1))
                         }
                 )
                 Text(
@@ -85,7 +81,7 @@ fun SortAndFilter(
                     color = MP_Black,
                     modifier = Modifier
                         .clickable {
-                            viewModel.onEvent(HighlightSectionEvent.OrderBy(2))
+                            viewModel.onEvent(MyProductsEvent.OrderBy(2))
                         }
                 )
             }
