@@ -7,16 +7,16 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.triforce.malacprodavac.domain.repository.products.ProductRepository
+import com.triforce.malacprodavac.domain.use_case.profile.Profile
+import com.triforce.malacprodavac.domain.util.Resource
 import com.triforce.malacprodavac.domain.util.filter.Filter
 import com.triforce.malacprodavac.domain.util.filter.FilterBuilder
 import com.triforce.malacprodavac.domain.util.filter.FilterOperation
 import com.triforce.malacprodavac.domain.util.filter.FilterOrder
 import com.triforce.malacprodavac.domain.util.filter.SingleFilter
 import com.triforce.malacprodavac.domain.util.filter.SingleOrder
-import com.triforce.malacprodavac.domain.model.products.Product
-import com.triforce.malacprodavac.domain.repository.products.ProductRepository
-import com.triforce.malacprodavac.domain.use_case.profile.Profile
-import com.triforce.malacprodavac.domain.util.Resource
+import com.triforce.malacprodavac.domain.util.helpers.calculateLimitAndOffset
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -27,16 +27,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategoryViewModel @Inject constructor(
-
     private val repository: ProductRepository,
     private val profile: Profile,
     savedStateHandle: SavedStateHandle
-
 ) : ViewModel() {
-
     var state by mutableStateOf(CategoryState())
 
-    private val debouncePeriod = 500L;
+    private val debouncePeriod = 500L
     private var searchJob: Job? = null
 
     private val _searchText = MutableStateFlow("")
@@ -116,11 +113,13 @@ class CategoryViewModel @Inject constructor(
         myShopId: Int = -1,
         categoryId: Int,
         searchText: String = "",
-        orderId: Int = -1
+        orderId: Int = -1,
+        page: Int = 1,
+        perPage: Int = 20
     ) {
         var filters = listOf(
             SingleFilter(
-                "categoryId",
+                "category.parentCategoryId",
                 FilterOperation.Eq,
                 categoryId.toString()
             )
@@ -140,7 +139,7 @@ class CategoryViewModel @Inject constructor(
                 FilterOperation.Ne,
                 myShopId.toString()
             )
-
+        val (limit, offset) = calculateLimitAndOffset(page, perPage)
         viewModelScope.launch {
             val query = FilterBuilder.buildFilterQueryMap(
                 Filter(
@@ -151,16 +150,19 @@ class CategoryViewModel @Inject constructor(
                             if (orderId == 1) FilterOrder.Asc else FilterOrder.Desc
                         )
                     ),
-                    limit = null,
-                    offset = null
+                    offset,
+                    limit
                 )
             )
             repository.getProducts(categoryId, true, query).collect { result ->
                 when (result) {
                     is Resource.Success -> {
-                        if (result.data is List<Product>) {
-                            state = state.copy(products = result.data)
-                        }
+                        if (result.data != null)
+                            state = state.copy(
+                                products = state.products + result.data.data,
+                                currentPage = result.data.meta.currentPage,
+                                isLastPage = result.data.meta.isLastPage
+                            )
                     }
 
                     is Resource.Error -> {
@@ -177,7 +179,11 @@ class CategoryViewModel @Inject constructor(
         }
     }
 
-    fun callGetProducts(orderId: Int = -1) {
+    fun loadNextPage(page: Int = 1, perPage: Int = 20) {
+        getProducts(categoryId = currentCategoryId!!, page = page + 1, perPage = perPage)
+    }
+
+    private fun callGetProducts(orderId: Int = -1) {
         currentCategoryId?.let { categoryId ->
             state.user?.let { user ->
                 if (user.roles.contains("Shop")) {

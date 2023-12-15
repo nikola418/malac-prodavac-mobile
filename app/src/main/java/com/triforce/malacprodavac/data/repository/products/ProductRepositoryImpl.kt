@@ -5,6 +5,7 @@ import com.triforce.malacprodavac.data.local.MalacProdavacDatabase
 import com.triforce.malacprodavac.data.mappers.products.toProduct
 import com.triforce.malacprodavac.data.remote.products.ProductsApi
 import com.triforce.malacprodavac.data.services.SessionManager
+import com.triforce.malacprodavac.domain.model.pagination.PaginationResult
 import com.triforce.malacprodavac.domain.model.products.CreateProductDto
 import com.triforce.malacprodavac.domain.model.products.Product
 import com.triforce.malacprodavac.domain.model.products.UpdateProductDto
@@ -32,28 +33,28 @@ class ProductRepositoryImpl @Inject constructor(
         categoryId: Int,
         fetchFromRemote: Boolean,
         queryMap: MutableMap<String, String>
-    ): Flow<Resource<List<Product>>> {
+    ): Flow<Resource<PaginationResult<Product>>> {
 
         return flow {
 
             emit(Resource.Loading(isLoading = true))
 
-            val localProducts = dao.getProducts()
+//            val localProducts = dao.getProducts()
+//
+//            if (localProducts.isNotEmpty()) {
+//                emit(Resource.Success(data = localProducts.map { it.toProduct() }))
+//            }
+//
+//
+//            val isDbEmpty = localProducts.isEmpty()
+//            val shouldJustLoadFromCache = !isDbEmpty && !fetchFromRemote
+//
+//            if (shouldJustLoadFromCache) {
+//                emit(Resource.Loading(false))
+//                return@flow
+//            }
 
-            if (localProducts.isNotEmpty()) {
-                emit(Resource.Success(data = localProducts.map { it.toProduct() }))
-            }
-
-
-            val isDbEmpty = localProducts.isEmpty()
-            val shouldJustLoadFromCache = !isDbEmpty && !fetchFromRemote
-
-            if (shouldJustLoadFromCache) {
-                emit(Resource.Loading(false))
-                return@flow
-            }
-
-            val remoteProducts = try {
+            val response = try {
                 api.getProducts(queryMap)
             } catch (e: IOException) {
 
@@ -69,8 +70,8 @@ class ProductRepositoryImpl @Inject constructor(
 
             }
 
-            remoteProducts?.let {
-                emit(Resource.Success(remoteProducts.data))
+            response?.let {
+                emit(Resource.Success(response))
             }
 
             emit(Resource.Loading(false))

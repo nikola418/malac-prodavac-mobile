@@ -22,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -98,7 +97,7 @@ fun HighlightSection(
                 textStyle = MaterialTheme.typography.body2
             )
 
-            SortAndFilter(navController,viewModel)
+            SortAndFilter(navController, viewModel)
 
             if (!state.isLoading) {
                 if (isSearching) {
@@ -108,7 +107,7 @@ fun HighlightSection(
                 } else {
                     ShowHighlightedProducts(
                         products = products,
-                        navController,
+                        navController = navController,
                         bottomNavigation = true
                     )
                 }

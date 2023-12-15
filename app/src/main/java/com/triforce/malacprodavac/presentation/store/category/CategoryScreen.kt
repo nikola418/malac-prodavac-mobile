@@ -59,7 +59,6 @@ import com.triforce.malacprodavac.ui.theme.MP_White
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun StoreCategoryScreen(
-
     navController: NavController,
     viewModel: CategoryViewModel = hiltViewModel()
 ) {
@@ -68,7 +67,7 @@ fun StoreCategoryScreen(
     val searchText by viewModel.searchText.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
 
-    val products: List<Product>? = state.products
+    val products: List<Product> = state.products
 
     val titleState = viewModel.categoryTitle.value
 
@@ -139,8 +138,13 @@ fun StoreCategoryScreen(
                 }
             } else {
                 ShowHighlightedProducts(
+                    isLoading = state.isLoading,
+                    isLastPage = state.isLastPage,
+                    loadNextPage = {
+                        viewModel.loadNextPage()
+                    },
                     products = products,
-                    navController,
+                    navController = navController,
                     bottomNavigation = true
                 )
             }

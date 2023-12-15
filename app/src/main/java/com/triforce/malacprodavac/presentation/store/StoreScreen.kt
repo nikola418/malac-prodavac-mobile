@@ -62,11 +62,11 @@ fun StoreScreen(navController: NavController) {
     val viewModel: StoreViewModel = hiltViewModel()
     val state = viewModel.state
 
-    val Categories: List<Category> = state.categories
+    val categories: List<Category> = state.categories
     var features: List<Feature> = listOf()
     var flagNumber: Int = 0
 
-    Categories.forEach {
+    categories.forEach {
         if (it.parentCategoryId == null) {
             flagNumber++
             if (it.id % 3 == 1) {
