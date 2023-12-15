@@ -1,5 +1,6 @@
 package com.triforce.malacprodavac.domain.use_case.product
 
+import com.triforce.malacprodavac.domain.model.pagination.PaginationResult
 import com.triforce.malacprodavac.domain.model.products.Product
 import com.triforce.malacprodavac.domain.repository.products.ProductRepository
 import com.triforce.malacprodavac.domain.util.Resource
@@ -14,7 +15,7 @@ class GetAllProducts(
         categoryId: Int,
         fetchFromRemote: Boolean,
         @QueryMap() query: MutableMap<String, String>
-    ): Flow<Resource<List<Product>>> {
+    ): Flow<Resource<PaginationResult<Product>>> {
         return repository.getProducts(categoryId, fetchFromRemote, query)
     }
 

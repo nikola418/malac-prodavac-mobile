@@ -15,14 +15,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -100,16 +104,21 @@ fun ShowHighlightSectionComp(
 
         }
 
-        ShowHighlightedProducts(subProducts, navController)
+        ShowHighlightedProducts(products = subProducts, navController = navController)
     }
 }
 
 @Composable
 fun ShowHighlightedProducts(
+    isLoading: Boolean = false,
+    loadNextPage: () -> Unit = {},
+    isLastPage: Boolean = true,
     products: List<Product>?,
     navController: NavController,
     bottomNavigation: Boolean = false
 ) {
+
+    val scrollState = rememberLazyListState()
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(
@@ -120,11 +129,28 @@ fun ShowHighlightedProducts(
         )
     ) {
         if (products != null) {
-            items(products.size) {
+            items(products) {
                 HighlightSectionProduct(
-                    product = products[it],
+                    product = it,
                     navController = navController
                 )
+            }
+            item {
+                if (isLoading) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp), horizontalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    LaunchedEffect(scrollState.canScrollForward) {
+                        if (!isLastPage && !scrollState.canScrollForward) {
+                            loadNextPage()
+                        }
+                    }
+                }
             }
         }
     }

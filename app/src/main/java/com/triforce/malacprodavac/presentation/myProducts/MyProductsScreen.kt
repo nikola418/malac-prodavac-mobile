@@ -37,7 +37,6 @@ import com.triforce.malacprodavac.presentation.components.BottomNavigationMenu
 import com.triforce.malacprodavac.presentation.components.RoundedBackgroundComp
 import com.triforce.malacprodavac.presentation.components.ShowHighlightedProducts
 import com.triforce.malacprodavac.presentation.components.TitleDescComp
-import com.triforce.malacprodavac.presentation.store.components.FilterSortComp
 import com.triforce.malacprodavac.presentation.store.components.GoBackComp
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Green
@@ -48,8 +47,7 @@ import com.triforce.malacprodavac.ui.theme.MP_White
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyProductsScreen(
-    navController: NavController,
-    viewModel: MyProductsViewModel = hiltViewModel()
+    navController: NavController, viewModel: MyProductsViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
 
@@ -66,12 +64,12 @@ fun MyProductsScreen(
         RoundedBackgroundComp(top = 65.dp, color = MP_White)
         GoBackComp("Svi Proizvodi", navController)
 
-        Column (
+        Column(
             modifier = Modifier.padding(vertical = 60.dp)
-        ){
+        ) {
             TitleDescComp(
                 title = "Moji Proizvodi",
-                description = "Dostupni od ${state.currentShop?.openFromDays} do ${state.currentShop?.openTillDays} Dana!" ,
+                description = "Dostupni od ${state.currentShop?.openFromDays} do ${state.currentShop?.openTillDays} Dana!",
                 colorTitle = MP_Black,
                 colorDesc = Color.DarkGray
             )
@@ -84,8 +82,7 @@ fun MyProductsScreen(
                     .padding(horizontal = 16.dp, vertical = 15.dp),
                 placeholder = {
                     Text(
-                        text = "Pretražite ${state.currentShop?.businessName}",
-                        color = MP_Black
+                        text = "Pretražite ${state.currentShop?.businessName}", color = MP_Black
                     )
                 },
                 trailingIcon = {
@@ -100,7 +97,7 @@ fun MyProductsScreen(
                 shape = RoundedCornerShape(10.dp)
             )
 
-            if ( isSearching ) {
+            if (isSearching) {
 
                 Box(modifier = Modifier.fillMaxSize()) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -109,34 +106,30 @@ fun MyProductsScreen(
             } else {
                 ShowHighlightedProducts(
                     products = state.products,
-                    navController,
+                    navController = navController,
                     bottomNavigation = true
                 )
             }
         }
 
         BottomNavigationMenu(
-            navController = navController,
-            items = listOf(
+            navController = navController, items = listOf(
                 BottomNavigationMenuContent(
                     title = "Početna",
                     graphicID = Icons.Default.Home,
                     screen = Screen.HomeScreen,
                     isActive = false
-                ),
-                BottomNavigationMenuContent(
+                ), BottomNavigationMenuContent(
                     title = "Market",
                     graphicID = ImageVector.vectorResource(R.drawable.logo_green),
                     screen = Screen.StoreScreen,
                     isActive = false
-                ),
-                BottomNavigationMenuContent(
+                ), BottomNavigationMenuContent(
                     title = "Profil",
                     graphicID = Icons.Default.Person,
                     screen = Screen.PrivateProfile,
                     isActive = false
-                ),
-                BottomNavigationMenuContent(
+                ), BottomNavigationMenuContent(
                     title = "Korpa",
                     graphicID = Icons.Default.ShoppingCart,
                     screen = Screen.CartScreen,

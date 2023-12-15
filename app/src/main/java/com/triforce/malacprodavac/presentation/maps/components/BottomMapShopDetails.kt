@@ -180,6 +180,6 @@ fun ShopHighlightProduct(
             )
         }
 
-        ShowHighlightedProducts(subProducts, navController)
+        ShowHighlightedProducts(products = subProducts, navController = navController)
     }
 }

@@ -9,11 +9,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.triforce.malacprodavac.domain.util.filter.Filter
-import com.triforce.malacprodavac.domain.util.filter.FilterBuilder
-import com.triforce.malacprodavac.domain.util.filter.FilterOperation
-import com.triforce.malacprodavac.domain.util.filter.SingleFilter
-import com.triforce.malacprodavac.domain.model.products.Product
 import com.triforce.malacprodavac.domain.model.shops.Shop
 import com.triforce.malacprodavac.domain.repository.ShopRepository
 import com.triforce.malacprodavac.domain.repository.products.ProductRepository
@@ -21,6 +16,10 @@ import com.triforce.malacprodavac.domain.repository.users.UserRepository
 import com.triforce.malacprodavac.domain.use_case.profile.Profile
 import com.triforce.malacprodavac.domain.util.Resource
 import com.triforce.malacprodavac.domain.util.compressedFileFromUri
+import com.triforce.malacprodavac.domain.util.filter.Filter
+import com.triforce.malacprodavac.domain.util.filter.FilterBuilder
+import com.triforce.malacprodavac.domain.util.filter.FilterOperation
+import com.triforce.malacprodavac.domain.util.filter.SingleFilter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -48,7 +47,7 @@ class MyProductsViewModel @Inject constructor(
     val isSearching = _isSearching.asStateFlow()
 
     var currentShopId: Int? = null
-    fun onSearchTextChange(text: String){
+    fun onSearchTextChange(text: String) {
         _searchText.value = text
         currentShopId?.let {
             getProducts(
@@ -105,6 +104,7 @@ class MyProductsViewModel @Inject constructor(
                 }
         }
     }
+
     private fun me() {
         viewModelScope.launch {
             profile.getMe().collect { result ->
@@ -134,7 +134,12 @@ class MyProductsViewModel @Inject constructor(
         }
     }
 
-    private fun getProducts(fetchFromRemote: Boolean, filterTag: String = "", id: Int, searchText: String = "") {
+    private fun getProducts(
+        fetchFromRemote: Boolean,
+        filterTag: String = "",
+        id: Int,
+        searchText: String = ""
+    ) {
 
         viewModelScope.launch {
 
@@ -158,13 +163,10 @@ class MyProductsViewModel @Inject constructor(
             repositoryProduct.getProducts(id, fetchFromRemote, query).collect { result ->
                 when (result) {
                     is Resource.Success -> {
-                        if (result.data is List<Product>) {
-                            state = state.copy(
-                                products = result.data,
-                                isLoading = false
-                            )
-
-                        }
+                        state = state.copy(
+                            products = result.data?.data,
+                            isLoading = false
+                        )
                     }
 
                     is Resource.Error -> {
@@ -193,10 +195,17 @@ class MyProductsViewModel @Inject constructor(
                                     currentShop = result.data
                                 )
 
-                                getProducts(fetchFromRemote = true, filterTag = "shopId", id = state.currentShop!!.id)
+                                getProducts(
+                                    fetchFromRemote = true,
+                                    filterTag = "shopId",
+                                    id = state.currentShop!!.id
+                                )
                             }
                         }
-                        is Resource.Error -> { Unit }
+
+                        is Resource.Error -> {
+                            Unit
+                        }
 
                         is Resource.Loading -> {
                             state = state.copy(

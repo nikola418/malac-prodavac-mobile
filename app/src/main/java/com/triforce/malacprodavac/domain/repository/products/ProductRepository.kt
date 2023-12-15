@@ -1,5 +1,6 @@
 package com.triforce.malacprodavac.domain.repository.products
 
+import com.triforce.malacprodavac.domain.model.pagination.PaginationResult
 import com.triforce.malacprodavac.domain.model.products.CreateProductDto
 import com.triforce.malacprodavac.domain.model.products.Product
 import com.triforce.malacprodavac.domain.model.products.UpdateProductDto
@@ -12,7 +13,7 @@ interface ProductRepository {
         categoryId: Int,
         fetchFromRemote: Boolean,
         queryMap: MutableMap<String, String>
-    ): Flow<Resource<List<Product>>>
+    ): Flow<Resource<PaginationResult<Product>>>
 
     suspend fun getProduct(
         id: Int,

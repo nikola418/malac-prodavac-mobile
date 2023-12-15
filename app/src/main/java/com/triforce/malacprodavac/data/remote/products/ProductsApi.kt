@@ -1,6 +1,6 @@
 package com.triforce.malacprodavac.data.remote.products
 
-import com.triforce.malacprodavac.data.remote.dto.PaginationResponse
+import com.triforce.malacprodavac.domain.model.pagination.PaginationResult
 import com.triforce.malacprodavac.domain.model.products.CreateProductDto
 import com.triforce.malacprodavac.domain.model.products.Product
 import com.triforce.malacprodavac.domain.model.products.UpdateProductDto
@@ -19,7 +19,7 @@ interface ProductsApi {
     @GET(ROUTE)
     suspend fun getProducts(
         @QueryMap() queryMap: MutableMap<String, String>
-    ): PaginationResponse<Product>
+    ): PaginationResult<Product>
 
     @GET("${ROUTE}/{id}")
     suspend fun getProduct(@Path("id") id: Int): Product
