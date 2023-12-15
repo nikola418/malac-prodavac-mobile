@@ -21,8 +21,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -67,8 +65,6 @@ fun HighlightSection(
             TitleDescComp(
                 title = "${shop?.businessName} za Vaš užitak!",
                 description = "Domaćinstvo ${shop?.businessName} Dostupni od ${shop?.openFromDays} do ${shop?.openTillDays} Dana!",
-                colorTitle = MP_Black,
-                colorDesc = Color.DarkGray
             )
 
             OutlinedTextField(
@@ -98,7 +94,7 @@ fun HighlightSection(
                 textStyle = MaterialTheme.typography.body2
             )
 
-            SortAndFilter(navController,viewModel)
+            SortAndFilter(viewModel)
 
             if (!state.isLoading) {
                 if (isSearching) {

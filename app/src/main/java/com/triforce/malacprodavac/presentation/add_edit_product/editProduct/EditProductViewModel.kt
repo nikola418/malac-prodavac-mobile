@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.triforce.malacprodavac.domain.model.products.Product
 import com.triforce.malacprodavac.domain.model.products.UpdateProductDto
 import com.triforce.malacprodavac.domain.use_case.category.CategoryUseCase
 import com.triforce.malacprodavac.domain.use_case.product.ProductUseCase
@@ -57,7 +58,17 @@ class EditProductViewModel @Inject constructor(
             is EditProductEvent.Submit -> onSubmit(event.context)
             is EditProductEvent.ChangeProductImage -> state =
                 state.copy(imageUri = event.imageUri, thumbUrl = event.imageUri.toString())
+
+            is EditProductEvent.ToggleAvailable -> onToggleAvailable(event.product)
         }
+    }
+
+    private fun onToggleAvailable(product: Product) {
+        val updatedProduct = product.copy(available = !product.available)
+        state = state.copy(product = updatedProduct)
+
+        val updateProduct = updateProductDtoFromState()
+        updateProduct(updatedProduct.id, updateProduct)
     }
 
     private fun onSubmit(context: Context) {
@@ -97,7 +108,8 @@ class EditProductViewModel @Inject constructor(
             availableAtLatitude = state.product?.availableAtLatitude,
             availableAtLongitude = state.product?.availableAtLongitude,
             availableFromHours = state.product?.availableFromHours,
-            availableTillHours = state.product?.availableTillHours
+            availableTillHours = state.product?.availableTillHours,
+            available = state.product?.available
         )
     }
 

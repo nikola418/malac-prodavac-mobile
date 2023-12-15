@@ -1,30 +1,28 @@
 package com.triforce.malacprodavac.presentation.highlightSection
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.triforce.malacprodavac.domain.model.products.Product
+import com.triforce.malacprodavac.domain.repository.ShopRepository
+import com.triforce.malacprodavac.domain.repository.products.ProductRepository
+import com.triforce.malacprodavac.domain.util.Resource
 import com.triforce.malacprodavac.domain.util.filter.Filter
 import com.triforce.malacprodavac.domain.util.filter.FilterBuilder
 import com.triforce.malacprodavac.domain.util.filter.FilterOperation
 import com.triforce.malacprodavac.domain.util.filter.FilterOrder
 import com.triforce.malacprodavac.domain.util.filter.SingleFilter
 import com.triforce.malacprodavac.domain.util.filter.SingleOrder
-import com.triforce.malacprodavac.domain.model.products.Product
-import com.triforce.malacprodavac.domain.repository.products.ProductRepository
-import com.triforce.malacprodavac.domain.repository.ShopRepository
-import com.triforce.malacprodavac.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 
 @HiltViewModel
 class HighlightSectionViewModel @Inject constructor(
@@ -37,8 +35,6 @@ class HighlightSectionViewModel @Inject constructor(
 ) : ViewModel() {
 
     var state by mutableStateOf(HighlightSectionState())
-
-    private val searchQueryChannel = Channel<String>(Channel.CONFLATED)
 
     private val _searchText = MutableStateFlow("")
     val searchText = _searchText.asStateFlow()
@@ -70,12 +66,11 @@ class HighlightSectionViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: HighlightSectionEvent){
-        when ( event){
+    fun onEvent(event: HighlightSectionEvent) {
+        when (event) {
             is HighlightSectionEvent.OrderBy -> {
                 currentShopId?.let {
-                    Log.d("SearchText", searchText.value)
-                    getProducts(shopId = it, searchText = searchText.value, orderId = event.order )
+                    getProducts(shopId = it, searchText = searchText.value, orderId = event.order)
                 }
             }
         }
@@ -122,7 +117,15 @@ class HighlightSectionViewModel @Inject constructor(
                             FilterOperation.IContains,
                             searchText
                         )
-                    ), order = if ( orderId == -1 ) null else listOf(SingleOrder("price", if(orderId == 1) FilterOrder.Asc else FilterOrder.Desc)), limit = null, offset = null
+                    ),
+                    order = if (orderId == -1) null else listOf(
+                        SingleOrder(
+                            "price",
+                            if (orderId == 1) FilterOrder.Asc else FilterOrder.Desc
+                        )
+                    ),
+                    limit = null,
+                    offset = null
                 )
             )
 

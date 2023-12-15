@@ -1,22 +1,19 @@
 package com.triforce.malacprodavac.presentation.myProducts
 
 import android.net.Uri
-import com.triforce.malacprodavac.domain.model.products.Product
-import com.triforce.malacprodavac.domain.model.shops.Shop
 import com.triforce.malacprodavac.domain.model.User
+import com.triforce.malacprodavac.domain.model.products.Product
 
-data class MyProductsState (
-    val id: Int = -1,
-
-    val searchQuery: String = "",
-
+data class MyProductsState(
     val isLoading: Boolean = false,
-    val isLoggedIn: Boolean = true,
-    val currentUser: User? = null,
-    val currentShop: Shop? = null,
+
+    val user: User? = null,
+
     val profileImageUrl: String? = null,
     val profileImageKey: String? = null,
+
     val token: String? = null,
+
     var mediaUri: Uri? = null,
     var newImage: Boolean = false,
 
