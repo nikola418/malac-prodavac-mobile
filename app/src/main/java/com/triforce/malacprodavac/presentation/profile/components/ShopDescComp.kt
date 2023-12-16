@@ -19,8 +19,10 @@ import com.triforce.malacprodavac.ui.theme.MP_Black
 @Composable
 fun ShopDescComp(
     user: User?,
-    shop: Shop? = null
+    shopUser: Shop? = null
 ) {
+    val shop = shopUser ?: user?.shop
+    
     if (user != null) {
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
