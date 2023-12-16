@@ -2,6 +2,7 @@ package com.triforce.malacprodavac.presentation.product.components
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,12 +15,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowRight
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -42,6 +45,7 @@ import com.triforce.malacprodavac.presentation.product.ProductEvent
 import com.triforce.malacprodavac.presentation.product.ProductViewModel
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.components.ProductOptions
 import com.triforce.malacprodavac.ui.theme.MP_Black
+import com.triforce.malacprodavac.ui.theme.MP_Gray
 import com.triforce.malacprodavac.ui.theme.MP_Green
 import com.triforce.malacprodavac.ui.theme.MP_GreenLight
 import com.triforce.malacprodavac.ui.theme.MP_White
@@ -54,19 +58,19 @@ fun ProductScreenContent(
 ) {
     var isCreateReviewOpen by remember { mutableStateOf(false) }
     var isCreateReplyReviewOpen by remember { mutableStateOf(false) }
+    var reviewId by remember { mutableStateOf(0) }
+    var clickedReviewId by remember { mutableStateOf(0) }
 
     val openCreateReviewDialog = { isCreateReviewOpen = true }
     val closeCreateReviewDialog = { isCreateReviewOpen = false }
     val openCreateReplyReviewDialog = { isCreateReplyReviewOpen = true }
-    val closeCreateReplyReviewDialog = { isCreateReplyReviewOpen = false }
+    val closeCreateReplyReviewDialog = { isCreateReplyReviewOpen = false}
 
     val createReviewCallback = { text: String, rating: Int ->
         viewModel.onEvent(ProductEvent.CreateReview(text, rating))
     }
 
-    val createReplyReviewCallback = { text: String ->
-        viewModel.onEvent(ProductEvent.CreateReview(text, 3))
-    }
+    var createReplyReviewCallback: (String, Int) -> Unit
 
     val state = viewModel.state
     val product = state.product
@@ -100,10 +104,6 @@ fun ProductScreenContent(
 
             if (isCreateReviewOpen) {
                 CreateReviewDialog(closeCreateReviewDialog, createReviewCallback)
-            }
-
-            if (isCreateReplyReviewOpen) {
-                CreateReplyReviewDialog(closeCreateReplyReviewDialog, createReplyReviewCallback)
             }
 
             LinearGradient(color1 = colorForeground, color2 = colorBackground)
@@ -154,6 +154,19 @@ fun ProductScreenContent(
                             .padding(16.dp)
                     ) {
                         items(state.reviews) { review ->
+                            reviewId = review.id
+
+                            createReplyReviewCallback = { text: String, reviewId: Int->
+                                viewModel.onEvent(ProductEvent.CreateReplyReview(text, reviewId))
+                            }
+                            if (isCreateReplyReviewOpen) {
+                                CreateReplyReviewDialog(
+                                    closeCreateReplyReviewDialog,
+                                    createReplyReviewCallback,
+                                    reviewId
+                                )
+                            }
+
                             Column {
                                 Row(
                                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -163,9 +176,12 @@ fun ProductScreenContent(
                                         text = review.text.ifEmpty { "Korisnik nije ostavio komentar" },
                                         softWrap = true,
                                     )
-                                    if(user?.roles!!.contains("Shop")) {
+                                    if (user?.roles!!.contains("Shop")) {
                                         IconButton(onClick = openCreateReplyReviewDialog) {
-                                            Icon(Icons.Filled.Replay, contentDescription = "Create Reply a Review")
+                                            Icon(
+                                                Icons.Filled.Replay,
+                                                contentDescription = "Create Reply a Review"
+                                            )
                                         }
                                     }
                                 }
@@ -183,6 +199,29 @@ fun ProductScreenContent(
                                         review.customer?.user?.firstName + " " + review.customer?.user?.lastName
                                     )
                                 }
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 25.dp, top = 10.dp, bottom = 10.dp)
+                                        .background(MP_Gray, shape = RoundedCornerShape(15.dp))
+                                ) {
+                                    if (state.replyReviews != null) {
+                                        for (replyReview in state.replyReviews) {
+                                            Row(
+                                                modifier = Modifier.padding(start = 25.dp)
+                                            ) {
+                                                Icon(
+                                                    Icons.Default.ArrowRight,
+                                                    contentDescription = "Create Reply a Review"
+                                                )
+                                                Text(
+                                                    text = replyReview.text.ifEmpty { "Korisnik nije odgovorio na komentar" },
+                                                    softWrap = true,
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -190,5 +229,4 @@ fun ProductScreenContent(
             }
         }
     }
-
 }

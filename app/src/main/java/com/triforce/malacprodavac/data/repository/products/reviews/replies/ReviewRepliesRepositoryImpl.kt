@@ -34,16 +34,16 @@ class ReviewRepliesRepositoryImpl @Inject constructor(
                 api.createReviewReply(productId, reviewId, createReviewReply)
             } catch (e: IOException) {
                 e.printStackTrace()
-                emit(Resource.Error("Couldn't find user."))
+                emit(Resource.Error("Ne može pronaći korisnika."))
                 null
             } catch (e: HttpException) {
                 e.printStackTrace()
                 if (e.code() == HttpURLConnection.HTTP_CONFLICT)
-                    emit(Resource.Error("Ne možete ostaviti više od jedne recenzije!"))
+                    emit(Resource.Error("Ne možete ostaviti više od jednog odgovora na recenziju!"))
                 else if (e.code() == HttpURLConnection.HTTP_BAD_REQUEST)
                     emit(Resource.Error("Morate popuniti sva polja!"))
                 else if (e.code() == HttpURLConnection.HTTP_FORBIDDEN)
-                    emit(Resource.Error("Morate kupiti proizvod da biste postavili recenziju!"))
+                    emit(Resource.Error("Morate kupiti proizvod da biste postavili odgovor na recenziju!"))
                 else
                     emit(Resource.Error("Postavljanje recenzije neuspešno!"))
                 null

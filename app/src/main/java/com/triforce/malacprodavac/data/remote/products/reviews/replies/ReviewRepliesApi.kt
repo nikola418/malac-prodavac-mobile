@@ -10,20 +10,20 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ReviewRepliesApi {
-    @POST(ReviewsApi.ROUTE)
+    @POST(ROUTE)
     suspend fun createReviewReply(
         @Path("productId") productId: Int,
         @Path("reviewId") reviewId: Int,
         @Body createReviewReply: CreateReviewReplyDto
     ): ReviewReply
 
-    @GET(ReviewsApi.ROUTE)
+    @GET(ROUTE)
     suspend fun getReviewReplies(
         @Path("productId") productId: Int,
         @Path("reviewId") reviewId: Int,
     ): PaginationResult<ReviewReply>
 
-    @GET("${ReviewsApi.ROUTE}/{replyId}")
+    @GET("${ROUTE}/{replyId}")
     suspend fun getReviewReply(
         @Path("productId") productId: Int,
         @Path("reviewId") reviewId: Int,

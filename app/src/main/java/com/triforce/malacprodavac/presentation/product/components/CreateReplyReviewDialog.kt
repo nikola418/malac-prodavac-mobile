@@ -40,7 +40,7 @@ import com.triforce.malacprodavac.ui.theme.MP_Pink
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateReplyReviewDialog(closeDialog: () -> Unit, onSubmit: (String) -> Unit) {
+fun CreateReplyReviewDialog(closeDialog: () -> Unit, onSubmit: (String, Int) -> Unit, reviewId: Int) {
 
     var text by remember { mutableStateOf("") }
     val setText = { newText: String ->
@@ -48,7 +48,6 @@ fun CreateReplyReviewDialog(closeDialog: () -> Unit, onSubmit: (String) -> Unit)
     }
 
     var textError: String? by remember { mutableStateOf(null) }
-    var ratingError: String? by remember { mutableStateOf(null) }
 
     Dialog(
         onDismissRequest = closeDialog,
@@ -110,9 +109,9 @@ fun CreateReplyReviewDialog(closeDialog: () -> Unit, onSubmit: (String) -> Unit)
                                 "Unesite tekst!"
                             else null
 
-                            if (ratingError == null && textError == null) {
+                            if (textError == null) {
                                 closeDialog()
-                                onSubmit(text)
+                                onSubmit(text, reviewId)
                             }
                         },
                         modifier = Modifier

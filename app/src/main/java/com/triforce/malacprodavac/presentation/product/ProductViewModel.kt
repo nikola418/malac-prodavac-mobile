@@ -26,6 +26,7 @@ class ProductViewModel @Inject constructor(
     private val profile: Profile,
     private val repository: ProductRepository,
     private val reviewUseCase: ReviewUseCase,
+    private val reviewReplyUseCase: ReviewReplyUseCase,
     private val repositoryShop: ShopRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -47,8 +48,10 @@ class ProductViewModel @Inject constructor(
             }
 
             is ProductEvent.CreateReplyReview -> {
-
+                createReplyReview(event.text, event.reviewId)
             }
+
+            else -> { }
         }
     }
 
@@ -133,30 +136,30 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-//    private fun createReplyReview(text: String, reviewId: Int) {
-//        viewModelScope.launch {
-//            ReviewReplyUseCase.createReviewReply.invoke(state.product!!.id, reviewId, CreateReviewReplyDto(text))
-//                .collect { result ->
-//                    when (result) {
-//                        is Resource.Error -> {
-//                            state = state.copy(createReviewError = result.message)
-//                        }
-//
-//                        is Resource.Loading -> {
-//                            state = state.copy()
-//                        }
-//
-//                        is Resource.Success -> {
-//                            result.data?.let {
-//                                state = state.copy(
-//                                    reviews = listOf(*state.reviews!!.toTypedArray(), it)
-//                                )
-//                            }
-//                        }
-//                    }
-//                }
-//        }
-//    }
+    private fun createReplyReview(text: String, reviewId: Int) {
+        viewModelScope.launch {
+            reviewReplyUseCase.createReviewReply.invoke(state.product!!.id, reviewId, CreateReviewReplyDto(text))
+                .collect { result ->
+                    when (result) {
+                        is Resource.Error -> {
+                            state = state.copy(createReplyReviewError = result.message)
+                        }
+
+                        is Resource.Loading -> {
+                            state = state.copy()
+                        }
+
+                        is Resource.Success -> {
+                            result.data?.let {
+                                state = state.copy(
+                                    replyReviews = listOf(*state.replyReviews!!.toTypedArray(), it)
+                                )
+                            }
+                        }
+                    }
+                }
+        }
+    }
 
     private fun getShop(shopId: Int) {
         viewModelScope.launch {
