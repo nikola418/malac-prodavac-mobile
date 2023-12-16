@@ -27,12 +27,16 @@ fun ProductBottomBar(
         if (viewModel.state.product != null)
             if (viewModel.state.product!!.shopId != viewModel.state.user?.shop?.id)
                 viewModel.state.product?.let {
-                    ShowFavouriteAddToCart(
-                        navController = navController,
-                        viewModel = viewModel,
-                        viewModelFavourite = viewModelFavProduct,
-                        product = it
-                    )
+
+                    if (viewModel.state.product!!.available)
+                        ShowFavouriteAddToCart(
+                            navController = navController,
+                            viewModel = viewModel,
+                            viewModelFavourite = viewModelFavProduct,
+                            product = it
+                        )
+                    else
+                        ShowNotAvailableProduct(it, viewModelFavProduct)
                 }
 
         BottomNavigationMenu(
