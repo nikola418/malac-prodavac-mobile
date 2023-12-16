@@ -43,7 +43,7 @@ class ReviewRepliesRepositoryImpl @Inject constructor(
                 else if (e.code() == HttpURLConnection.HTTP_BAD_REQUEST)
                     emit(Resource.Error("Morate popuniti sva polja!"))
                 else if (e.code() == HttpURLConnection.HTTP_FORBIDDEN)
-                    emit(Resource.Error("Morate kupiti proizvod da biste postavili odgovor na recenziju!"))
+                    emit(Resource.Error("Ne možete odgovoriti na recenziju ukoliko proizvod nije Vaš!"))
                 else
                     emit(Resource.Error("Postavljanje recenzije neuspešno!"))
                 null

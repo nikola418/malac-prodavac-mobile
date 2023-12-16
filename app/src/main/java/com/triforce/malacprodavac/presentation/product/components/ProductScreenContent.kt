@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.triforce.malacprodavac.LinearGradient
 import com.triforce.malacprodavac.Screen
+import com.triforce.malacprodavac.domain.model.products.reviews.reviewReplies.ReviewReply
 import com.triforce.malacprodavac.presentation.components.RatingStars
 import com.triforce.malacprodavac.presentation.components.RoundedBackgroundComp
 import com.triforce.malacprodavac.presentation.components.ShowHighlightSectionComp
@@ -60,10 +61,11 @@ fun ProductScreenContent(
     var isCreateReplyReviewOpen by remember { mutableStateOf(false) }
     var reviewId by remember { mutableStateOf(0) }
     var clickedReviewId by remember { mutableStateOf(0) }
+    var reviewReplies by remember { mutableStateOf(listOf<ReviewReply>()) }
 
     val openCreateReviewDialog = { isCreateReviewOpen = true }
     val closeCreateReviewDialog = { isCreateReviewOpen = false }
-    val openCreateReplyReviewDialog = { isCreateReplyReviewOpen = true }
+    var openCreateReplyReviewDialog = { isCreateReplyReviewOpen = true}
     val closeCreateReplyReviewDialog = { isCreateReplyReviewOpen = false}
 
     val createReviewCallback = { text: String, rating: Int ->
@@ -88,6 +90,16 @@ fun ProductScreenContent(
             .makeText(
                 context,
                 state.createReviewError,
+                Toast.LENGTH_LONG
+            )
+            .show()
+    }
+
+    if (state.createReplyReviewError != null) {
+        Toast
+            .makeText(
+                context,
+                state.createReplyReviewError,
                 Toast.LENGTH_LONG
             )
             .show()
@@ -159,6 +171,7 @@ fun ProductScreenContent(
                             createReplyReviewCallback = { text: String, reviewId: Int->
                                 viewModel.onEvent(ProductEvent.CreateReplyReview(text, reviewId))
                             }
+
                             if (isCreateReplyReviewOpen) {
                                 CreateReplyReviewDialog(
                                     closeCreateReplyReviewDialog,
@@ -205,8 +218,10 @@ fun ProductScreenContent(
                                         .padding(start = 25.dp, top = 10.dp, bottom = 10.dp)
                                         .background(MP_Gray, shape = RoundedCornerShape(15.dp))
                                 ) {
-                                    if (state.replyReviews != null) {
-                                        for (replyReview in state.replyReviews) {
+                                    viewModel.getReplyReviews(productId = product.id, reviewId = reviewId)
+                                    reviewReplies = reviewReplies.plus(state.replyReviews!!)
+                                    if (reviewReplies != null) {
+                                        for (replyReview in reviewReplies) {
                                             Row(
                                                 modifier = Modifier.padding(start = 25.dp)
                                             ) {
@@ -219,6 +234,7 @@ fun ProductScreenContent(
                                                     softWrap = true,
                                                 )
                                             }
+                                            break
                                         }
                                     }
                                 }

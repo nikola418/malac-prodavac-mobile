@@ -111,6 +111,23 @@ class ProductViewModel @Inject constructor(
         }
     }
 
+    public fun getReplyReviews(productId: Int, reviewId: Int) {
+        viewModelScope.launch {
+            reviewReplyUseCase.getReviewReplies(productId, reviewId).collect { result ->
+                when (result) {
+                    is Resource.Error -> {}
+                    is Resource.Loading -> {
+                        state = state.copy(isLoading = result.isLoading)
+                    }
+
+                    is Resource.Success -> {
+                        state = state.copy(replyReviews = result.data)
+                    }
+                }
+            }
+        }
+    }
+
     private fun createReview(text: String, rating: Int) {
         viewModelScope.launch {
             reviewUseCase.createReview.invoke(state.product!!.id, CreateReviewDto(text, rating))
