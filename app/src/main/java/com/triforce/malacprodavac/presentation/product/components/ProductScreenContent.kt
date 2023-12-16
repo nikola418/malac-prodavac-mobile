@@ -101,7 +101,7 @@ fun ProductScreenContent(
                 ProductHeroImage(imageUrl = state.thumbnailUrl, imageKey = state.thumbnailKey)
 
                 Spacer(modifier = Modifier.padding(22.dp))
-                ProductDetails(product = product)
+                ProductDetails(product = product, shop = shop)
 
                 if (product.shopId == viewModel.state.user?.shop?.id)
                     ProductOptions(product, navController, true)
