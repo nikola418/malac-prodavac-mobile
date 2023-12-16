@@ -7,10 +7,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.triforce.malacprodavac.domain.model.products.reviews.CreateReviewDto
+import com.triforce.malacprodavac.domain.model.products.reviews.reviewReplies.CreateReviewReplyDto
 import com.triforce.malacprodavac.domain.model.shops.Shop
 import com.triforce.malacprodavac.domain.repository.ShopRepository
 import com.triforce.malacprodavac.domain.repository.products.ProductRepository
 import com.triforce.malacprodavac.domain.use_case.product.replies.ReviewUseCase
+import com.triforce.malacprodavac.domain.use_case.product.replies.replies.CreateReviewReply
+import com.triforce.malacprodavac.domain.use_case.product.replies.replies.ReviewReplyUseCase
 import com.triforce.malacprodavac.domain.use_case.profile.Profile
 import com.triforce.malacprodavac.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +26,7 @@ class ProductViewModel @Inject constructor(
     private val profile: Profile,
     private val repository: ProductRepository,
     private val reviewUseCase: ReviewUseCase,
+    private val reviewReplyUseCase: ReviewReplyUseCase,
     private val repositoryShop: ShopRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -42,6 +46,12 @@ class ProductViewModel @Inject constructor(
             is ProductEvent.CreateReview -> {
                 createReview(event.text, event.rating)
             }
+
+            is ProductEvent.CreateReplyReview -> {
+                createReplyReview(event.text, event.reviewId)
+            }
+
+            else -> { }
         }
     }
 
@@ -101,6 +111,23 @@ class ProductViewModel @Inject constructor(
         }
     }
 
+    public fun getReplyReviews(productId: Int, reviewId: Int) {
+        viewModelScope.launch {
+            reviewReplyUseCase.getReviewReplies(productId, reviewId).collect { result ->
+                when (result) {
+                    is Resource.Error -> {}
+                    is Resource.Loading -> {
+                        state = state.copy(isLoading = result.isLoading)
+                    }
+
+                    is Resource.Success -> {
+                        state = state.copy(replyReviews = result.data)
+                    }
+                }
+            }
+        }
+    }
+
     private fun createReview(text: String, rating: Int) {
         viewModelScope.launch {
             reviewUseCase.createReview.invoke(state.product!!.id, CreateReviewDto(text, rating))
@@ -118,6 +145,31 @@ class ProductViewModel @Inject constructor(
                             result.data?.let {
                                 state = state.copy(
                                     reviews = listOf(*state.reviews!!.toTypedArray(), it)
+                                )
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
+    private fun createReplyReview(text: String, reviewId: Int) {
+        viewModelScope.launch {
+            reviewReplyUseCase.createReviewReply.invoke(state.product!!.id, reviewId, CreateReviewReplyDto(text))
+                .collect { result ->
+                    when (result) {
+                        is Resource.Error -> {
+                            state = state.copy(createReplyReviewError = result.message)
+                        }
+
+                        is Resource.Loading -> {
+                            state = state.copy()
+                        }
+
+                        is Resource.Success -> {
+                            result.data?.let {
+                                state = state.copy(
+                                    replyReviews = listOf(*state.replyReviews!!.toTypedArray(), it)
                                 )
                             }
                         }

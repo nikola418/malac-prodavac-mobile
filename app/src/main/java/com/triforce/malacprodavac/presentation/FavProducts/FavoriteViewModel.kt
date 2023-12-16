@@ -47,7 +47,7 @@ class FavoriteViewModel @Inject constructor(
     }
 
     private fun getFavProducts(
-        userId: Int,
+        userId: Int
     ) {
         viewModelScope.launch {
             val query = FilterBuilder.buildFilterQueryMap(
