@@ -2,7 +2,6 @@ package com.triforce.malacprodavac.presentation.product.components
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -65,8 +64,8 @@ fun ProductScreenContent(
 
     val openCreateReviewDialog = { isCreateReviewOpen = true }
     val closeCreateReviewDialog = { isCreateReviewOpen = false }
-    var openCreateReplyReviewDialog = { isCreateReplyReviewOpen = true}
-    val closeCreateReplyReviewDialog = { isCreateReplyReviewOpen = false}
+    var openCreateReplyReviewDialog = { isCreateReplyReviewOpen = true }
+    val closeCreateReplyReviewDialog = { isCreateReplyReviewOpen = false }
 
     val createReviewCallback = { text: String, rating: Int ->
         viewModel.onEvent(ProductEvent.CreateReview(text, rating))
@@ -152,23 +151,22 @@ fun ProductScreenContent(
                         color = MP_Black,
                         fontWeight = FontWeight.W500
                     )
-                    IconButton(onClick = openCreateReviewDialog) {
-                        Icon(Icons.Filled.Add, contentDescription = "Create a Review")
-                    }
+                    if (product.shopId != viewModel.state.user?.shop?.id)
+                        IconButton(onClick = openCreateReviewDialog) {
+                            Icon(Icons.Filled.Add, contentDescription = "Create a Review")
+                        }
                 }
 
                 if (state.reviews != null) {
-
-                    Spacer(Modifier.height(16.dp))
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
+                            .padding(horizontal = 20.dp)
                     ) {
                         items(state.reviews) { review ->
                             reviewId = review.id
 
-                            createReplyReviewCallback = { text: String, reviewId: Int->
+                            createReplyReviewCallback = { text: String, reviewId: Int ->
                                 viewModel.onEvent(ProductEvent.CreateReplyReview(text, reviewId))
                             }
 
@@ -181,6 +179,9 @@ fun ProductScreenContent(
                             }
 
                             Column {
+                                RatingStars(
+                                    rating = review.rating.toDouble()
+                                )
                                 Row(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     modifier = Modifier.fillMaxWidth()
@@ -189,7 +190,7 @@ fun ProductScreenContent(
                                         text = review.text.ifEmpty { "Korisnik nije ostavio komentar" },
                                         softWrap = true,
                                     )
-                                    if (user?.roles!!.contains("Shop")) {
+                                    if (product.shopId == viewModel.state.user?.shop?.id) {
                                         IconButton(onClick = openCreateReplyReviewDialog) {
                                             Icon(
                                                 Icons.Filled.Replay,
@@ -198,9 +199,6 @@ fun ProductScreenContent(
                                         }
                                     }
                                 }
-                                RatingStars(
-                                    rating = review.rating.toDouble()
-                                )
                                 Row(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     modifier = Modifier.fillMaxWidth()
@@ -218,24 +216,27 @@ fun ProductScreenContent(
                                         .padding(start = 25.dp, top = 10.dp, bottom = 10.dp)
                                         .background(MP_Gray, shape = RoundedCornerShape(15.dp))
                                 ) {
-                                    viewModel.getReplyReviews(productId = product.id, reviewId = reviewId)
+                                    viewModel.getReplyReviews(
+                                        productId = product.id,
+                                        reviewId = reviewId
+                                    )
                                     reviewReplies = reviewReplies.plus(state.replyReviews!!)
-                                    if (reviewReplies != null) {
-                                        for (replyReview in reviewReplies) {
-                                            Row(
-                                                modifier = Modifier.padding(start = 25.dp)
-                                            ) {
+                                    for (replyReview in reviewReplies) {
+                                        Row(
+                                            modifier = Modifier.padding(start = 25.dp)
+                                        ) {
+                                            if (product.shopId == viewModel.state.user?.shop?.id) {
                                                 Icon(
                                                     Icons.Default.ArrowRight,
                                                     contentDescription = "Create Reply a Review"
                                                 )
-                                                Text(
-                                                    text = replyReview.text.ifEmpty { "Korisnik nije odgovorio na komentar" },
-                                                    softWrap = true,
-                                                )
                                             }
-                                            break
+                                            Text(
+                                                text = replyReview.text.ifEmpty { "Korisnik nije odgovorio na komentar" },
+                                                softWrap = true,
+                                            )
                                         }
+                                        break
                                     }
                                 }
                             }
