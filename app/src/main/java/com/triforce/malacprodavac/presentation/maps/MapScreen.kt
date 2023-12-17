@@ -1,17 +1,11 @@
 package com.triforce.malacprodavac.presentation.maps
 
-import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -28,14 +22,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -49,11 +41,7 @@ import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.presentation.components.BottomNavigationMenu
 import com.triforce.malacprodavac.presentation.maps.components.BottomMapShopDetails
-import com.triforce.malacprodavac.ui.theme.MP_Green
-import com.triforce.malacprodavac.ui.theme.MP_GreenDark
-import com.triforce.malacprodavac.ui.theme.MP_Orange
 import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
-import com.triforce.malacprodavac.ui.theme.MP_Pink
 import com.triforce.malacprodavac.ui.theme.MP_White
 
 @Composable
@@ -65,23 +53,12 @@ fun MapScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
 
-    val initialCameraPosition = remember {
-        CameraPosition(
-            LatLng(44.01667, 20.91667),
-            12.0f,
-            0.0f,
-            0.0f
-        )
-    }
-    val cameraPositionState = remember {
-        mutableStateOf(initialCameraPosition)
-    }
+    val initialCameraPosition =
+        remember { CameraPosition(LatLng(44.01667, 20.91667), 12.0f, 0.0f, 0.0f) }
 
-    val shopIconVector: ImageVector = ImageVector.vectorResource(id = R.drawable.shop_icon)
+    val cameraPositionState = remember { mutableStateOf(initialCameraPosition) }
 
-    val uiSettings = remember {
-        MapUiSettings(zoomControlsEnabled = false)
-    }
+    val uiSettings = remember { MapUiSettings(zoomControlsEnabled = false) }
 
     fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
         return ContextCompat.getDrawable(context, vectorResId)?.run {
@@ -100,9 +77,7 @@ fun MapScreen(
                 modifier = Modifier.padding(padding)
             ) {
                 GoogleMap(
-                    cameraPositionState = CameraPositionState(
-                        position = cameraPositionState.value
-                    ),
+                    cameraPositionState = CameraPositionState(position = cameraPositionState.value),
                     properties = viewModel.state.properties,
                     uiSettings = uiSettings,
                     modifier = Modifier
@@ -112,13 +87,6 @@ fun MapScreen(
                         viewModel.onEvent(MapEvent.OnMapLongClick(it))
                     }
                 ) {
-                    cameraPositionState.value = CameraPosition(
-                        cameraPositionState.value.target,
-                        cameraPositionState.value.zoom,
-                        cameraPositionState.value.tilt,
-                        cameraPositionState.value.bearing
-                    )
-
                     viewModel.state.shops!!.forEach { shop ->
                         if (shop.availableAtLatitude != null && shop.availableAtLongitude != null) {
                             Marker(
@@ -126,26 +94,9 @@ fun MapScreen(
                                     shop.availableAtLatitude,
                                     shop.availableAtLongitude
                                 ),
-                                title = shop.businessName + "user id " + shop.user?.id + " shop id " + shop.id,
-                                snippet = if (shop.user != null) {
-                                    shop.user.firstName + " " + shop.user.lastName
-                                } else {
-                                    ""
-                                },
-                                /*onInfoWindowLongClick = {
-                                    viewModel.onEvent(MapEvent.OnInfoWindowLongClick(shop))
-                                },*/
                                 onClick = {
-                                    cameraPositionState.value = CameraPosition(
-                                        cameraPositionState.value.target,
-                                        cameraPositionState.value.zoom,
-                                        cameraPositionState.value.tilt,
-                                        cameraPositionState.value.bearing
-                                    )
-
                                     viewModel.onEvent(MapEvent.OnInfoWindowLongClick(shop))
-                                    //it.showInfoWindow()
-                                    true
+                                    false
                                 },
                                 icon = bitmapDescriptorFromVector(
                                     LocalContext.current,
@@ -157,13 +108,6 @@ fun MapScreen(
                 }
                 FloatingActionButton(
                     onClick = {
-                        cameraPositionState.value = CameraPosition(
-                            cameraPositionState.value.target,
-                            cameraPositionState.value.zoom,
-                            cameraPositionState.value.tilt,
-                            cameraPositionState.value.bearing
-                        )
-
                         viewModel.onEvent(MapEvent.ToggleSpecialMap)
                     },
                     backgroundColor = MP_Orange_Dark,
@@ -172,11 +116,8 @@ fun MapScreen(
                         .padding(27.dp)
                 ) {
                     Icon(
-                        imageVector = if (viewModel.state.isSpecialMap) {
-                            Icons.Outlined.Clear
-                        } else {
-                            Icons.Outlined.LocationOn
-                        },
+                        imageVector = if (viewModel.state.isSpecialMap) Icons.Outlined.Clear
+                        else Icons.Outlined.LocationOn,
                         contentDescription = "Toggle Special map",
                         tint = MP_White
                     )

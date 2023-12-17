@@ -3,15 +3,14 @@ package com.triforce.malacprodavac.presentation.maps
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.MapStyleOptions
-import com.triforce.malacprodavac.domain.util.filter.Filter
-import com.triforce.malacprodavac.domain.util.filter.FilterBuilder
 import com.triforce.malacprodavac.domain.model.shops.Shop
 import com.triforce.malacprodavac.domain.repository.ShopRepository
 import com.triforce.malacprodavac.domain.util.Resource
+import com.triforce.malacprodavac.domain.util.filter.Filter
+import com.triforce.malacprodavac.domain.util.filter.FilterBuilder
 import com.triforce.malacprodavac.presentation.maps.styles.MapStyle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -22,22 +21,21 @@ import javax.inject.Inject
 class MapsViewModel @Inject constructor(
 
     private val repository: ShopRepository,
-    savedStateHandle: SavedStateHandle
 
-): ViewModel() {
+    ) : ViewModel() {
 
     var state by mutableStateOf(MapState())
 
     init {
-        getShops(true)
+        getShops()
     }
 
-    fun onEvent(event: MapEvent){
-        when(event){
+    fun onEvent(event: MapEvent) {
+        when (event) {
             MapEvent.ToggleSpecialMap -> {
                 state = state.copy(
                     properties = state.properties.copy(
-                        mapStyleOptions = if(state.isSpecialMap) {
+                        mapStyleOptions = if (state.isSpecialMap) {
                             null
                         } else {
                             MapStyleOptions(MapStyle.json)
@@ -54,27 +52,21 @@ class MapsViewModel @Inject constructor(
                 )
             }
 
-            is MapEvent.OnMapLongClick -> {
-                // TODO() Implement event to select shop position
-            }
+            is MapEvent.OnMapLongClick -> {}
+            is MapEvent.OnMapClick -> {}
 
-            is MapEvent.OnMapClick -> {
-                // TODO() Implement event to select shop position
-            }
-
-            else -> { }
         }
     }
 
-    private fun getShops(fetchFromRemote: Boolean, searchText: String = "") {
+    private fun getShops() {
 
         viewModelScope.launch {
 
             val query = FilterBuilder.buildFilterQueryMap(
-                Filter(filter = null, order = null, limit = null, offset = null )
+                Filter(filter = null, order = null, limit = null, offset = null)
             )
 
-            repository.getShops(fetchFromRemote, query).collectLatest { result ->
+            repository.getShops(true, query).collectLatest { result ->
                 when (result) {
                     is Resource.Success -> {
                         if (result.data is List<Shop>) {
