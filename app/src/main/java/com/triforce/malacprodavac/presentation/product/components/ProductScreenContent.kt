@@ -179,9 +179,11 @@ fun ProductScreenContent(
                             }
 
                             Column {
+
                                 RatingStars(
                                     rating = review.rating.toDouble()
                                 )
+
                                 Row(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     modifier = Modifier.fillMaxWidth()
@@ -191,7 +193,14 @@ fun ProductScreenContent(
                                         softWrap = true,
                                     )
                                     if (product.shopId == viewModel.state.user?.shop?.id) {
-                                        IconButton(onClick = openCreateReplyReviewDialog) {
+                                        IconButton(onClick = {
+                                            viewModel.onEvent(
+                                                ProductEvent.FetchReviewReplies(
+                                                    product.id,
+                                                    review.id
+                                                )
+                                            )
+                                        }) {
                                             Icon(
                                                 Icons.Filled.Replay,
                                                 contentDescription = "Create Reply a Review"
@@ -199,6 +208,7 @@ fun ProductScreenContent(
                                         }
                                     }
                                 }
+
                                 Row(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     modifier = Modifier.fillMaxWidth()
@@ -210,6 +220,7 @@ fun ProductScreenContent(
                                         review.customer?.user?.firstName + " " + review.customer?.user?.lastName
                                     )
                                 }
+
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -239,7 +250,9 @@ fun ProductScreenContent(
                                         break
                                     }
                                 }
+
                             }
+
                         }
                     }
                 }

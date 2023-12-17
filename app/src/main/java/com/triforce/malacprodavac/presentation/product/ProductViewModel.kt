@@ -12,7 +12,6 @@ import com.triforce.malacprodavac.domain.model.shops.Shop
 import com.triforce.malacprodavac.domain.repository.ShopRepository
 import com.triforce.malacprodavac.domain.repository.products.ProductRepository
 import com.triforce.malacprodavac.domain.use_case.product.replies.ReviewUseCase
-import com.triforce.malacprodavac.domain.use_case.product.replies.replies.CreateReviewReply
 import com.triforce.malacprodavac.domain.use_case.product.replies.replies.ReviewReplyUseCase
 import com.triforce.malacprodavac.domain.use_case.profile.Profile
 import com.triforce.malacprodavac.domain.util.Resource
@@ -35,23 +34,11 @@ class ProductViewModel @Inject constructor(
 
     fun onEvent(event: ProductEvent) {
         when (event) {
-            is ProductEvent.buyProduct -> {
-                state = state.copy(isBuyed = true)
-            }
-
-            is ProductEvent.ToggleFavouriteProduct -> {
-                state = state.copy(isBuyed = true)
-            }
-
-            is ProductEvent.CreateReview -> {
-                createReview(event.text, event.rating)
-            }
-
-            is ProductEvent.CreateReplyReview -> {
-                createReplyReview(event.text, event.reviewId)
-            }
-
-            else -> { }
+            is ProductEvent.buyProduct -> state = state.copy(isBuyed = true)
+            is ProductEvent.ToggleFavouriteProduct -> state = state.copy(isBuyed = true)
+            is ProductEvent.CreateReview -> createReview(event.text, event.rating)
+            is ProductEvent.CreateReplyReview -> createReplyReview(event.text, event.reviewId)
+            is ProductEvent.FetchReviewReplies -> getReplyReviews(event.productId, event.reviewId)
         }
     }
 
@@ -98,14 +85,12 @@ class ProductViewModel @Inject constructor(
         viewModelScope.launch {
             reviewUseCase.getReviews(productId).collect { result ->
                 when (result) {
-                    is Resource.Error -> {}
-                    is Resource.Loading -> {
-                        state = state.copy(isLoading = result.isLoading)
-                    }
-
                     is Resource.Success -> {
                         state = state.copy(reviews = result.data)
                     }
+
+                    is Resource.Error -> handleError()
+                    is Resource.Loading -> handleLoading(result.isLoading)
                 }
             }
         }
@@ -115,14 +100,13 @@ class ProductViewModel @Inject constructor(
         viewModelScope.launch {
             reviewReplyUseCase.getReviewReplies(productId, reviewId).collect { result ->
                 when (result) {
-                    is Resource.Error -> {}
-                    is Resource.Loading -> {
-                        state = state.copy(isLoading = result.isLoading)
-                    }
-
                     is Resource.Success -> {
                         state = state.copy(replyReviews = result.data)
                     }
+
+
+                    is Resource.Error -> handleError()
+                    is Resource.Loading -> handleLoading(result.isLoading)
                 }
             }
         }
@@ -133,14 +117,6 @@ class ProductViewModel @Inject constructor(
             reviewUseCase.createReview.invoke(state.product!!.id, CreateReviewDto(text, rating))
                 .collect { result ->
                     when (result) {
-                        is Resource.Error -> {
-                            state = state.copy(createReviewError = result.message)
-                        }
-
-                        is Resource.Loading -> {
-                            state = state.copy()
-                        }
-
                         is Resource.Success -> {
                             result.data?.let {
                                 state = state.copy(
@@ -148,6 +124,12 @@ class ProductViewModel @Inject constructor(
                                 )
                             }
                         }
+
+                        is Resource.Error -> {
+                            state = state.copy(createReviewError = result.message)
+                        }
+
+                        is Resource.Loading -> handleLoading(result.isLoading)
                     }
                 }
         }
@@ -155,17 +137,13 @@ class ProductViewModel @Inject constructor(
 
     private fun createReplyReview(text: String, reviewId: Int) {
         viewModelScope.launch {
-            reviewReplyUseCase.createReviewReply.invoke(state.product!!.id, reviewId, CreateReviewReplyDto(text))
+            reviewReplyUseCase.createReviewReply.invoke(
+                state.product!!.id,
+                reviewId,
+                CreateReviewReplyDto(text)
+            )
                 .collect { result ->
                     when (result) {
-                        is Resource.Error -> {
-                            state = state.copy(createReplyReviewError = result.message)
-                        }
-
-                        is Resource.Loading -> {
-                            state = state.copy()
-                        }
-
                         is Resource.Success -> {
                             result.data?.let {
                                 state = state.copy(
@@ -173,6 +151,12 @@ class ProductViewModel @Inject constructor(
                                 )
                             }
                         }
+
+                        is Resource.Error -> {
+                            state = state.copy(createReplyReviewError = result.message)
+                        }
+
+                        is Resource.Loading -> handleLoading(result.isLoading)
                     }
                 }
         }
@@ -189,15 +173,8 @@ class ProductViewModel @Inject constructor(
                             }
                         }
 
-                        is Resource.Error -> {
-                            Unit
-                        }
-
-                        is Resource.Loading -> {
-                            state = state.copy(
-                                isLoading = result.isLoading
-                            )
-                        }
+                        is Resource.Error -> handleError()
+                        is Resource.Loading -> handleLoading(result.isLoading)
                     }
                 }
         }
@@ -221,18 +198,17 @@ class ProductViewModel @Inject constructor(
                         }
                     }
 
-                    is Resource.Error -> {
-                        Unit
-                    }
-
-                    is Resource.Loading -> {
-                        state = state.copy(
-                            isLoading = result.isLoading
-                        )
-                    }
+                    is Resource.Error -> handleError()
+                    is Resource.Loading -> handleLoading(result.isLoading)
                 }
             }
         }
     }
 
+    private fun handleError() {
+    }
+
+    private fun handleLoading(isLoading: Boolean) {
+        state = state.copy(isLoading = isLoading)
+    }
 }
