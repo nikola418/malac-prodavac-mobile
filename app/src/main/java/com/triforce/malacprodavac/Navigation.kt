@@ -243,6 +243,24 @@ fun Navigation() {
             CustomerPrivateScreen(navController = navController)
         }
 
+        // my transactions
+
+        composable(route = Screen.CustomerPrivateScreen.route) {
+            CustomerPrivateScreen(navController = navController)
+        }
+
+        composable(route = Screen.CustomerPrivateScreen.route) {
+            CustomerPrivateScreen(navController = navController)
+        }
+
+        composable(route = Screen.CustomerPrivateScreen.route) {
+            CustomerPrivateScreen(navController = navController)
+        }
+
+        composable(route = Screen.CustomerPrivateScreen.route) {
+            CustomerPrivateScreen(navController = navController)
+        }
+
         composable(route = Screen.AdvertisingProductScreen.route + "?productId={productId}",
             arguments = listOf(
                 navArgument(
