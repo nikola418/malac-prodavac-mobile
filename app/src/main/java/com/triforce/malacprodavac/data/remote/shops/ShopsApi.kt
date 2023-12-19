@@ -1,12 +1,13 @@
 package com.triforce.malacprodavac.data.remote.shops
 
 import com.triforce.malacprodavac.data.local.scheduledPickup.ScheduledPickupEntity
-import com.triforce.malacprodavac.data.local.shops.ShopEntity
 import com.triforce.malacprodavac.data.remote.dto.PaginationResponse
 import com.triforce.malacprodavac.data.remote.shops.dto.CreateShopDto
 import com.triforce.malacprodavac.domain.model.shops.Shop
+import com.triforce.malacprodavac.domain.model.shops.UpdateShop
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.QueryMap
@@ -33,6 +34,9 @@ interface ShopsApi {
         @Path("scheduledPickupId") scheduledPickupId: Int
         //@QueryMap queryMap: MutableMap<String, String>
     ): ScheduledPickupEntity
+
+    @PATCH("$ROUTE/{id}")
+    suspend fun updateShop(@Path("id") shopId: Int, @Body dto: UpdateShop): Shop
 
     companion object {
         const val ROUTE = "/shops"

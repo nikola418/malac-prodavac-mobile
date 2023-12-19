@@ -1,6 +1,5 @@
 package com.triforce.malacprodavac.presentation.profile.profilePrivate.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,25 +9,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.domain.model.User
-import com.triforce.malacprodavac.domain.model.shops.Shop
 import com.triforce.malacprodavac.ui.theme.MP_Black
-import com.triforce.malacprodavac.ui.theme.MP_Green
 import com.triforce.malacprodavac.ui.theme.MP_Pink
-import com.triforce.malacprodavac.ui.theme.MP_Pink_Dark
-import com.triforce.malacprodavac.ui.theme.MP_White
 
 @Composable
 fun CourierDescComp(
@@ -43,11 +35,11 @@ fun CourierDescComp(
                     horizontal = 20.dp
                 )
         ) {
-            Row (
+            Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
-            ){
+            ) {
                 Column {
                     Text(
                         text = "Kontakt:",
@@ -56,7 +48,7 @@ fun CourierDescComp(
                         fontWeight = FontWeight.W400
                     )
                     Text(
-                        text = "${user.phoneNumber}",
+                        text = user.phoneNumber ?: "Nepoznato",
                         style = MaterialTheme.typography.h5,
                         color = MP_Pink,
                         fontWeight = FontWeight.W500
@@ -69,7 +61,7 @@ fun CourierDescComp(
                         fontWeight = FontWeight.W400
                     )
                     Text(
-                        text = "${user.address}",
+                        text = user.address ?: "Nepoznato",
                         style = MaterialTheme.typography.h5,
                         color = MP_Pink,
                         fontWeight = FontWeight.W500

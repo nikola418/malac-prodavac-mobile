@@ -1,37 +1,51 @@
 package com.triforce.malacprodavac.presentation.profile.profilePrivate.userScreens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.triforce.malacprodavac.BottomNavigationMenuContent
 import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.Screen
+import com.triforce.malacprodavac.presentation.add_edit_product.components.AddEditTextField
 import com.triforce.malacprodavac.presentation.components.BottomNavigationMenu
 import com.triforce.malacprodavac.presentation.components.ShowHighlightSectionComp
 import com.triforce.malacprodavac.presentation.profile.components.ProfilePrivateHeroComp
 import com.triforce.malacprodavac.presentation.profile.components.ShopDescComp
+import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateEvent
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateViewModel
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.components.AdvertisingProductButton
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.components.MyProductsButton
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.components.ProductOptions
+import com.triforce.malacprodavac.ui.theme.MP_Black
+import com.triforce.malacprodavac.ui.theme.MP_Green
 import com.triforce.malacprodavac.ui.theme.MP_White
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShopPrivateScreen(
     navController: NavController,
@@ -39,6 +53,7 @@ fun ShopPrivateScreen(
 ) {
     val state = viewModel.state
     val user = state.currentUser
+    val scrollState = rememberScrollState()
 
     if (!viewModel.isLoggedIn()) {
         LaunchedEffect(key1 = viewModel.isLoggedIn())
@@ -48,66 +63,210 @@ fun ShopPrivateScreen(
             }
         }
     }
-    Box(
+    Scaffold(
+        topBar = {
+            ProfilePrivateHeroComp(user, navController, viewModel, true)
+        },
+        bottomBar = {
+            BottomNavigationMenu(
+                navController = navController,
+                items = listOf(
+                    BottomNavigationMenuContent(
+                        title = "Početna",
+                        graphicID = Icons.Default.Home,
+                        screen = Screen.HomeScreen,
+                        isActive = false
+                    ),
+                    BottomNavigationMenuContent(
+                        title = "Market",
+                        graphicID = ImageVector.vectorResource(R.drawable.logo_green),
+                        screen = Screen.StoreScreen,
+                        isActive = false
+                    ),
+                    BottomNavigationMenuContent(
+                        title = "Profil",
+                        graphicID = Icons.Default.Person,
+                        screen = Screen.PrivateProfile,
+                        isActive = true
+                    ),
+                    BottomNavigationMenuContent(
+                        title = "Korpa",
+                        graphicID = Icons.Default.ShoppingCart,
+                        screen = Screen.CartScreen,
+                        isActive = false
+                    )
+                ),
+            )
+        },
         modifier = Modifier
             .background(MP_White)
-            .fillMaxSize()
-    ) {
-        Column {
-            ProfilePrivateHeroComp(user, navController, viewModel, true)
-            Spacer(modifier = Modifier.padding(16.dp))
-
-            ShopDescComp(user)
-            Spacer(modifier = Modifier.padding(16.dp))
-
-            ProductOptions(null, navController, false)
-            Spacer(modifier = Modifier.padding(12.dp))
-
-            MyProductsButton(navController)
-            Spacer(modifier = Modifier.padding(16.dp))
-
-            AdvertisingProductButton(Modifier, null, navController, false, false)
-            Spacer(modifier = Modifier.padding(16.dp))
-
-            if (user?.shop?.products != null) {
-                ShowHighlightSectionComp(
-                    navController = navController,
-                    products = user.shop.products,
-                    title = "Naši proizvodi",
-                    route = Screen.HighlightSection.route
-                )
+    ) { it ->
+        Column(
+            Modifier
+                .background(MP_White)
+                .padding(it)
+        ) {
+            Spacer(Modifier.height(8.dp))
+            if (!state.isEditing) {
+                ShopDescComp(user)
                 Spacer(modifier = Modifier.padding(16.dp))
+
+                ProductOptions(null, navController, false)
+                Spacer(modifier = Modifier.padding(12.dp))
+
+                MyProductsButton(navController)
+                Spacer(modifier = Modifier.padding(16.dp))
+
+                AdvertisingProductButton(Modifier, null, navController, false, false)
+                Spacer(modifier = Modifier.padding(16.dp))
+
+                if (user?.shop?.products != null) {
+                    ShowHighlightSectionComp(
+                        navController = navController,
+                        products = user.shop.products,
+                        title = "Naši proizvodi",
+                        route = Screen.HighlightSection.route
+                    )
+                    Spacer(modifier = Modifier.padding(16.dp))
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(state = scrollState)
+                        .padding(horizontal = 16.dp)
+                ) {
+                    AddEditTextField(
+                        text = state.updateUser?.firstName ?: "",
+                        isError = false,
+                        onTextValueChange = {
+                            viewModel.onEvent(ProfilePrivateEvent.FirstNameChanged(it))
+                        },
+                        placeholder = "Ime"
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    AddEditTextField(
+                        text = state.updateUser?.lastName ?: "",
+                        isError = false,
+                        onTextValueChange = {
+                            viewModel.onEvent(ProfilePrivateEvent.LastNameChanged(it))
+                        },
+                        placeholder = "Prezime"
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    AddEditTextField(
+                        text = state.updateUser?.address ?: "",
+                        isError = false,
+                        onTextValueChange = {
+                            viewModel.onEvent(ProfilePrivateEvent.AddressChanged(it))
+                        },
+                        placeholder = "Adresa"
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    AddEditTextField(
+                        text = state.updateUser?.phoneNumber ?: "",
+                        isError = false,
+                        onTextValueChange = {
+                            viewModel.onEvent(ProfilePrivateEvent.PhoneNumberChanged(it))
+                        },
+                        placeholder = "Kontakt telefon"
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Button(
+                        onClick = { navController.navigate(Screen.MapScreen.route) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(text = "Postavite Lokaciju")
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Button(
+                        onClick = { navController.navigate(Screen.MapScreen.route) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(text = "Postavite rutu")
+                    }
+                    AddEditTextField(
+                        text = state.updateShop?.businessName ?: "",
+                        isError = false,
+                        onTextValueChange = {
+                            viewModel.onEvent(ProfilePrivateEvent.BusinessNameChanged(it))
+                        },
+                        placeholder = "Ime prodavnice"
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = "Radni dani:",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MP_Black
+                    )
+                    AddEditTextField(
+                        text = state.updateShop?.openFromDays ?: "",
+                        isError = false,
+                        onTextValueChange = {
+                            viewModel.onEvent(ProfilePrivateEvent.OpenFromDaysChanged(it))
+                        },
+                        keyboardType = KeyboardType.Text,
+                        placeholder = "Prvi radni dan"
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    AddEditTextField(
+                        text = state.updateShop?.openTillDays ?: "",
+                        isError = false,
+                        keyboardType = KeyboardType.Text,
+                        onTextValueChange = {
+                            viewModel.onEvent(ProfilePrivateEvent.OpenTillDaysChanged(it))
+                        },
+                        placeholder = "Zadnji radni dan"
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = "Radno vreme:",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold, color = MP_Black
+                    )
+                    AddEditTextField(
+                        text = state.updateShop?.openFrom ?: "",
+                        isError = false,
+                        keyboardType = KeyboardType.Number,
+                        onTextValueChange = {
+                            viewModel.onEvent(ProfilePrivateEvent.OpenFromChanged(it))
+                        },
+                        placeholder = "Od"
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    AddEditTextField(
+                        text = state.updateShop?.openTill ?: "",
+                        isError = false,
+                        keyboardType = KeyboardType.Number,
+                        onTextValueChange = {
+                            viewModel.onEvent(ProfilePrivateEvent.OpenTillChanged(it))
+                        },
+                        placeholder = "Do"
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    AddEditTextField(
+                        text = state.updateShop?.availableAt ?: "",
+                        isError = false,
+                        onTextValueChange = {
+                            viewModel.onEvent(ProfilePrivateEvent.AvailableAtChanged(it))
+                        },
+                        placeholder = "Lokacija izlaganja proizvoda"
+                    )
+                    Button(
+                        onClick = { viewModel.onEvent(ProfilePrivateEvent.SubmitEdit) },
+                        colors = ButtonDefaults.buttonColors(containerColor = MP_Green),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(text = "Potvrdi izmene", style = MaterialTheme.typography.bodyLarge)
+                    }
+                }
             }
         }
-
-        BottomNavigationMenu(
-            navController = navController,
-            items = listOf(
-                BottomNavigationMenuContent(
-                    title = "Početna",
-                    graphicID = Icons.Default.Home,
-                    screen = Screen.HomeScreen,
-                    isActive = false
-                ),
-                BottomNavigationMenuContent(
-                    title = "Market",
-                    graphicID = ImageVector.vectorResource(R.drawable.logo_green),
-                    screen = Screen.StoreScreen,
-                    isActive = false
-                ),
-                BottomNavigationMenuContent(
-                    title = "Profil",
-                    graphicID = Icons.Default.Person,
-                    screen = Screen.PrivateProfile,
-                    isActive = true
-                ),
-                BottomNavigationMenuContent(
-                    title = "Korpa",
-                    graphicID = Icons.Default.ShoppingCart,
-                    screen = Screen.CartScreen,
-                    isActive = false
-                )
-            ), modifier = Modifier.align(Alignment.BottomCenter)
-        )
     }
 }

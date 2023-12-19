@@ -58,6 +58,8 @@ import com.triforce.malacprodavac.domain.use_case.couriers.CourierUseCase
 import com.triforce.malacprodavac.domain.use_case.couriers.CreateCourier
 import com.triforce.malacprodavac.domain.use_case.couriers.GetCourier
 import com.triforce.malacprodavac.domain.use_case.couriers.GetCouriers
+import com.triforce.malacprodavac.domain.use_case.couriers.UpdateCourierUseCase
+import com.triforce.malacprodavac.domain.use_case.customers.UpdateCustomerUseCase
 import com.triforce.malacprodavac.domain.use_case.favoriteProduct.AddFavProduct
 import com.triforce.malacprodavac.domain.use_case.favoriteProduct.DeleteFavProduct
 import com.triforce.malacprodavac.domain.use_case.favoriteProduct.FavoriteProduct
@@ -103,6 +105,7 @@ import com.triforce.malacprodavac.domain.use_case.schedulePickup.AddSchedulePick
 import com.triforce.malacprodavac.domain.use_case.schedulePickup.GetAllScheduledPickups
 import com.triforce.malacprodavac.domain.use_case.schedulePickup.GetSchedulePickupForId
 import com.triforce.malacprodavac.domain.use_case.schedulePickup.SchedulePickupUseCase
+import com.triforce.malacprodavac.domain.use_case.shops.UpdateShopUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -337,6 +340,22 @@ object ApplicationModule {
     fun provideIsAuthenticatedUseCase(sessionManager: SessionManager) =
         IsAuthenticated(sessionManager)
 
+
+    @Provides
+    @Singleton
+    fun provideUpdateCustomerUseCase(repository: CustomerRepository) =
+        UpdateCustomerUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideUpdateCourierUseCase(repository: CourierRepository) =
+        UpdateCourierUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideUpdateShopUseCase(repository: ShopRepository) =
+        UpdateShopUseCase(repository)
+
     @Provides
     @Singleton
     fun provideProfileUseCase(
@@ -344,9 +363,21 @@ object ApplicationModule {
         me: Me,
         getToken: GetToken,
         setProfilePicture: SetProfilePicture,
-        isAuthenticated: IsAuthenticated
+        isAuthenticated: IsAuthenticated,
+        updateCustomer: UpdateCustomerUseCase,
+        updateCourier: UpdateCourierUseCase,
+        updateShop: UpdateShopUseCase
     ) =
-        Profile(me, logout, getToken, setProfilePicture, isAuthenticated)
+        Profile(
+            me,
+            logout,
+            getToken,
+            setProfilePicture,
+            isAuthenticated,
+            updateCustomer,
+            updateCourier,
+            updateShop
+        )
 
     @Provides
     @Singleton

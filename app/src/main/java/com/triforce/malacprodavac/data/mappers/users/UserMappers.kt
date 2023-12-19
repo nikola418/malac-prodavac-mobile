@@ -11,6 +11,7 @@ import com.triforce.malacprodavac.data.mappers.toShopEntity
 import com.triforce.malacprodavac.data.mappers.users.userMedias.toUserMedia
 import com.triforce.malacprodavac.data.mappers.users.userMedias.toUserMediaEntity
 import com.triforce.malacprodavac.domain.model.User
+import com.triforce.malacprodavac.domain.model.users.UpdateUser
 
 fun UserEntity.toUser(): User = User(
     id = id,
@@ -89,4 +90,17 @@ fun User.toUserWithRelations(): UserWithRelations = UserWithRelations(
     customer = customer?.toCustomerEntity(),
     courier = courier?.toCourierEntity(),
     shop = shop?.toShopEntity()
+)
+
+fun User.toUpdateUser(): UpdateUser = UpdateUser(
+    firstName = firstName,
+    lastName = lastName,
+    address = address,
+    addressLatitude = addressLatitude,
+    addressLongitude = addressLongitude,
+    phoneNumber = phoneNumber,
+    currency = currency,
+    paymentMethod = paymentMethod,
+    email = email,
+    password = null
 )

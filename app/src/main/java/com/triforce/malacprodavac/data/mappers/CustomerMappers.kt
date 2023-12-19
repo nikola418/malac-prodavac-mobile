@@ -3,6 +3,7 @@ package com.triforce.malacprodavac.data.mappers
 import com.triforce.malacprodavac.data.local.customers.CustomerEntity
 import com.triforce.malacprodavac.data.mappers.users.toUser
 import com.triforce.malacprodavac.domain.model.Customer
+import com.triforce.malacprodavac.domain.model.customers.UpdateCustomer
 
 fun CustomerEntity.toCustomer(): Customer = Customer(
     id = id,
@@ -17,4 +18,8 @@ fun Customer.toCustomerEntity(): CustomerEntity = CustomerEntity(
     userId = userId,
     createdAt = createdAt,
     updatedAt = updatedAt
+)
+
+fun Customer.toUpdateCustomer(): UpdateCustomer = UpdateCustomer(
+    
 )

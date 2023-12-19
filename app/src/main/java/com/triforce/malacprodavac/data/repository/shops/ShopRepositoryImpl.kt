@@ -7,6 +7,7 @@ import com.triforce.malacprodavac.data.remote.shops.ShopsApi
 import com.triforce.malacprodavac.data.remote.shops.dto.CreateShopDto
 import com.triforce.malacprodavac.domain.model.CreateShop
 import com.triforce.malacprodavac.domain.model.shops.Shop
+import com.triforce.malacprodavac.domain.model.shops.UpdateShop
 import com.triforce.malacprodavac.domain.repository.ShopRepository
 import com.triforce.malacprodavac.domain.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -144,6 +145,29 @@ class ShopRepositoryImpl @Inject constructor(
 
             }
 
+            emit(Resource.Loading(false))
+        }
+    }
+
+    override suspend fun updateShop(shopId: Int, dto: UpdateShop): Flow<Resource<Shop>> {
+        return flow {
+            emit(Resource.Loading(true))
+
+            val result = try {
+                api.updateShop(shopId, dto)
+            } catch (e: IOException) {
+                e.printStackTrace()
+                emit(Resource.Error("Couldn't update shop"))
+                null
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                emit(Resource.Error("Couldn't update shop data"))
+                null
+            }
+
+            result?.let {
+                emit(Resource.Success(it))
+            }
             emit(Resource.Loading(false))
         }
     }

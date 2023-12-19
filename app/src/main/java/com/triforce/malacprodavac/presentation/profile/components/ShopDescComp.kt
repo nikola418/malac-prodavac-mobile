@@ -22,7 +22,7 @@ fun ShopDescComp(
     shopUser: Shop? = null
 ) {
     val shop = shopUser ?: user?.shop
-    
+
     if (user != null) {
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
@@ -33,7 +33,7 @@ fun ShopDescComp(
                 )
         ) {
             Text(
-                text = "${shop?.businessName}",
+                text = shop?.businessName ?: "Nepoznato ime prodavnice",
                 style = MaterialTheme.typography.h5,
                 color = MP_Black,
                 fontWeight = FontWeight.W600
