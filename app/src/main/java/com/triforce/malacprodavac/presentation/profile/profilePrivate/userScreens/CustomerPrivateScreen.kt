@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -35,6 +36,14 @@ fun CustomerPrivateScreen(
     val state = viewModel.state
     val user = state.currentUser
 
+    if (!viewModel.isLoggedIn()) {
+        LaunchedEffect(key1 = viewModel.isLoggedIn())
+        {
+            navController.navigate(Screen.LoginScreen.route) {
+                this.popUpTo(Screen.LoginScreen.route)
+            }
+        }
+    }
     Box(
         modifier = Modifier
             .background(MP_White)
