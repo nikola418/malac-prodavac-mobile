@@ -21,12 +21,8 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.AddCircle
-import androidx.compose.material.icons.rounded.AddCircleOutline
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.EditNote
-import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material.icons.rounded.Message
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -35,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -134,7 +131,7 @@ fun ProfilePrivateHeroComp(
                                 fontWeight = FontWeight.W500,
                             )
                             Text(
-                                text = "${user.email}" ,
+                                text = "${user.email}",
                                 style = MaterialTheme.typography.body2,
                                 color = MP_White,
                                 fontWeight = FontWeight.W500
@@ -175,7 +172,17 @@ fun ProfilePrivateHeroComp(
                                     tint = MP_White,
                                     modifier = Modifier
                                         .size(30.dp)
-                                        .clickable { })
+                                        .clickable { viewModel.onEvent(ProfilePrivateEvent.Edit) }
+                                        .then(
+                                            if (state.isEditing) Modifier.background(
+                                                MP_GreenDark,
+                                                RoundedCornerShape(4.dp)
+                                            ) else Modifier.background(
+                                                Color.Unspecified
+                                            )
+                                        )
+
+                                )
                             }
                         }
                     }

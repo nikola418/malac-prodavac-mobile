@@ -1,17 +1,12 @@
 package com.triforce.malacprodavac.presentation.maps
 
-import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -28,14 +23,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -49,11 +42,7 @@ import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.presentation.components.BottomNavigationMenu
 import com.triforce.malacprodavac.presentation.maps.components.BottomMapShopDetails
-import com.triforce.malacprodavac.ui.theme.MP_Green
-import com.triforce.malacprodavac.ui.theme.MP_GreenDark
-import com.triforce.malacprodavac.ui.theme.MP_Orange
 import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
-import com.triforce.malacprodavac.ui.theme.MP_Pink
 import com.triforce.malacprodavac.ui.theme.MP_White
 
 @Composable
@@ -64,6 +53,7 @@ fun MapScreen(
 
 ) {
     val scaffoldState = rememberScaffoldState()
+    val context = LocalContext.current
 
     val initialCameraPosition = remember {
         CameraPosition(
@@ -108,9 +98,17 @@ fun MapScreen(
                     modifier = Modifier
                         .padding(padding)
                         .fillMaxSize(),
-                    onMapLongClick = {
+                    onMapClick = {
                         viewModel.onEvent(MapEvent.OnMapLongClick(it))
+                        Toast
+                            .makeText(
+                                context,
+                                "Izabrali ste lokaciju!",
+                                Toast.LENGTH_LONG
+                            )
+                            .show()
                     }
+
                 ) {
                     cameraPositionState.value = CameraPosition(
                         cameraPositionState.value.target,
@@ -118,6 +116,32 @@ fun MapScreen(
                         cameraPositionState.value.tilt,
                         cameraPositionState.value.bearing
                     )
+
+                    if(viewModel.state.selectedAddressLatitude != null && viewModel.state.selectedAddressLongitude != null){
+                        Marker(
+                            position = LatLng(
+                                viewModel.state.selectedAddressLatitude!!,
+                                viewModel.state.selectedAddressLongitude!!
+                            ),
+                            title = "Nova lokacija",
+                            snippet = "",
+                            onClick = {
+                                cameraPositionState.value = CameraPosition(
+                                    cameraPositionState.value.target,
+                                    cameraPositionState.value.zoom,
+                                    cameraPositionState.value.tilt,
+                                    cameraPositionState.value.bearing
+                                )
+
+                                //it.showInfoWindow()
+                                true
+                            },
+                            icon = bitmapDescriptorFromVector(
+                                LocalContext.current,
+                                R.drawable.shop_icon
+                            )
+                        )
+                    }
 
                     viewModel.state.shops!!.forEach { shop ->
                         if (shop.availableAtLatitude != null && shop.availableAtLongitude != null) {

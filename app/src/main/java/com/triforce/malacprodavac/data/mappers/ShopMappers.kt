@@ -4,6 +4,7 @@ import com.triforce.malacprodavac.data.local.shops.ShopEntity
 import com.triforce.malacprodavac.data.mappers.products.toProduct
 import com.triforce.malacprodavac.data.mappers.users.toUser
 import com.triforce.malacprodavac.domain.model.shops.Shop
+import com.triforce.malacprodavac.domain.model.shops.UpdateShop
 
 fun ShopEntity.toShop(): Shop = Shop(
     id = id,
@@ -40,4 +41,15 @@ fun Shop.toShopEntity(): ShopEntity = ShopEntity(
     createdAt = createdAt,
     updatedAt = updatedAt,
     isFavored = isFavored
+)
+
+fun Shop.toUpdateShop(): UpdateShop = UpdateShop(
+    businessName = businessName,
+    availableAt = availableAt,
+    availableAtLongitude = availableAtLongitude,
+    availableAtLatitude = availableAtLatitude,
+    openTillDays = openTillDays,
+    openFromDays = openFromDays,
+    openTill = openTill,
+    openFrom = openFrom
 )

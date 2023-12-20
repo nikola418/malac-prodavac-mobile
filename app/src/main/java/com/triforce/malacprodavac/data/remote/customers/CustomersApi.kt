@@ -8,6 +8,7 @@ import com.triforce.malacprodavac.domain.model.Customer
 import com.triforce.malacprodavac.domain.model.SchedulePickup
 import com.triforce.malacprodavac.domain.model.customers.FavoriteProduct
 import com.triforce.malacprodavac.domain.model.customers.FavoriteShop
+import com.triforce.malacprodavac.domain.model.customers.UpdateCustomer
 import com.triforce.malacprodavac.domain.model.pagination.PaginationResult
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -32,7 +33,7 @@ interface CustomersApi {
     @PATCH("${ROUTE}/{id}")
     suspend fun updateCustomer(
         @Path("id") customerId: Int,
-        @Body updateBody: CreateCustomerDto
+        @Body updateBody: UpdateCustomer
     ): Customer
 
     @POST("${ROUTE}/{id}/favoriteProducts")
