@@ -10,6 +10,6 @@ data class UpdateShop(
     val openFromDays: String? = null,
     val openTillDays: String? = null,
     val availableAt: String? = null,
-    val availableAtLatitude: Double? = null,
-    val availableAtLongitude: Double? = null
+    var availableAtLatitude: Double? = null,
+    var availableAtLongitude: Double? = null
 )

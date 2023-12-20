@@ -1,5 +1,6 @@
 package com.triforce.malacprodavac.presentation.profile.profilePrivate.userScreens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,6 +36,7 @@ import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.presentation.add_edit_product.components.AddEditTextField
 import com.triforce.malacprodavac.presentation.components.BottomNavigationMenu
+import com.triforce.malacprodavac.presentation.maps.components.Cordinates
 import com.triforce.malacprodavac.presentation.profile.components.ProfilePrivateHeroComp
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateEvent
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateViewModel
@@ -51,6 +54,7 @@ fun CourierPrivateScreen(
     val state = viewModel.state
     val user = state.currentUser
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
 
     if (!viewModel.isLoggedIn()) {
         LaunchedEffect(key1 = viewModel.isLoggedIn())
@@ -160,7 +164,18 @@ fun CourierPrivateScreen(
                     }
                     Spacer(Modifier.height(8.dp))
                     Button(
-                        onClick = { viewModel.onEvent(ProfilePrivateEvent.SubmitEdit) },
+                        onClick = {
+                            state.updateUser?.addressLatitude = Cordinates.latitude
+                            state.updateUser?.addressLongitude = Cordinates.longitude
+                            viewModel.onEvent(ProfilePrivateEvent.SubmitEdit)
+                            Toast
+                                .makeText(
+                                    context,
+                                    "Uspešno ste izmenili podatke!",
+                                    Toast.LENGTH_LONG
+                                )
+                                .show()
+                                  },
                         colors = ButtonDefaults.buttonColors(containerColor = MP_Green),
                         modifier = Modifier
                             .fillMaxWidth()

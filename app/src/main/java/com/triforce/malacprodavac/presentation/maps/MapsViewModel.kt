@@ -1,8 +1,10 @@
 package com.triforce.malacprodavac.presentation.maps
 
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +14,7 @@ import com.triforce.malacprodavac.domain.util.filter.FilterBuilder
 import com.triforce.malacprodavac.domain.model.shops.Shop
 import com.triforce.malacprodavac.domain.repository.ShopRepository
 import com.triforce.malacprodavac.domain.util.Resource
+import com.triforce.malacprodavac.presentation.maps.components.Cordinates
 import com.triforce.malacprodavac.presentation.maps.styles.MapStyle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -55,13 +58,13 @@ class MapsViewModel @Inject constructor(
             }
 
             is MapEvent.OnMapLongClick -> {
-                // TODO() Implement event to select shop position
+                state = state.copy(
+                    selectedAddressLatitude = event.latLng.latitude,
+                    selectedAddressLongitude = event.latLng.longitude
+                )
+                Cordinates.latitude = state.selectedAddressLatitude
+                Cordinates.longitude = state.selectedAddressLongitude
             }
-
-            is MapEvent.OnMapClick -> {
-                // TODO() Implement event to select shop position
-            }
-
             else -> { }
         }
     }

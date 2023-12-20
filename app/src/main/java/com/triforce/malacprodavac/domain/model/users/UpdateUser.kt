@@ -8,7 +8,7 @@ data class UpdateUser(
     val email: String? = null,
     val password: String? = null,
     val address: String? = null,
-    val addressLatitude: Double? = null,
-    val addressLongitude: Double? = null,
+    var addressLatitude: Double? = null,
+    var addressLongitude: Double? = null,
     val phoneNumber: String? = null
 )

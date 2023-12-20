@@ -1,5 +1,6 @@
 package com.triforce.malacprodavac.presentation.profile.profilePrivate.userScreens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,6 +36,7 @@ import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.presentation.add_edit_product.components.AddEditTextField
 import com.triforce.malacprodavac.presentation.components.BottomNavigationMenu
 import com.triforce.malacprodavac.presentation.components.ShowHighlightSectionComp
+import com.triforce.malacprodavac.presentation.maps.components.Cordinates
 import com.triforce.malacprodavac.presentation.profile.components.ProfilePrivateHeroComp
 import com.triforce.malacprodavac.presentation.profile.components.ShopDescComp
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateEvent
@@ -54,6 +57,7 @@ fun ShopPrivateScreen(
     val state = viewModel.state
     val user = state.currentUser
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
 
     if (!viewModel.isLoggedIn()) {
         LaunchedEffect(key1 = viewModel.isLoggedIn())
@@ -257,7 +261,21 @@ fun ShopPrivateScreen(
                         placeholder = "Lokacija izlaganja proizvoda"
                     )
                     Button(
-                        onClick = { viewModel.onEvent(ProfilePrivateEvent.SubmitEdit) },
+                        onClick = {
+                            state.updateUser?.addressLatitude = Cordinates.latitude
+                            state.updateUser?.addressLongitude = Cordinates.longitude
+                            state.updateShop?.availableAtLatitude = Cordinates.latitude
+                            state.updateShop?.availableAtLongitude = Cordinates.longitude
+
+                            viewModel.onEvent(ProfilePrivateEvent.SubmitEdit)
+                            Toast
+                                .makeText(
+                                    context,
+                                    "Uspešno ste izmenili podatke!",
+                                    Toast.LENGTH_LONG
+                                )
+                                .show()
+                                  },
                         colors = ButtonDefaults.buttonColors(containerColor = MP_Green),
                         modifier = Modifier
                             .fillMaxWidth()
