@@ -26,4 +26,10 @@ data class ProfilePrivateState(
     val updateCustomer: UpdateCustomer? = currentUser?.customer?.toUpdateCustomer(),
     val updateCourier: UpdateCourier? = currentUser?.courier?.toUpdateCourier(),
     val updateShop: UpdateShop? = currentUser?.shop?.toUpdateShop(),
+
+    val firstNameError: String? = null,
+    val lastNameError: String? = null,
+    val addressError: String? = null,
+    val phoneNumberError: String? = null,
+    val businessNameError: String? = null
 )

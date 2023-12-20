@@ -14,6 +14,10 @@ import com.triforce.malacprodavac.data.mappers.toUpdateShop
 import com.triforce.malacprodavac.data.mappers.users.toUpdateUser
 import com.triforce.malacprodavac.data.services.SessionManager
 import com.triforce.malacprodavac.domain.use_case.profile.Profile
+import com.triforce.malacprodavac.domain.use_case.validate.ValidateAddress
+import com.triforce.malacprodavac.domain.use_case.validate.ValidateFirstName
+import com.triforce.malacprodavac.domain.use_case.validate.ValidateLastName
+import com.triforce.malacprodavac.domain.use_case.validate.ValidatePhoneNumber
 import com.triforce.malacprodavac.domain.util.Resource
 import com.triforce.malacprodavac.domain.util.compressedFileFromUri
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +31,11 @@ class ProfilePrivateViewModel @Inject constructor(
     private val sessionManager: SessionManager
 ) : ViewModel() {
     var state by mutableStateOf(ProfilePrivateState())
+
+    private val validateStringFirstName = ValidateFirstName()
+    private val validateStringLastName = ValidateLastName()
+    private val validatePhoneNumber = ValidatePhoneNumber()
+    private val validateAdress = ValidateAddress()
 
     init {
         me()

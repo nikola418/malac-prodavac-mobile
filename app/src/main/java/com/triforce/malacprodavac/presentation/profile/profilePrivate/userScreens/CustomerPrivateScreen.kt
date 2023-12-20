@@ -21,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -113,25 +114,39 @@ fun CustomerPrivateScreen(
                         .padding(horizontal = 16.dp)
                 ) {
                     AddEditTextField(
-                        text = user?.firstName ?: "",
-                        isError = false,
+                        text = state.updateUser?.firstName ?: "",
+                        isError = state.firstNameError != null,
                         onTextValueChange = {
                             viewModel.onEvent(ProfilePrivateEvent.FirstNameChanged(it))
                         },
                         placeholder = "Ime"
                     )
+                    if (state.firstNameError != null) {
+                    Text(
+                        text = state.firstNameError,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.align(Alignment.End)
+                    )
+                }
                     Spacer(Modifier.height(8.dp))
                     AddEditTextField(
-                        text = user?.lastName ?: "",
-                        isError = false,
+                        text = state.updateUser?.lastName ?: "",
+                        isError = state.lastNameError != null,
                         onTextValueChange = {
                             viewModel.onEvent(ProfilePrivateEvent.LastNameChanged(it))
                         },
                         placeholder = "Prezime"
                     )
+                    if (state.lastNameError != null) {
+                        Text(
+                            text = state.lastNameError,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.align(Alignment.End)
+                        )
+                    }
                     Spacer(Modifier.height(8.dp))
                     AddEditTextField(
-                        text = user?.address ?: "",
+                        text = state.updateUser?.address ?: "",
                         isError = false,
                         onTextValueChange = {
                             viewModel.onEvent(ProfilePrivateEvent.AddressChanged(it))
@@ -139,6 +154,21 @@ fun CustomerPrivateScreen(
                         placeholder = "Adresa"
                     )
                     Spacer(Modifier.height(8.dp))
+                    AddEditTextField(
+                        text = state.updateUser?.phoneNumber ?: "",
+                        isError = state.phoneNumberError != null,
+                        onTextValueChange = {
+                            viewModel.onEvent(ProfilePrivateEvent.PhoneNumberChanged(it))
+                        },
+                        placeholder = "Kontakt telefon"
+                    )
+                    if (state.phoneNumberError != null) {
+                        Text(
+                            text = state.phoneNumberError,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.align(Alignment.End)
+                        )
+                    }
                     Button(
                         onClick = { navController.navigate(Screen.MapScreen.route) },
                         modifier = Modifier

@@ -110,6 +110,9 @@ fun MapScreen(
                         .fillMaxSize(),
                     onMapLongClick = {
                         viewModel.onEvent(MapEvent.OnMapLongClick(it))
+                    },
+                    onMapClick = {
+                        viewModel.onEvent(MapEvent.OnMapClick(it))
                     }
                 ) {
                     cameraPositionState.value = CameraPosition(
