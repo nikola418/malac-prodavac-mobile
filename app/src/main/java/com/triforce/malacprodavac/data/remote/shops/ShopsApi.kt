@@ -3,6 +3,7 @@ package com.triforce.malacprodavac.data.remote.shops
 import com.triforce.malacprodavac.data.local.scheduledPickup.ScheduledPickupEntity
 import com.triforce.malacprodavac.data.remote.dto.PaginationResponse
 import com.triforce.malacprodavac.data.remote.shops.dto.CreateShopDto
+import com.triforce.malacprodavac.domain.model.Order
 import com.triforce.malacprodavac.domain.model.shops.Shop
 import com.triforce.malacprodavac.domain.model.shops.UpdateShop
 import retrofit2.http.Body
@@ -21,6 +22,9 @@ interface ShopsApi {
 
     @GET("${ROUTE}/{id}")
     suspend fun getShop(@Path("id") id: Int): Shop
+
+    @GET("${ROUTE}/{id}/orders")
+    suspend fun getShopOrders(@Path("id") id: Int): PaginationResponse<Order>
 
     @GET("${ROUTE}/{id}/scheduledPickups")
     suspend fun getShopSchedulePickups(
