@@ -2,8 +2,10 @@ package com.triforce.malacprodavac.presentation.profile.profilePrivate.userScree
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,6 +35,10 @@ import androidx.navigation.NavController
 import com.triforce.malacprodavac.BottomNavigationMenuContent
 import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.Screen
+import com.triforce.malacprodavac.domain.util.enum.DaysOfTheWeek
+import com.triforce.malacprodavac.domain.util.enum.UserRole
+import com.triforce.malacprodavac.domain.util.enum.WorkTimeEnd
+import com.triforce.malacprodavac.domain.util.enum.WorkTimeStart
 import com.triforce.malacprodavac.presentation.add_edit_product.components.AddEditTextField
 import com.triforce.malacprodavac.presentation.components.BottomNavigationMenu
 import com.triforce.malacprodavac.presentation.components.ShowHighlightSectionComp
@@ -42,8 +48,11 @@ import com.triforce.malacprodavac.presentation.profile.components.ShopDescComp
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateEvent
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateViewModel
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.components.AdvertisingProductButton
+import com.triforce.malacprodavac.presentation.profile.profilePrivate.components.DropDownListWorkTime
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.components.MyProductsButton
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.components.ProductOptions
+import com.triforce.malacprodavac.presentation.registration.RegistrationFormEvent
+import com.triforce.malacprodavac.presentation.registration.components.DropDownList
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Green
 import com.triforce.malacprodavac.ui.theme.MP_White
@@ -105,33 +114,35 @@ fun ShopPrivateScreen(
         modifier = Modifier
             .background(MP_White)
     ) { it ->
-        Column(
+        Box(
             Modifier
+                .fillMaxSize()
                 .background(MP_White)
                 .padding(it)
         ) {
-            Spacer(Modifier.height(8.dp))
             if (!state.isEditing) {
-                ShopDescComp(user)
-                Spacer(modifier = Modifier.padding(16.dp))
-
-                ProductOptions(null, navController, false)
-                Spacer(modifier = Modifier.padding(12.dp))
-
-                MyProductsButton(navController)
-                Spacer(modifier = Modifier.padding(16.dp))
-
-                AdvertisingProductButton(Modifier, null, navController, false, false)
-                Spacer(modifier = Modifier.padding(16.dp))
-
-                if (user?.shop?.products != null) {
-                    ShowHighlightSectionComp(
-                        navController = navController,
-                        products = user.shop.products,
-                        title = "Naši proizvodi",
-                        route = Screen.HighlightSection.route
-                    )
+                Column {
+                    ShopDescComp(user)
                     Spacer(modifier = Modifier.padding(16.dp))
+
+                    ProductOptions(null, navController, false)
+                    Spacer(modifier = Modifier.padding(12.dp))
+
+                    MyProductsButton(navController)
+                    Spacer(modifier = Modifier.padding(16.dp))
+
+                    AdvertisingProductButton(Modifier, null, navController, false, false)
+                    Spacer(modifier = Modifier.padding(16.dp))
+
+                    if (user?.shop?.products != null) {
+                        ShowHighlightSectionComp(
+                            navController = navController,
+                            products = user.shop.products,
+                            title = "Naši proizvodi",
+                            route = Screen.HighlightSection.route
+                        )
+                        Spacer(modifier = Modifier.padding(16.dp))
+                    }
                 }
             } else {
                 Column(
@@ -139,6 +150,7 @@ fun ShopPrivateScreen(
                         .verticalScroll(state = scrollState)
                         .padding(horizontal = 16.dp)
                 ) {
+                    Spacer(Modifier.height(8.dp))
                     AddEditTextField(
                         text = state.updateUser?.firstName ?: "",
                         isError = false,
@@ -181,7 +193,7 @@ fun ShopPrivateScreen(
                             .fillMaxWidth()
                             .padding(16.dp)
                     ) {
-                        Text(text = "Postavite Lokaciju")
+                        Text(text = "Postavite Vašu Lokaciju")
                     }
                     Spacer(Modifier.height(8.dp))
                     Button(
@@ -190,7 +202,7 @@ fun ShopPrivateScreen(
                             .fillMaxWidth()
                             .padding(16.dp)
                     ) {
-                        Text(text = "Postavite rutu")
+                        Text(text = "Postavite Rutu Obilaska")
                     }
                     AddEditTextField(
                         text = state.updateShop?.businessName ?: "",
@@ -207,50 +219,42 @@ fun ShopPrivateScreen(
                         fontWeight = FontWeight.Bold,
                         color = MP_Black
                     )
-                    AddEditTextField(
-                        text = state.updateShop?.openFromDays ?: "",
-                        isError = false,
-                        onTextValueChange = {
-                            viewModel.onEvent(ProfilePrivateEvent.OpenFromDaysChanged(it))
+                    DropDownListWorkTime(
+                        entries = enumValues<DaysOfTheWeek>().toList(),
+                        handleSelect = { nzm ->
+                            viewModel.onEvent(
+                                ProfilePrivateEvent.OpenFromDaysChanged(nzm as DaysOfTheWeek))
                         },
-                        keyboardType = KeyboardType.Text,
-                        placeholder = "Prvi radni dan"
-                    )
+                        label = "Prvi radni dan")
                     Spacer(Modifier.height(8.dp))
-                    AddEditTextField(
-                        text = state.updateShop?.openTillDays ?: "",
-                        isError = false,
-                        keyboardType = KeyboardType.Text,
-                        onTextValueChange = {
-                            viewModel.onEvent(ProfilePrivateEvent.OpenTillDaysChanged(it))
+                    DropDownListWorkTime(
+                        entries = enumValues<DaysOfTheWeek>().toList(),
+                        handleSelect = { nzm ->
+                            viewModel.onEvent(
+                                ProfilePrivateEvent.OpenTillDaysChanged(nzm as DaysOfTheWeek))
                         },
-                        placeholder = "Zadnji radni dan"
-                    )
+                        label = "Zadnji radni dan")
                     Spacer(Modifier.height(8.dp))
                     Text(
                         text = "Radno vreme:",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold, color = MP_Black
                     )
-                    AddEditTextField(
-                        text = state.updateShop?.openFrom ?: "",
-                        isError = false,
-                        keyboardType = KeyboardType.Number,
-                        onTextValueChange = {
-                            viewModel.onEvent(ProfilePrivateEvent.OpenFromChanged(it))
+                    DropDownListWorkTime(
+                        entries = enumValues<WorkTimeStart>().toList(),
+                        handleSelect = { nzm ->
+                            viewModel.onEvent(
+                                ProfilePrivateEvent.OpenFromChanged(nzm as WorkTimeStart))
                         },
-                        placeholder = "Od"
-                    )
+                        label = "Od")
                     Spacer(Modifier.height(8.dp))
-                    AddEditTextField(
-                        text = state.updateShop?.openTill ?: "",
-                        isError = false,
-                        keyboardType = KeyboardType.Number,
-                        onTextValueChange = {
-                            viewModel.onEvent(ProfilePrivateEvent.OpenTillChanged(it))
+                    DropDownListWorkTime(
+                        entries = enumValues<WorkTimeEnd>().toList(),
+                        handleSelect = { nzm ->
+                            viewModel.onEvent(
+                                ProfilePrivateEvent.OpenTillChanged(nzm as WorkTimeEnd))
                         },
-                        placeholder = "Do"
-                    )
+                        label = "Do")
                     Spacer(Modifier.height(8.dp))
                     AddEditTextField(
                         text = state.updateShop?.availableAt ?: "",
@@ -260,6 +264,15 @@ fun ShopPrivateScreen(
                         },
                         placeholder = "Lokacija izlaganja proizvoda"
                     )
+                    Spacer(Modifier.height(8.dp))
+                    Button(
+                        onClick = { navController.navigate(Screen.MapScreen.route) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(text = "Postavite Lokaciju Izlaganja")
+                    }
                     Button(
                         onClick = {
                             state.updateUser?.addressLatitude = Cordinates.latitude
@@ -275,13 +288,16 @@ fun ShopPrivateScreen(
                                     Toast.LENGTH_LONG
                                 )
                                 .show()
-                                  },
+                        },
                         colors = ButtonDefaults.buttonColors(containerColor = MP_Green),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
                     ) {
-                        Text(text = "Potvrdi izmene", style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            text = "Potvrdi izmene",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
                 }
             }
