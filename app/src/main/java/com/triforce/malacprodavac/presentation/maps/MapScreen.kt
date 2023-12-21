@@ -135,13 +135,10 @@ fun MapScreen(
 
                                 //it.showInfoWindow()
                                 true
-                            },
-                            icon = bitmapDescriptorFromVector(
-                                LocalContext.current,
-                                R.drawable.shop_icon
-                            )
+                            }
                         )
                     }
+
 
                     viewModel.state.shops!!.forEach { shop ->
                         if (shop.availableAtLatitude != null && shop.availableAtLongitude != null) {
