@@ -29,7 +29,8 @@ fun ShopDescComp(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    horizontal = 20.dp
+                    horizontal = 20.dp,
+                    vertical = 8.dp,
                 )
         ) {
             Text(

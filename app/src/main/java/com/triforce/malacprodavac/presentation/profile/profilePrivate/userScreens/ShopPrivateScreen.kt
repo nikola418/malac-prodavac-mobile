@@ -2,8 +2,10 @@ package com.triforce.malacprodavac.presentation.profile.profilePrivate.userScree
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -105,33 +107,35 @@ fun ShopPrivateScreen(
         modifier = Modifier
             .background(MP_White)
     ) { it ->
-        Column(
+        Box(
             Modifier
+                .fillMaxSize()
                 .background(MP_White)
                 .padding(it)
         ) {
-            Spacer(Modifier.height(8.dp))
             if (!state.isEditing) {
-                ShopDescComp(user)
-                Spacer(modifier = Modifier.padding(16.dp))
-
-                ProductOptions(null, navController, false)
-                Spacer(modifier = Modifier.padding(12.dp))
-
-                MyProductsButton(navController)
-                Spacer(modifier = Modifier.padding(16.dp))
-
-                AdvertisingProductButton(Modifier, null, navController, false, false)
-                Spacer(modifier = Modifier.padding(16.dp))
-
-                if (user?.shop?.products != null) {
-                    ShowHighlightSectionComp(
-                        navController = navController,
-                        products = user.shop.products,
-                        title = "Naši proizvodi",
-                        route = Screen.HighlightSection.route
-                    )
+                Column {
+                    ShopDescComp(user)
                     Spacer(modifier = Modifier.padding(16.dp))
+
+                    ProductOptions(null, navController, false)
+                    Spacer(modifier = Modifier.padding(12.dp))
+
+                    MyProductsButton(navController)
+                    Spacer(modifier = Modifier.padding(16.dp))
+
+                    AdvertisingProductButton(Modifier, null, navController, false, false)
+                    Spacer(modifier = Modifier.padding(16.dp))
+
+                    if (user?.shop?.products != null) {
+                        ShowHighlightSectionComp(
+                            navController = navController,
+                            products = user.shop.products,
+                            title = "Naši proizvodi",
+                            route = Screen.HighlightSection.route
+                        )
+                        Spacer(modifier = Modifier.padding(16.dp))
+                    }
                 }
             } else {
                 Column(
@@ -139,6 +143,7 @@ fun ShopPrivateScreen(
                         .verticalScroll(state = scrollState)
                         .padding(horizontal = 16.dp)
                 ) {
+                    Spacer(Modifier.height(8.dp))
                     AddEditTextField(
                         text = state.updateUser?.firstName ?: "",
                         isError = false,
@@ -181,7 +186,7 @@ fun ShopPrivateScreen(
                             .fillMaxWidth()
                             .padding(16.dp)
                     ) {
-                        Text(text = "Postavite Lokaciju")
+                        Text(text = "Postavite Vašu Lokaciju")
                     }
                     Spacer(Modifier.height(8.dp))
                     Button(
@@ -190,7 +195,7 @@ fun ShopPrivateScreen(
                             .fillMaxWidth()
                             .padding(16.dp)
                     ) {
-                        Text(text = "Postavite rutu")
+                        Text(text = "Postavite Rutu Obilaska")
                     }
                     AddEditTextField(
                         text = state.updateShop?.businessName ?: "",
@@ -260,6 +265,15 @@ fun ShopPrivateScreen(
                         },
                         placeholder = "Lokacija izlaganja proizvoda"
                     )
+                    Spacer(Modifier.height(8.dp))
+                    Button(
+                        onClick = { navController.navigate(Screen.MapScreen.route) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(text = "Postavite Lokaciju Izlaganja")
+                    }
                     Button(
                         onClick = {
                             state.updateUser?.addressLatitude = Cordinates.latitude
@@ -275,13 +289,16 @@ fun ShopPrivateScreen(
                                     Toast.LENGTH_LONG
                                 )
                                 .show()
-                                  },
+                        },
                         colors = ButtonDefaults.buttonColors(containerColor = MP_Green),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
                     ) {
-                        Text(text = "Potvrdi izmene", style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            text = "Potvrdi izmene",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
                 }
             }

@@ -6,10 +6,13 @@ import android.graphics.Canvas
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -85,6 +88,37 @@ fun MapScreen(
 
     Scaffold(
         scaffoldState = scaffoldState,
+        bottomBar = {
+            BottomNavigationMenu(
+                navController = navController,
+                items = listOf(
+                    BottomNavigationMenuContent(
+                        title = "Početna",
+                        graphicID = Icons.Default.Home,
+                        screen = Screen.HomeScreen,
+                        isActive = false
+                    ),
+                    BottomNavigationMenuContent(
+                        title = "Market",
+                        graphicID = ImageVector.vectorResource(R.drawable.logo_green),
+                        screen = Screen.StoreScreen,
+                        isActive = false
+                    ),
+                    BottomNavigationMenuContent(
+                        title = "Profil",
+                        graphicID = Icons.Default.Person,
+                        screen = Screen.PrivateProfile,
+                        isActive = false
+                    ),
+                    BottomNavigationMenuContent(
+                        title = "Korpa",
+                        graphicID = Icons.Default.ShoppingCart,
+                        screen = Screen.CartScreen,
+                        isActive = false
+                    )
+                )
+            )
+        },
         content = { padding ->
             Box(
                 modifier = Modifier.padding(padding)
@@ -96,7 +130,6 @@ fun MapScreen(
                     properties = viewModel.state.properties,
                     uiSettings = uiSettings,
                     modifier = Modifier
-                        .padding(padding)
                         .fillMaxSize(),
                     onMapClick = {
                         viewModel.onEvent(MapEvent.OnMapLongClick(it))
@@ -117,7 +150,7 @@ fun MapScreen(
                         cameraPositionState.value.bearing
                     )
 
-                    if(viewModel.state.selectedAddressLatitude != null && viewModel.state.selectedAddressLongitude != null){
+                    if (viewModel.state.selectedAddressLatitude != null && viewModel.state.selectedAddressLongitude != null) {
                         Marker(
                             position = LatLng(
                                 viewModel.state.selectedAddressLatitude!!,
@@ -202,35 +235,13 @@ fun MapScreen(
                         tint = MP_White
                     )
                 }
-                BottomNavigationMenu(
-                    navController = navController,
-                    items = listOf(
-                        BottomNavigationMenuContent(
-                            title = "Početna",
-                            graphicID = Icons.Default.Home,
-                            screen = Screen.HomeScreen,
-                            isActive = false
-                        ),
-                        BottomNavigationMenuContent(
-                            title = "Market",
-                            graphicID = ImageVector.vectorResource(R.drawable.logo_green),
-                            screen = Screen.StoreScreen,
-                            isActive = false
-                        ),
-                        BottomNavigationMenuContent(
-                            title = "Profil",
-                            graphicID = Icons.Default.Person,
-                            screen = Screen.PrivateProfile,
-                            isActive = false
-                        ),
-                        BottomNavigationMenuContent(
-                            title = "Korpa",
-                            graphicID = Icons.Default.ShoppingCart,
-                            screen = Screen.CartScreen,
-                            isActive = false
-                        )
-                    ), modifier = Modifier.align(Alignment.BottomCenter)
-                )
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter),
+                    onClick = {}) {
+                    Text("Postavi lokaciju")
+                }
             }
 
             viewModel.state.selectedShop?.let { selectedShop ->
