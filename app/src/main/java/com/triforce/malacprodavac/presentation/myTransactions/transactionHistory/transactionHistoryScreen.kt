@@ -13,7 +13,7 @@ fun TransactionHistoryScreen(
 ) {
     Scaffold(
         topBar = {
-            GoBackComp("Istorija Transakcija", navController, true)
+            GoBackComp("Transakcije", navController, true)
         },
         content = { padding ->
             TransactionHistoryContentScreen(navController, padding)

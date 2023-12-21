@@ -13,7 +13,7 @@ fun MyPurchasesScreen(
 ) {
     Scaffold(
         topBar = {
-            GoBackComp("Moje Kupovine", navController, true)
+            GoBackComp("Moje Porudžbine", navController, true)
         },
         content = { padding ->
             MyPurchasesContentScreen(navController, padding)

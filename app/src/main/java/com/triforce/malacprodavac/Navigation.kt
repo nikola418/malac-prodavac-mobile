@@ -29,7 +29,6 @@ import com.triforce.malacprodavac.presentation.myTransactions.mySales.MySalesScr
 import com.triforce.malacprodavac.presentation.myTransactions.transactionDetails.TransactionDetailsScreen
 import com.triforce.malacprodavac.presentation.myTransactions.transactionHistory.TransactionHistoryScreen
 import com.triforce.malacprodavac.presentation.notifications.NotificationsScreen
-import com.triforce.malacprodavac.presentation.orders.OrderScreen
 import com.triforce.malacprodavac.presentation.product.ProductScreen
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateScreen
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.userScreens.CourierPrivateScreen
@@ -39,7 +38,6 @@ import com.triforce.malacprodavac.presentation.profile.profilePublic.ProfilePubl
 import com.triforce.malacprodavac.presentation.registration.RegistrationScreen
 import com.triforce.malacprodavac.presentation.store.StoreScreen
 import com.triforce.malacprodavac.presentation.store.category.StoreCategoryScreen
-import com.triforce.malacprodavac.presentation.transactions.TransactionScreen
 
 @Composable
 fun Navigation() {
@@ -200,19 +198,9 @@ fun Navigation() {
         ) {
             AddProductImageScreen(navController = navController)
         }
-
-        composable(route = Screen.OrderScreen.route) {
-            OrderScreen(navController = navController)
-        }
-
         composable(route = Screen.MapScreen.route) {
             MapScreen(navController = navController)
         }
-
-        composable(route = Screen.TransactionScreen.route) {
-            TransactionScreen(navController = navController)
-        }
-
         composable(route = Screen.FavoriteProductsScreen.route) {
             FavoriteScreen(navController = navController)
         }

@@ -37,7 +37,6 @@ import com.triforce.malacprodavac.presentation.components.BottomNavigationMenu
 import com.triforce.malacprodavac.presentation.components.RoundedBackgroundComp
 import com.triforce.malacprodavac.presentation.home.components.GreetingSection
 import com.triforce.malacprodavac.presentation.home.components.RecommendedFeaturesSection
-import com.triforce.malacprodavac.presentation.orders.OrderViewModel
 import com.triforce.malacprodavac.ui.theme.MP_Green
 import com.triforce.malacprodavac.ui.theme.MP_GreenDark
 import com.triforce.malacprodavac.ui.theme.MP_Pink
@@ -48,7 +47,6 @@ import com.triforce.malacprodavac.ui.theme.MP_White
 fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel(),
-    viewModelOrder: OrderViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
 
@@ -90,14 +88,6 @@ fun HomeScreen(
             color1 = MP_GreenDark,
             color2 = MP_GreenDark,
             screen = Screen.PrivateProfile
-        ),
-        Feature(
-            id = 1,
-            title = "Porudžbine",
-            graphicID = ImageVector.vectorResource(R.drawable.round_featured_play_list_24),
-            color1 = MP_Green,
-            color2 = MP_Green,
-            screen = Screen.OrderScreen
         ),
         Feature(
             id = 1,
