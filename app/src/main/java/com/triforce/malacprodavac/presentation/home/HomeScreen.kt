@@ -109,11 +109,27 @@ fun HomeScreen(
         ),
         Feature(
             id = 1,
-            title = "Omiljeni prodavci",
+            title = "Moje prodaje",
             graphicID = Icons.Default.Favorite,
             color1 = MP_Green,
             color2 = MP_Green,
-            screen = Screen.FavoriteShopScreen
+            screen = Screen.MySales
+        ),
+        Feature(
+            id = 1,
+            title = "Moje kupovine",
+            graphicID = Icons.Default.Favorite,
+            color1 = MP_Green,
+            color2 = MP_Green,
+            screen = Screen.MyPurchases
+        ),
+        Feature(
+            id = 1,
+            title = "Istorija transakcija",
+            graphicID = Icons.Default.Favorite,
+            color1 = MP_Green,
+            color2 = MP_Green,
+            screen = Screen.TransactionHistory
         )
     )
 
