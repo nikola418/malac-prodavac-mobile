@@ -23,6 +23,11 @@ import com.triforce.malacprodavac.presentation.home.shopHome.ShopHomeScreen
 import com.triforce.malacprodavac.presentation.login.LoginScreen
 import com.triforce.malacprodavac.presentation.maps.MapScreen
 import com.triforce.malacprodavac.presentation.myProducts.MyProductsScreen
+import com.triforce.malacprodavac.presentation.myTransactions.myDeliveries.MyDeliveriesScreen
+import com.triforce.malacprodavac.presentation.myTransactions.myPurchases.MyPurchasesScreen
+import com.triforce.malacprodavac.presentation.myTransactions.mySales.MySalesScreen
+import com.triforce.malacprodavac.presentation.myTransactions.transactionDetails.TransactionDetailsScreen
+import com.triforce.malacprodavac.presentation.myTransactions.transactionHistory.TransactionHistoryScreen
 import com.triforce.malacprodavac.presentation.notifications.NotificationsScreen
 import com.triforce.malacprodavac.presentation.orders.OrderScreen
 import com.triforce.malacprodavac.presentation.product.ProductScreen
@@ -245,20 +250,24 @@ fun Navigation() {
 
         // my transactions
 
-        composable(route = Screen.CustomerPrivateScreen.route) {
-            CustomerPrivateScreen(navController = navController)
+        composable(route = Screen.MySales.route) {
+            MySalesScreen(navController = navController)
         }
 
-        composable(route = Screen.CustomerPrivateScreen.route) {
-            CustomerPrivateScreen(navController = navController)
+        composable(route = Screen.MyPurchases.route) {
+            MyPurchasesScreen(navController = navController)
         }
 
-        composable(route = Screen.CustomerPrivateScreen.route) {
-            CustomerPrivateScreen(navController = navController)
+        composable(route = Screen.MyDeliveries.route) {
+            MyDeliveriesScreen(navController = navController)
         }
 
-        composable(route = Screen.CustomerPrivateScreen.route) {
-            CustomerPrivateScreen(navController = navController)
+        composable(route = Screen.TransactionHistory.route) {
+            TransactionHistoryScreen(navController = navController)
+        }
+
+        composable(route = Screen.TransactionDetails.route) {
+            TransactionDetailsScreen(navController = navController)
         }
 
         composable(route = Screen.AdvertisingProductScreen.route + "?productId={productId}",
