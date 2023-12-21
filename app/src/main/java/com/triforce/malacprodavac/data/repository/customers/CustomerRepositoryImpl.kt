@@ -8,6 +8,7 @@ import com.triforce.malacprodavac.domain.model.CreateCustomer
 import com.triforce.malacprodavac.domain.model.Customer
 import com.triforce.malacprodavac.domain.model.customers.FavoriteProduct
 import com.triforce.malacprodavac.domain.model.customers.FavoriteShop
+import com.triforce.malacprodavac.domain.model.customers.UpdateCustomer
 import com.triforce.malacprodavac.domain.repository.CustomerRepository
 import com.triforce.malacprodavac.domain.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -81,6 +82,30 @@ class CustomerRepositoryImpl @Inject constructor(
                 emit(Resource.Success(data = it.data))
             }
             emit(Resource.Loading(isLoading = false))
+        }
+    }
+
+    override suspend fun updateCustomer(
+        customerId: Int,
+        dto: UpdateCustomer
+    ): Flow<Resource<Customer>> {
+        return flow {
+            emit(Resource.Loading(true))
+            val result = try {
+                api.updateCustomer(customerId, dto)
+            } catch (e: IOException) {
+                e.printStackTrace()
+                emit(Resource.Error("Couldn't update customer."))
+                null
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                emit(Resource.Error(e.message()))
+                null
+            }
+            result?.let {
+                emit(Resource.Success(it))
+            }
+            emit(Resource.Loading(false))
         }
     }
 

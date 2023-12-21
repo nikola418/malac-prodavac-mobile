@@ -6,6 +6,7 @@ import com.triforce.malacprodavac.domain.model.CreateCustomer
 import com.triforce.malacprodavac.domain.model.Customer
 import com.triforce.malacprodavac.domain.model.customers.FavoriteProduct
 import com.triforce.malacprodavac.domain.model.customers.FavoriteShop
+import com.triforce.malacprodavac.domain.model.customers.UpdateCustomer
 import com.triforce.malacprodavac.domain.util.Resource
 import kotlinx.coroutines.flow.Flow
 
@@ -19,6 +20,8 @@ interface CustomerRepository {
         fetchFromRemote: Boolean,
         queryMap: MutableMap<String, String>
     ): Flow<Resource<List<FavoriteProduct>>>
+
+    suspend fun updateCustomer(customerId: Int, dto: UpdateCustomer): Flow<Resource<Customer>>
 
     suspend fun insertFavoriteProduct(
         customerId: Int,

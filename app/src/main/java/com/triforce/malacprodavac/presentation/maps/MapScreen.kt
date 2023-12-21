@@ -3,12 +3,16 @@ package com.triforce.malacprodavac.presentation.maps
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -52,13 +56,25 @@ fun MapScreen(
 
 ) {
     val scaffoldState = rememberScaffoldState()
+    val context = LocalContext.current
 
-    val initialCameraPosition =
-        remember { CameraPosition(LatLng(44.01667, 20.91667), 12.0f, 0.0f, 0.0f) }
+    val initialCameraPosition = remember {
+        CameraPosition(
+            LatLng(44.01667, 20.91667),
+            12.0f,
+            0.0f,
+            0.0f
+        )
+    }
+    val cameraPositionState = remember {
+        mutableStateOf(initialCameraPosition)
+    }
 
-    val cameraPositionState = remember { mutableStateOf(initialCameraPosition) }
+    val shopIconVector: ImageVector = ImageVector.vectorResource(id = R.drawable.shop_icon)
 
-    val uiSettings = remember { MapUiSettings(zoomControlsEnabled = false) }
+    val uiSettings = remember {
+        MapUiSettings(zoomControlsEnabled = false)
+    }
 
     fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
         return ContextCompat.getDrawable(context, vectorResId)?.run {
@@ -72,21 +88,91 @@ fun MapScreen(
 
     Scaffold(
         scaffoldState = scaffoldState,
+        bottomBar = {
+            BottomNavigationMenu(
+                navController = navController,
+                items = listOf(
+                    BottomNavigationMenuContent(
+                        title = "Početna",
+                        graphicID = Icons.Default.Home,
+                        screen = Screen.HomeScreen,
+                        isActive = false
+                    ),
+                    BottomNavigationMenuContent(
+                        title = "Market",
+                        graphicID = ImageVector.vectorResource(R.drawable.logo_green),
+                        screen = Screen.StoreScreen,
+                        isActive = false
+                    ),
+                    BottomNavigationMenuContent(
+                        title = "Profil",
+                        graphicID = Icons.Default.Person,
+                        screen = Screen.PrivateProfile,
+                        isActive = false
+                    ),
+                    BottomNavigationMenuContent(
+                        title = "Korpa",
+                        graphicID = Icons.Default.ShoppingCart,
+                        screen = Screen.CartScreen,
+                        isActive = false
+                    )
+                )
+            )
+        },
         content = { padding ->
             Box(
                 modifier = Modifier.padding(padding)
             ) {
                 GoogleMap(
-                    cameraPositionState = CameraPositionState(position = cameraPositionState.value),
+                    cameraPositionState = CameraPositionState(
+                        position = cameraPositionState.value
+                    ),
                     properties = viewModel.state.properties,
                     uiSettings = uiSettings,
                     modifier = Modifier
-                        .padding(padding)
                         .fillMaxSize(),
-                    onMapLongClick = {
+                    onMapClick = {
                         viewModel.onEvent(MapEvent.OnMapLongClick(it))
+                        Toast
+                            .makeText(
+                                context,
+                                "Izabrali ste lokaciju!",
+                                Toast.LENGTH_LONG
+                            )
+                            .show()
                     }
+
                 ) {
+                    cameraPositionState.value = CameraPosition(
+                        cameraPositionState.value.target,
+                        cameraPositionState.value.zoom,
+                        cameraPositionState.value.tilt,
+                        cameraPositionState.value.bearing
+                    )
+
+                    if (viewModel.state.selectedAddressLatitude != null && viewModel.state.selectedAddressLongitude != null) {
+                        Marker(
+                            position = LatLng(
+                                viewModel.state.selectedAddressLatitude!!,
+                                viewModel.state.selectedAddressLongitude!!
+                            ),
+                            title = "Nova lokacija",
+                            snippet = "",
+                            onClick = {
+                                cameraPositionState.value = CameraPosition(
+                                    cameraPositionState.value.target,
+                                    cameraPositionState.value.zoom,
+                                    cameraPositionState.value.tilt,
+                                    cameraPositionState.value.bearing
+                                )
+
+                                //it.showInfoWindow()
+                                true
+                            }
+                        )
+                    }
+
+
                     viewModel.state.shops!!.forEach { shop ->
                         if (shop.availableAtLatitude != null && shop.availableAtLongitude != null) {
                             Marker(
@@ -94,9 +180,26 @@ fun MapScreen(
                                     shop.availableAtLatitude,
                                     shop.availableAtLongitude
                                 ),
-                                onClick = {
+                                title = shop.businessName + "user id " + shop.user?.id + " shop id " + shop.id,
+                                snippet = if (shop.user != null) {
+                                    shop.user.firstName + " " + shop.user.lastName
+                                } else {
+                                    ""
+                                },
+                                /*onInfoWindowLongClick = {
                                     viewModel.onEvent(MapEvent.OnInfoWindowLongClick(shop))
-                                    false
+                                },*/
+                                onClick = {
+                                    cameraPositionState.value = CameraPosition(
+                                        cameraPositionState.value.target,
+                                        cameraPositionState.value.zoom,
+                                        cameraPositionState.value.tilt,
+                                        cameraPositionState.value.bearing
+                                    )
+
+                                    viewModel.onEvent(MapEvent.OnInfoWindowLongClick(shop))
+                                    //it.showInfoWindow()
+                                    true
                                 },
                                 icon = bitmapDescriptorFromVector(
                                     LocalContext.current,
@@ -108,6 +211,13 @@ fun MapScreen(
                 }
                 FloatingActionButton(
                     onClick = {
+                        cameraPositionState.value = CameraPosition(
+                            cameraPositionState.value.target,
+                            cameraPositionState.value.zoom,
+                            cameraPositionState.value.tilt,
+                            cameraPositionState.value.bearing
+                        )
+
                         viewModel.onEvent(MapEvent.ToggleSpecialMap)
                     },
                     backgroundColor = MP_Orange_Dark,
@@ -116,41 +226,22 @@ fun MapScreen(
                         .padding(27.dp)
                 ) {
                     Icon(
-                        imageVector = if (viewModel.state.isSpecialMap) Icons.Outlined.Clear
-                        else Icons.Outlined.LocationOn,
+                        imageVector = if (viewModel.state.isSpecialMap) {
+                            Icons.Outlined.Clear
+                        } else {
+                            Icons.Outlined.LocationOn
+                        },
                         contentDescription = "Toggle Special map",
                         tint = MP_White
                     )
                 }
-                BottomNavigationMenu(
-                    navController = navController,
-                    items = listOf(
-                        BottomNavigationMenuContent(
-                            title = "Početna",
-                            graphicID = Icons.Default.Home,
-                            screen = Screen.HomeScreen,
-                            isActive = false
-                        ),
-                        BottomNavigationMenuContent(
-                            title = "Market",
-                            graphicID = ImageVector.vectorResource(R.drawable.logo_green),
-                            screen = Screen.StoreScreen,
-                            isActive = false
-                        ),
-                        BottomNavigationMenuContent(
-                            title = "Profil",
-                            graphicID = Icons.Default.Person,
-                            screen = Screen.PrivateProfile,
-                            isActive = false
-                        ),
-                        BottomNavigationMenuContent(
-                            title = "Korpa",
-                            graphicID = Icons.Default.ShoppingCart,
-                            screen = Screen.CartScreen,
-                            isActive = false
-                        )
-                    ), modifier = Modifier.align(Alignment.BottomCenter)
-                )
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter),
+                    onClick = {}) {
+                    Text("Postavi lokaciju")
+                }
             }
 
             viewModel.state.selectedShop?.let { selectedShop ->

@@ -12,4 +12,7 @@ data class MapState(
 
     val shops: List<Shop>? = emptyList(),
     val isLoading: Boolean = false,
+
+    val selectedAddressLatitude: Double? = null,
+    val selectedAddressLongitude: Double? = null
 )

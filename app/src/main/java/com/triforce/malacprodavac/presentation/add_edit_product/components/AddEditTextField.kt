@@ -23,25 +23,25 @@ import com.triforce.malacprodavac.ui.theme.MP_White
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditTextField(
-    label: String,
+    label: String? = null,
     text: String,
     isError: Boolean = false,
     onTextValueChange: (String) -> Unit,
     placeholder: String,
     keyboardType: KeyboardType = KeyboardType.Text
-
 ) {
     Column {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.body1,
-            color = MP_Black,
-            fontWeight = FontWeight.W400,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, bottom = 10.dp),
-        )
+        if (label != null)
+            Text(
+                text = label,
+                style = MaterialTheme.typography.body1,
+                color = MP_Black,
+                fontWeight = FontWeight.W400,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp, bottom = 10.dp),
+            )
         OutlinedTextField(
             value = text,
             isError = isError,
