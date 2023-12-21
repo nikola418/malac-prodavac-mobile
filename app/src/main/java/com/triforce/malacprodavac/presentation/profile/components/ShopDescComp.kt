@@ -23,7 +23,41 @@ fun ShopDescComp(
 ) {
     val shop = shopUser ?: user?.shop
 
+    var openFromDay: String? = null
+    var openTillDay: String? = null
+
+    if(shop?.openFromDays == "Monday")
+        openFromDay = "Ponedeljak"
+    else if(shop?.openFromDays == "Tuesday")
+        openFromDay = "Utorak"
+    else if(shop?.openFromDays == "Wednesday")
+        openFromDay = "Sreda"
+    else if(shop?.openFromDays == "Thursday")
+        openFromDay = "Četvrtak"
+    else if(shop?.openFromDays == "Friday")
+        openFromDay = "Petak"
+    else if(shop?.openFromDays == "Saturday")
+        openFromDay = "Subota"
+    else if(shop?.openFromDays == "Sunday")
+        openFromDay = "Nedelja"
+
+    if(shop?.openTillDays == "Monday")
+        openTillDay = "Ponedeljak"
+    else if(shop?.openTillDays == "Tuesday")
+        openTillDay = "Utorak"
+    else if(shop?.openTillDays == "Wednesday")
+        openTillDay = "Sreda"
+    else if(shop?.openTillDays == "Thursday")
+        openTillDay = "Četvrtak"
+    else if(shop?.openTillDays == "Friday")
+        openTillDay = "Petak"
+    else if(shop?.openTillDays == "Saturday")
+        openTillDay = "Subota"
+    else if(shop?.openTillDays == "Sunday")
+        openTillDay = "Nedelja"
+
     if (user != null) {
+
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
@@ -49,8 +83,8 @@ fun ShopDescComp(
                 maxLines = 1
             )
             Text(
-                text = "Radni dani: ".plus(shop?.openFromDays ?: "Nepoznato").plus("-")
-                    .plus(shop?.openTillDays ?: "Nepoznato"),
+                text = "Radni dani: ".plus(openFromDay ?: "Nepoznato").plus("-")
+                    .plus(openTillDay ?: "Nepoznato"),
                 style = MaterialTheme.typography.body1,
                 color = Color.Gray,
                 fontWeight = FontWeight.W300,

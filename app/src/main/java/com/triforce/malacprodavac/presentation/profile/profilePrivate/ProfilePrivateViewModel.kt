@@ -98,7 +98,7 @@ class ProfilePrivateViewModel @Inject constructor(
             is ProfilePrivateEvent.OpenFromChanged -> {
                 state = state.copy(
                     updateShop = state.updateShop?.copy(
-                        openFrom = event.openFrom
+                        openFrom = event.openFrom.toString()
                     )
                 )
             }
@@ -106,7 +106,7 @@ class ProfilePrivateViewModel @Inject constructor(
             is ProfilePrivateEvent.OpenTillChanged -> {
                 state = state.copy(
                     updateShop = state.updateShop?.copy(
-                        openTill = event.openTill
+                        openTill = event.openTill.toString()
                     )
                 )
             }
@@ -114,7 +114,7 @@ class ProfilePrivateViewModel @Inject constructor(
             is ProfilePrivateEvent.OpenFromDaysChanged -> {
                 state = state.copy(
                     updateShop = state.updateShop?.copy(
-                        openFromDays = event.openFromDays
+                        openFromDays = event.openFromDays.toText()
                     )
                 )
             }
@@ -122,7 +122,7 @@ class ProfilePrivateViewModel @Inject constructor(
             is ProfilePrivateEvent.OpenTillDaysChanged -> {
                 state = state.copy(
                     updateShop = state.updateShop?.copy(
-                        openTillDays = event.openTillDays
+                        openTillDays = event.openTillDays.toText()
                     )
                 )
             }
