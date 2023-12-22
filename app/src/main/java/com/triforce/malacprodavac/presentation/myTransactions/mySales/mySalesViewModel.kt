@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.triforce.malacprodavac.domain.repository.CourierRepository
 import com.triforce.malacprodavac.domain.repository.ShopRepository
 import com.triforce.malacprodavac.domain.use_case.profile.Profile
 import com.triforce.malacprodavac.domain.util.Resource
@@ -16,7 +17,8 @@ import javax.inject.Inject
 class MySalesViewModel @Inject constructor(
 
     private val profile: Profile,
-    private val repository: ShopRepository
+    private val shopRepository: ShopRepository,
+    private val courierRepository: CourierRepository
 
 ) : ViewModel() {
 
@@ -35,11 +37,30 @@ class MySalesViewModel @Inject constructor(
     private fun getShopOrders() {
         viewModelScope.launch {
             state.user?.shop?.id?.let {
-                repository.getShopOrders(it, true).collect { result ->
+                shopRepository.getShopOrders(it, true).collect { result ->
                     when (result) {
                         is Resource.Success -> {
                             result.data?.let {
                                 state = state.copy(orders = result.data)
+                            }
+                        }
+
+                        is Resource.Error -> handleError()
+                        is Resource.Loading -> handleLoading(result.isLoading)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getCouriers() {
+        viewModelScope.launch {
+            state.user?.shop?.id?.let {
+                courierRepository.getCouriers().collect { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            result.data?.let {
+                                state = state.copy(couriers = result.data.data)
                             }
                         }
 
@@ -62,6 +83,7 @@ class MySalesViewModel @Inject constructor(
 
                         getToken()
                         getShopOrders()
+                        getCouriers()
                     }
 
                     is Resource.Error -> handleError()

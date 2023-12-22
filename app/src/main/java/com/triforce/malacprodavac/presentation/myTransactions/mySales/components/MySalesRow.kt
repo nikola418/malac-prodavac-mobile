@@ -24,7 +24,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.triforce.malacprodavac.R
+import com.triforce.malacprodavac.domain.model.Courier
 import com.triforce.malacprodavac.domain.model.Order
+import com.triforce.malacprodavac.presentation.add_edit_product.components.AddEditSubmitButton
+import com.triforce.malacprodavac.presentation.myTransactions.mySales.MySalesEvent
 import com.triforce.malacprodavac.presentation.myTransactions.mySales.MySalesViewModel
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
@@ -79,13 +82,6 @@ fun MySalesRow(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            Text(
-                text = "#" + id,
-                style = MaterialTheme.typography.h3,
-                color = MP_Orange_Dark,
-                fontWeight = FontWeight.W400
-            )
-
             Column(
                 modifier = Modifier.padding(10.dp)
             ) {
@@ -109,12 +105,35 @@ fun MySalesRow(
                     fontWeight = FontWeight.W300
                 )
 
-                Spacer(modifier = Modifier.padding(12.dp))
+                Spacer(modifier = Modifier.padding(6.dp))
                 Text(
                     text = "${date} ${time}",
                     style = MaterialTheme.typography.body1,
                     color = MP_Pink,
                     fontWeight = FontWeight.W400
+                )
+
+                Spacer(modifier = Modifier.padding(12.dp))
+                CouriersDropDownList(
+                    couriers = viewModel.state.couriers,
+                    selectedCourier = "----",
+                    handleSelect = { courier ->
+                        viewModel.onEvent(
+                            MySalesEvent.CourierIdChanged(
+                                (courier as Courier).id,
+                                order.id
+                            )
+                        )
+                    },
+                    label = "Izaberi kurira",
+                    fill = true
+                )
+                Spacer(modifier = Modifier.padding(12.dp))
+                AddEditSubmitButton(
+                    Modifier.clickable {
+                        viewModel.onEvent(MySalesEvent.Submit(order.id))
+                    },
+                    isEdit = false
                 )
             }
 
