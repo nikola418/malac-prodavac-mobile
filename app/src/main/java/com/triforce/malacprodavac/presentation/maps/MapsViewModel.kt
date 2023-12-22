@@ -65,6 +65,15 @@ class MapsViewModel @Inject constructor(
                 Cordinates.latitude = state.selectedAddressLatitude
                 Cordinates.longitude = state.selectedAddressLongitude
             }
+
+            is MapEvent.OnMapAvailableLongClick -> {
+                state = state.copy(
+                    selectedAvailableAddressLatitude = event.latLng.latitude,
+                    selectedAvailableAddressLongitude = event.latLng.longitude
+                )
+                Cordinates.availableAtLatitude = state.selectedAvailableAddressLatitude
+                Cordinates.availableAtLongitude = state.selectedAvailableAddressLongitude
+            }
             else -> { }
         }
     }

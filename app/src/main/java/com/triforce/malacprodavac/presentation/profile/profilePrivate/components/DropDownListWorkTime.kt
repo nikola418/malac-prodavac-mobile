@@ -19,11 +19,14 @@ import androidx.compose.ui.Modifier
 fun DropDownListWorkTime(
     entries: List<Any> = emptyList(),
     handleSelect: (Any) -> Unit,
-    label: String
+    label: String,
+    first: Boolean
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     var selectedEntry by remember { mutableStateOf(entries.first().toString()) }
 
+    if(!first)
+        selectedEntry = entries.get(4).toString()
     // menu box
     ExposedDropdownMenuBox(
         expanded = isExpanded,

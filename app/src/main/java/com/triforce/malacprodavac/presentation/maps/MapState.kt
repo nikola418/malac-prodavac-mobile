@@ -14,5 +14,7 @@ data class MapState(
     val isLoading: Boolean = false,
 
     val selectedAddressLatitude: Double? = null,
-    val selectedAddressLongitude: Double? = null
+    val selectedAddressLongitude: Double? = null,
+    val selectedAvailableAddressLatitude: Double? = null,
+    val selectedAvailableAddressLongitude: Double? = null
 )

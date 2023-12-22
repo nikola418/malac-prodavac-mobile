@@ -45,6 +45,9 @@ import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.presentation.components.BottomNavigationMenu
 import com.triforce.malacprodavac.presentation.maps.components.BottomMapShopDetails
+import com.triforce.malacprodavac.presentation.maps.components.Cordinates
+import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateEvent
+import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateViewModel
 import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
 import com.triforce.malacprodavac.ui.theme.MP_White
 
@@ -52,11 +55,12 @@ import com.triforce.malacprodavac.ui.theme.MP_White
 fun MapScreen(
 
     navController: NavController,
-    viewModel: MapsViewModel = hiltViewModel()
-
+    viewModel: MapsViewModel = hiltViewModel(),
+    viewModelProfilePrivate: ProfilePrivateViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
+    val state = viewModelProfilePrivate.state
 
     val initialCameraPosition = remember {
         CameraPosition(
@@ -70,7 +74,7 @@ fun MapScreen(
         mutableStateOf(initialCameraPosition)
     }
 
-    val shopIconVector: ImageVector = ImageVector.vectorResource(id = R.drawable.shop_icon)
+//    val shopIconVector: ImageVector = ImageVector.vectorResource(id = R.drawable.shop_icon)
 
     val uiSettings = remember {
         MapUiSettings(zoomControlsEnabled = false)
@@ -132,14 +136,28 @@ fun MapScreen(
                     modifier = Modifier
                         .fillMaxSize(),
                     onMapClick = {
-                        viewModel.onEvent(MapEvent.OnMapLongClick(it))
-                        Toast
-                            .makeText(
-                                context,
-                                "Izabrali ste lokaciju!",
-                                Toast.LENGTH_LONG
-                            )
-                            .show()
+                        if(Cordinates.isLocation)
+                        {
+                            viewModel.onEvent(MapEvent.OnMapLongClick(it))
+                            Toast
+                                .makeText(
+                                    context,
+                                    "Izabrali ste lokaciju!",
+                                    Toast.LENGTH_LONG
+                                )
+                                .show()
+                        }
+                        if(Cordinates.isAvailable)
+                        {
+                            viewModel.onEvent(MapEvent.OnMapAvailableLongClick(it))
+                            Toast
+                                .makeText(
+                                    context,
+                                    "Izabrali ste lokaciju oglašavanja proizvoda!",
+                                    Toast.LENGTH_LONG
+                                )
+                                .show()
+                        }
                     }
 
                 ) {
@@ -172,23 +190,41 @@ fun MapScreen(
                         )
                     }
 
+                    if (viewModel.state.selectedAvailableAddressLatitude != null && viewModel.state.selectedAvailableAddressLongitude != null) {
+                        Marker(
+                            position = LatLng(
+                                viewModel.state.selectedAvailableAddressLatitude!!,
+                                viewModel.state.selectedAvailableAddressLongitude!!
+                            ),
+                            title = "Oglašavanje proizvoda",
+                            snippet = "",
+                            onClick = {
+                                cameraPositionState.value = CameraPosition(
+                                    cameraPositionState.value.target,
+                                    cameraPositionState.value.zoom,
+                                    cameraPositionState.value.tilt,
+                                    cameraPositionState.value.bearing
+                                )
+
+                                //it.showInfoWindow()
+                                true
+                            }
+                        )
+                    }
+
 
                     viewModel.state.shops!!.forEach { shop ->
-                        if (shop.availableAtLatitude != null && shop.availableAtLongitude != null) {
+                        if (shop.user?.addressLatitude != null && shop.user.addressLongitude != null) {
                             Marker(
                                 position = LatLng(
-                                    shop.availableAtLatitude,
-                                    shop.availableAtLongitude
+                                    shop.user.addressLatitude,
+                                    shop.user.addressLongitude
                                 ),
-                                title = shop.businessName + "user id " + shop.user?.id + " shop id " + shop.id,
-                                snippet = if (shop.user != null) {
-                                    shop.user.firstName + " " + shop.user.lastName
-                                } else {
-                                    ""
-                                },
-                                /*onInfoWindowLongClick = {
-                                    viewModel.onEvent(MapEvent.OnInfoWindowLongClick(shop))
-                                },*/
+                                title = shop.businessName + "user id " + shop.user.id + " shop id " + shop.id,
+                                snippet = shop.user.firstName + " " + shop.user.lastName,
+//                                onInfoWindowLongClick = {
+//                                    viewModel.onEvent(MapEvent.OnInfoWindowLongClick(shop))
+//                                }.
                                 onClick = {
                                     cameraPositionState.value = CameraPosition(
                                         cameraPositionState.value.target,
@@ -204,6 +240,40 @@ fun MapScreen(
                                 icon = bitmapDescriptorFromVector(
                                     LocalContext.current,
                                     R.drawable.shop_icon
+                                )
+                            )
+                        }
+
+                        if (shop.availableAtLatitude != null && shop.availableAtLongitude != null) {
+                            Marker(
+                                position = LatLng(
+                                    shop.availableAtLatitude,
+                                    shop.availableAtLongitude
+                                ),
+                                title = shop.businessName + "user id " + shop.user?.id + " shop id " + shop.id,
+                                snippet = if (shop.user != null) {
+                                    shop.user.firstName + " " + shop.user.lastName
+                                } else {
+                                    ""
+                                },
+                                onInfoWindowLongClick = {
+                                    viewModel.onEvent(MapEvent.OnInfoWindowLongClick(shop))
+                                },
+                                onClick = {
+                                    cameraPositionState.value = CameraPosition(
+                                        cameraPositionState.value.target,
+                                        cameraPositionState.value.zoom,
+                                        cameraPositionState.value.tilt,
+                                        cameraPositionState.value.bearing
+                                    )
+
+                                    viewModel.onEvent(MapEvent.OnInfoWindowLongClick(shop))
+                                    //it.showInfoWindow()
+                                    true
+                                },
+                                icon = bitmapDescriptorFromVector(
+                                    LocalContext.current,
+                                    R.drawable.logo_green
                                 )
                             )
                         }
@@ -239,8 +309,37 @@ fun MapScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter),
-                    onClick = {}) {
-                    Text("Postavi lokaciju")
+                    onClick = {
+                        state.updateUser?.addressLatitude = Cordinates.latitude
+                        state.updateUser?.addressLongitude = Cordinates.longitude
+                        state.updateShop?.availableAtLatitude = Cordinates.availableAtLatitude
+                        state.updateShop?.availableAtLongitude = Cordinates.availableAtLongitude
+                        if(Cordinates.isLocation)
+                        {
+                            Toast
+                                .makeText(
+                                    context,
+                                    "Postavili ste uspešno lokaciju!",
+                                    Toast.LENGTH_LONG
+                                )
+                                .show()
+                        }
+                        else if(Cordinates.isAvailable)
+                        {
+                            Toast
+                                .makeText(
+                                    context,
+                                    "Postavili ste uspešno lokaciju oglašavanja proizvoda!",
+                                    Toast.LENGTH_LONG
+                                )
+                                .show()
+                        }
+                        viewModelProfilePrivate.onEvent(ProfilePrivateEvent.SubmitEdit)
+                    }) {
+                    if(Cordinates.isLocation)
+                        Text("Postavi lokaciju")
+                    else if(Cordinates.isAvailable)
+                        Text("Postavi lokaciju izlaganja proizvoda")
                 }
             }
 
