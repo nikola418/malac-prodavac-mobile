@@ -8,5 +8,6 @@ sealed class MapEvent {
     object ToggleSpecialMap: MapEvent()
     data class OnMapClick(val latLng: LatLng): MapEvent()
     data class OnMapLongClick(val latLng: LatLng): MapEvent()
+    data class OnMapAvailableLongClick(val latLng: LatLng): MapEvent()
     data class OnInfoWindowLongClick(val shop: Shop): MapEvent()
 }

@@ -188,7 +188,10 @@ fun ShopPrivateScreen(
                     )
                     Spacer(Modifier.height(8.dp))
                     Button(
-                        onClick = { navController.navigate(Screen.MapScreen.route) },
+                        onClick = {
+                            Cordinates.isLocation = true
+                            Cordinates.isAvailable = false
+                            navController.navigate(Screen.MapScreen.route) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
@@ -225,7 +228,8 @@ fun ShopPrivateScreen(
                             viewModel.onEvent(
                                 ProfilePrivateEvent.OpenFromDaysChanged(nzm as DaysOfTheWeek))
                         },
-                        label = "Prvi radni dan")
+                        label = "Prvi radni dan",
+                        first = true)
                     Spacer(Modifier.height(8.dp))
                     DropDownListWorkTime(
                         entries = enumValues<DaysOfTheWeek>().toList(),
@@ -233,7 +237,8 @@ fun ShopPrivateScreen(
                             viewModel.onEvent(
                                 ProfilePrivateEvent.OpenTillDaysChanged(nzm as DaysOfTheWeek))
                         },
-                        label = "Zadnji radni dan")
+                        label = "Zadnji radni dan",
+                        first = false)
                     Spacer(Modifier.height(8.dp))
                     Text(
                         text = "Radno vreme:",
@@ -246,7 +251,8 @@ fun ShopPrivateScreen(
                             viewModel.onEvent(
                                 ProfilePrivateEvent.OpenFromChanged(nzm as WorkTimeStart))
                         },
-                        label = "Od")
+                        label = "Od",
+                        first = true)
                     Spacer(Modifier.height(8.dp))
                     DropDownListWorkTime(
                         entries = enumValues<WorkTimeEnd>().toList(),
@@ -254,7 +260,8 @@ fun ShopPrivateScreen(
                             viewModel.onEvent(
                                 ProfilePrivateEvent.OpenTillChanged(nzm as WorkTimeEnd))
                         },
-                        label = "Do")
+                        label = "Do",
+                        first = true)
                     Spacer(Modifier.height(8.dp))
                     AddEditTextField(
                         text = state.updateShop?.availableAt ?: "",
@@ -266,7 +273,10 @@ fun ShopPrivateScreen(
                     )
                     Spacer(Modifier.height(8.dp))
                     Button(
-                        onClick = { navController.navigate(Screen.MapScreen.route) },
+                        onClick = {
+                            Cordinates.isLocation = false
+                            Cordinates.isAvailable = true
+                            navController.navigate(Screen.MapScreen.route) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
@@ -277,8 +287,8 @@ fun ShopPrivateScreen(
                         onClick = {
                             state.updateUser?.addressLatitude = Cordinates.latitude
                             state.updateUser?.addressLongitude = Cordinates.longitude
-                            state.updateShop?.availableAtLatitude = Cordinates.latitude
-                            state.updateShop?.availableAtLongitude = Cordinates.longitude
+                            state.updateShop?.availableAtLatitude = Cordinates.availableAtLatitude
+                            state.updateShop?.availableAtLongitude = Cordinates.availableAtLongitude
 
                             viewModel.onEvent(ProfilePrivateEvent.SubmitEdit)
                             Toast
