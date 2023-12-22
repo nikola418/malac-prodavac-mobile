@@ -100,7 +100,7 @@ fun MyDeliveriesRow(
                 color = MP_Pink,
                 fontWeight = FontWeight.W400
             )
-
+            Spacer(modifier = Modifier.padding(12.dp))
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.logo_green),
                 contentDescription = "DeleteOrder",

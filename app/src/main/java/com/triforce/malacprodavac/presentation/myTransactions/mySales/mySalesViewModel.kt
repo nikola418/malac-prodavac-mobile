@@ -5,10 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.triforce.malacprodavac.data.remote.orders.dto.UpdateOrderDto
 import com.triforce.malacprodavac.domain.repository.CourierRepository
+import com.triforce.malacprodavac.domain.repository.OrderRepository
 import com.triforce.malacprodavac.domain.repository.ShopRepository
 import com.triforce.malacprodavac.domain.use_case.profile.Profile
 import com.triforce.malacprodavac.domain.util.Resource
+import com.triforce.malacprodavac.util.enum.OrderStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,7 +21,8 @@ class MySalesViewModel @Inject constructor(
 
     private val profile: Profile,
     private val shopRepository: ShopRepository,
-    private val courierRepository: CourierRepository
+    private val courierRepository: CourierRepository,
+    private val orderRepository: OrderRepository
 
 ) : ViewModel() {
 
@@ -30,8 +34,17 @@ class MySalesViewModel @Inject constructor(
 
     fun onEvent(event: MySalesEvent) {
         when (event) {
-            is MySalesEvent.CourierIdChanged -> TODO()
-            is MySalesEvent.Submit -> TODO()
+            is MySalesEvent.CourierIdChanged ->
+                state.orders.find { it.id == event.orderId }?.apply {
+                    courierId = event.courierId
+                }
+
+            is MySalesEvent.Submit ->
+                state.orders.find { it.id == event.orderId }?.courierId?.let { courierId ->
+                    updateOrder(event.orderId, courierId)
+                }
+
+            is MySalesEvent.AcceptOrder -> acceptOrder(event.orderId)
         }
     }
 
@@ -49,6 +62,42 @@ class MySalesViewModel @Inject constructor(
                         is Resource.Error -> handleError()
                         is Resource.Loading -> handleLoading(result.isLoading)
                     }
+                }
+            }
+        }
+    }
+
+    private fun acceptOrder(orderId: Int) {
+        viewModelScope.launch {
+            orderRepository.updateOrder(
+                orderId, UpdateOrderDto(
+                    orderStatus = null,
+                    accepted = true,
+                    courierId = null
+                )
+            ).collect { result ->
+                when (result) {
+                    is Resource.Success -> getShopOrders()
+                    is Resource.Error -> handleError()
+                    is Resource.Loading -> handleLoading(result.isLoading)
+                }
+            }
+        }
+    }
+
+    private fun updateOrder(orderId: Int, courierId: Int) {
+        viewModelScope.launch {
+            orderRepository.updateOrder(
+                orderId, UpdateOrderDto(
+                    orderStatus = OrderStatus.Packaged.toString(),
+                    accepted = null,
+                    courierId = courierId
+                )
+            ).collect { result ->
+                when (result) {
+                    is Resource.Success -> getShopOrders()
+                    is Resource.Error -> handleError()
+                    is Resource.Loading -> handleLoading(result.isLoading)
                 }
             }
         }

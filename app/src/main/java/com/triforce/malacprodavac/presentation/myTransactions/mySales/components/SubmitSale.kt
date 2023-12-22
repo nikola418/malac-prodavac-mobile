@@ -17,15 +17,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.triforce.malacprodavac.ui.theme.MP_Black
-import com.triforce.malacprodavac.ui.theme.MP_Green
 import com.triforce.malacprodavac.ui.theme.MP_White
 
 @Composable
 fun SubmitSale(
+    text: String,
+    tintColor: Color,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -33,20 +35,19 @@ fun SubmitSale(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 40.dp)
             .shadow(
                 elevation = 10.dp,
                 spotColor = MP_Black,
                 shape = RoundedCornerShape(7.5.dp)
             )
             .clip(RoundedCornerShape(7.5.dp))
-            .background(MP_Green)
+            .background(tintColor)
             .padding(
                 vertical = 5.dp,
             )
     ) {
         Text(
-            text = "Potvrdi prodaju",
+            text = text,
             style = MaterialTheme.typography.h6,
             color = MP_White,
             fontWeight = FontWeight.W300,

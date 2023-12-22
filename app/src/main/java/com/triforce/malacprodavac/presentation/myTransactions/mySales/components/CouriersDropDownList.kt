@@ -26,6 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.triforce.malacprodavac.domain.model.Courier
+import com.triforce.malacprodavac.domain.model.Order
+import com.triforce.malacprodavac.presentation.myTransactions.mySales.MySalesEvent
+import com.triforce.malacprodavac.presentation.myTransactions.mySales.MySalesViewModel
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_White
 
@@ -33,6 +36,8 @@ import com.triforce.malacprodavac.ui.theme.MP_White
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CouriersDropDownList(
+    viewModel: MySalesViewModel,
+    order: Order,
     couriers: List<Courier> = emptyList(),
     selectedCourier: String? = null,
     handleSelect: (Any) -> Unit,
@@ -105,6 +110,7 @@ fun CouriersDropDownList(
                             selected = "${courier.user?.firstName} ${courier.user?.lastName}"
                             isExpanded = false
                             handleSelect(courier)
+                            viewModel.onEvent(MySalesEvent.CourierIdChanged(courier.id, order.id))
                         },
                         modifier = Modifier.fillMaxWidth(),
                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding

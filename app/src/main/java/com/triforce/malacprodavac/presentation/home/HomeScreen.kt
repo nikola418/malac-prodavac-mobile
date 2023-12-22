@@ -43,6 +43,7 @@ import com.triforce.malacprodavac.presentation.home.components.GreetingSection
 import com.triforce.malacprodavac.presentation.home.components.RecommendedFeaturesSection
 import com.triforce.malacprodavac.ui.theme.MP_Green
 import com.triforce.malacprodavac.ui.theme.MP_GreenDark
+import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
 import com.triforce.malacprodavac.ui.theme.MP_Pink
 import com.triforce.malacprodavac.ui.theme.MP_White
 
@@ -105,16 +106,16 @@ fun HomeScreen(
             id = 1,
             title = "Moje prodaje",
             graphicID = Icons.Default.ShoppingCartCheckout,
-            color1 = MP_Green,
-            color2 = MP_Green,
+            color1 = MP_Pink,
+            color2 = MP_Pink,
             screen = Screen.MySales
         ),
         Feature(
             id = 1,
             title = "Moje dostave",
             graphicID = Icons.Default.DeliveryDining,
-            color1 = MP_Green,
-            color2 = MP_Green,
+            color1 = MP_Orange_Dark,
+            color2 = MP_Orange_Dark,
             screen = Screen.MyDeliveries
         ),
         Feature(

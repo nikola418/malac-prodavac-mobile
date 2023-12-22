@@ -105,28 +105,54 @@ fun MySalesRow(
                 fontWeight = FontWeight.W400
             )
 
-            if (order.orderStatus == OrderStatus.Ordered.toString()) {
-                Spacer(modifier = Modifier.padding(12.dp))
-                CouriersDropDownList(
-                    couriers = viewModel.state.couriers,
-                    selectedCourier = "----",
-                    handleSelect = { courier ->
-                        viewModel.onEvent(
-                            MySalesEvent.CourierIdChanged(
-                                (courier as Courier).id,
-                                order.id
+            if (order.accepted) {
+                if (order.orderStatus == OrderStatus.Ordered.toString()) {
+                    Spacer(modifier = Modifier.padding(12.dp))
+                    CouriersDropDownList(
+                        couriers = viewModel.state.couriers,
+                        selectedCourier = "----",
+                        handleSelect = { courier ->
+                            viewModel.onEvent(
+                                MySalesEvent.CourierIdChanged(
+                                    (courier as Courier).id,
+                                    order.id
+                                )
                             )
-                        )
-                    },
-                    label = "Izaberi kurira",
-                    fill = true
-                )
+                        },
+                        label = "Izaberi kurira",
+                        fill = true,
+                        order = order,
+                        viewModel = viewModel
+                    )
+                    Spacer(modifier = Modifier.padding(12.dp))
+                    SubmitSale(
+                        text = "Dodeli kurira",
+                        tintColor = MP_Orange_Dark,
+                        modifier = Modifier.clickable {
+                            viewModel.onEvent(MySalesEvent.Submit(order.id))
+                        }
+                    )
+                    Spacer(modifier = Modifier.padding(12.dp))
+                } else {
+                    Spacer(modifier = Modifier.padding(6.dp))
+                    Text(
+                        text = "Dodeljen kurir #${order.courierId}",
+                        style = MaterialTheme.typography.body1,
+                        color = MP_Black,
+                        fontWeight = FontWeight.W300
+                    )
+                    Spacer(modifier = Modifier.padding(12.dp))
+                }
+            } else {
                 Spacer(modifier = Modifier.padding(12.dp))
                 SubmitSale(
-                    Modifier.clickable {
-                        viewModel.onEvent(MySalesEvent.Submit(order.id))
+                    text = "Potvrdi porudžbinu",
+                    tintColor = MP_Green,
+                    modifier = Modifier.clickable {
+                        viewModel.onEvent(MySalesEvent.AcceptOrder(order.id))
                     }
                 )
+                Spacer(modifier = Modifier.padding(12.dp))
             }
 
             Icon(

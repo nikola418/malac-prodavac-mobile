@@ -10,7 +10,7 @@ data class Order(
     val id: Int,
     val productId: Int,
     val customerId: Int,
-    val courierId: Int?,
+    var courierId: Int?,
     val accepted: Boolean,
     val updatedAt: String,
     val createdAt: String,
