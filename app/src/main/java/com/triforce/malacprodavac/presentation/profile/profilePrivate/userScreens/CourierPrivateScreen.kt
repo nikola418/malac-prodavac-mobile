@@ -155,7 +155,11 @@ fun CourierPrivateScreen(
                         placeholder = "Kontakt telefon"
                     )
                     Button(
-                        onClick = { navController.navigate(Screen.MapScreen.route) },
+                        onClick = {
+                            Cordinates.isLocation = true
+                            Cordinates.isAvailable = false
+                            navController.navigate(Screen.MapScreen.route)
+                                  },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
