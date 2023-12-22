@@ -1,7 +1,6 @@
-package com.triforce.malacprodavac.presentation.myTransactions.mySales.components
+package com.triforce.malacprodavac.presentation.myTransactions.myDeliveries.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,21 +21,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.triforce.malacprodavac.R
-import com.triforce.malacprodavac.domain.model.Courier
 import com.triforce.malacprodavac.domain.model.Order
-import com.triforce.malacprodavac.presentation.myTransactions.mySales.MySalesEvent
-import com.triforce.malacprodavac.presentation.myTransactions.mySales.MySalesViewModel
+import com.triforce.malacprodavac.presentation.myTransactions.myDeliveries.MyDeliveriesViewModel
 import com.triforce.malacprodavac.ui.theme.MP_Black
-import com.triforce.malacprodavac.ui.theme.MP_Green
+import com.triforce.malacprodavac.ui.theme.MP_Orange
 import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
 import com.triforce.malacprodavac.ui.theme.MP_Pink
 import com.triforce.malacprodavac.ui.theme.MP_White
-import com.triforce.malacprodavac.util.enum.OrderStatus
 
 @Composable
-fun MySalesRow(
+fun MyDeliveriesRow(
     navController: NavController,
-    viewModel: MySalesViewModel,
+    viewModel: MyDeliveriesViewModel,
     order: Order,
     id: Int,
 ) {
@@ -105,34 +101,10 @@ fun MySalesRow(
                 fontWeight = FontWeight.W400
             )
 
-            if (order.orderStatus == OrderStatus.Ordered.toString()) {
-                Spacer(modifier = Modifier.padding(12.dp))
-                CouriersDropDownList(
-                    couriers = viewModel.state.couriers,
-                    selectedCourier = "----",
-                    handleSelect = { courier ->
-                        viewModel.onEvent(
-                            MySalesEvent.CourierIdChanged(
-                                (courier as Courier).id,
-                                order.id
-                            )
-                        )
-                    },
-                    label = "Izaberi kurira",
-                    fill = true
-                )
-                Spacer(modifier = Modifier.padding(12.dp))
-                SubmitSale(
-                    Modifier.clickable {
-                        viewModel.onEvent(MySalesEvent.Submit(order.id))
-                    }
-                )
-            }
-
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.logo_green),
                 contentDescription = "DeleteOrder",
-                tint = MP_Green,
+                tint = MP_Orange,
                 modifier = Modifier
                     .size(30.dp)
             )

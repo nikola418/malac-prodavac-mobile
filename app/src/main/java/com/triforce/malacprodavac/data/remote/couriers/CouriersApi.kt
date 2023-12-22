@@ -1,7 +1,9 @@
 package com.triforce.malacprodavac.data.remote.couriers
 
 import com.triforce.malacprodavac.data.remote.couriers.dto.CreateCourierDto
+import com.triforce.malacprodavac.data.remote.dto.PaginationResponse
 import com.triforce.malacprodavac.domain.model.Courier
+import com.triforce.malacprodavac.domain.model.Order
 import com.triforce.malacprodavac.domain.model.couriers.UpdateCourier
 import com.triforce.malacprodavac.domain.model.pagination.PaginationResult
 import retrofit2.http.Body
@@ -25,6 +27,9 @@ interface CouriersApi {
 
     @PATCH("$ROUTE/{id}")
     suspend fun updateCourier(@Path("id") courierId: Int, @Body body: UpdateCourier): Courier
+
+    @GET("${ROUTE}/{id}/orders")
+    suspend fun getCourierOrders(@Path("id") id: Int): PaginationResponse<Order>
 
     companion object {
         const val ROUTE = "/couriers"

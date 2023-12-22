@@ -8,11 +8,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DeliveryDining
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Shop
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.ShoppingCartCheckout
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -100,15 +104,23 @@ fun HomeScreen(
         Feature(
             id = 1,
             title = "Moje prodaje",
-            graphicID = Icons.Default.Favorite,
+            graphicID = Icons.Default.ShoppingCartCheckout,
             color1 = MP_Green,
             color2 = MP_Green,
             screen = Screen.MySales
         ),
         Feature(
             id = 1,
+            title = "Moje dostave",
+            graphicID = Icons.Default.DeliveryDining,
+            color1 = MP_Green,
+            color2 = MP_Green,
+            screen = Screen.MyDeliveries
+        ),
+        Feature(
+            id = 1,
             title = "Moje kupovine",
-            graphicID = Icons.Default.Favorite,
+            graphicID = Icons.Default.Shop,
             color1 = MP_Green,
             color2 = MP_Green,
             screen = Screen.MyPurchases
@@ -116,7 +128,7 @@ fun HomeScreen(
         Feature(
             id = 1,
             title = "Istorija transakcija",
-            graphicID = Icons.Default.Favorite,
+            graphicID = Icons.Default.History,
             color1 = MP_Green,
             color2 = MP_Green,
             screen = Screen.TransactionHistory

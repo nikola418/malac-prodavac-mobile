@@ -30,14 +30,15 @@ class MySalesViewModel @Inject constructor(
 
     fun onEvent(event: MySalesEvent) {
         when (event) {
-            else -> {}
+            is MySalesEvent.CourierIdChanged -> TODO()
+            is MySalesEvent.Submit -> TODO()
         }
     }
 
     private fun getShopOrders() {
         viewModelScope.launch {
-            state.user?.shop?.id?.let {
-                shopRepository.getShopOrders(it, true).collect { result ->
+            state.user?.shop?.id?.let { shopId ->
+                shopRepository.getShopOrders(shopId, true).collect { result ->
                     when (result) {
                         is Resource.Success -> {
                             result.data?.let {
