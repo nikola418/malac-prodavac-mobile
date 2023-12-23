@@ -1,6 +1,7 @@
 package com.triforce.malacprodavac.presentation.myTransactions.transactionHistory.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -25,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.triforce.malacprodavac.R
+import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.domain.model.Order
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Green
@@ -70,9 +73,6 @@ fun TransactionHistoryRow(
             .clip(RoundedCornerShape(10.dp))
             .fillMaxWidth()
             .padding(10.dp)
-        /*.clickable {
-            navController.navigate(Screen.DetailsOrderScreen.route)
-        }*/
     ) {
         Column(
             modifier = Modifier.padding(10.dp)
@@ -124,6 +124,18 @@ fun TransactionHistoryRow(
                 )
             }
         }
+        Icon(
+            imageVector = Icons.Default.ArrowForwardIos,
+            contentDescription = "ViewMore",
+            tint = MP_Black,
+            modifier = Modifier
+                .padding(bottom = 12.5.dp, end = 12.5.dp)
+                .size(21.dp)
+                .align(Alignment.BottomEnd)
+                .clickable {
+                    navController.navigate(Screen.TransactionDetails.route + "?id=${order.id}")
+                }
+        )
         Icon(
             imageVector = Icons.Outlined.CheckCircle,
             contentDescription = "Completed",

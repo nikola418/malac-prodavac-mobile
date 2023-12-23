@@ -254,7 +254,16 @@ fun Navigation() {
             TransactionHistoryScreen(navController = navController)
         }
 
-        composable(route = Screen.TransactionDetails.route) {
+        composable(route = Screen.TransactionDetails.route + "?id={id}",
+            arguments = listOf(
+                navArgument(
+                    name = "id"
+                ) {
+                    type = NavType.IntType
+                    defaultValue = -1
+                }
+            )
+        ) {
             TransactionDetailsScreen(navController = navController)
         }
 

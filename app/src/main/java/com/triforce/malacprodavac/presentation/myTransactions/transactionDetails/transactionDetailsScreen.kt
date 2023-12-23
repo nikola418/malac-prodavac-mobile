@@ -13,10 +13,10 @@ fun TransactionDetailsScreen(
 ) {
     Scaffold(
         topBar = {
-            GoBackComp("Detalji Transakcije", navController, true)
+            GoBackComp("Detalji", navController, true)
         },
         content = { padding ->
-            TransactionDetailsContentScreen(navController, padding)
+            TransactionDetailsContentScreen(padding)
         },
         bottomBar = {
             MyProductsBottomBar(navController)

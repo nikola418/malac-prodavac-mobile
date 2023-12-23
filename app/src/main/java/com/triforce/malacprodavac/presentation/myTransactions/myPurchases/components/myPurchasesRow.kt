@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.triforce.malacprodavac.R
+import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.domain.model.Order
 import com.triforce.malacprodavac.presentation.myTransactions.myPurchases.MyPurchasesEvent
 import com.triforce.malacprodavac.presentation.myTransactions.myPurchases.MyPurchasesViewModel
@@ -85,9 +87,6 @@ fun MyPurchasesRow(
             .clip(RoundedCornerShape(10.dp))
             .fillMaxWidth()
             .padding(10.dp)
-        /*.clickable {
-            navController.navigate(Screen.DetailsOrderScreen.route)
-        }*/
     ) {
         Column(
             modifier = Modifier.padding(10.dp)
@@ -164,7 +163,18 @@ fun MyPurchasesRow(
                 )
             }
         }
-
+        Icon(
+            imageVector = Icons.Default.ArrowForwardIos,
+            contentDescription = "ViewMore",
+            tint = MP_Black,
+            modifier = Modifier
+                .padding(bottom = 12.5.dp, end = 12.5.dp)
+                .size(21.dp)
+                .align(Alignment.BottomEnd)
+                .clickable {
+                    navController.navigate(Screen.TransactionDetails.route + "?id=${order.id}")
+                }
+        )
         Icon(
             imageVector = Icons.Default.DeleteOutline,
             contentDescription = "DeleteOrder",
