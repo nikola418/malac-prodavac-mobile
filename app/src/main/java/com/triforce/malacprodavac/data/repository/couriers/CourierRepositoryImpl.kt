@@ -5,6 +5,7 @@ import com.triforce.malacprodavac.data.remote.couriers.CouriersApi
 import com.triforce.malacprodavac.data.remote.couriers.dto.CreateCourierDto
 import com.triforce.malacprodavac.domain.model.Courier
 import com.triforce.malacprodavac.domain.model.CreateCourier
+import com.triforce.malacprodavac.domain.model.Order
 import com.triforce.malacprodavac.domain.model.couriers.UpdateCourier
 import com.triforce.malacprodavac.domain.model.pagination.PaginationResult
 import com.triforce.malacprodavac.domain.repository.CourierRepository
@@ -124,6 +125,34 @@ class CourierRepositoryImpl @Inject constructor(
 
             result?.let {
                 emit(Resource.Success(it))
+            }
+
+            emit(Resource.Loading(false))
+        }
+    }
+
+    override suspend fun getCourierOrders(
+        id: Int,
+        fetchFromRemote: Boolean
+    ): Flow<Resource<List<Order>>> {
+        return flow {
+            emit(Resource.Loading(isLoading = true))
+
+            val remoteShopOrders = try {
+                api.getCourierOrders(id)
+            } catch (e: IOException) {
+                e.printStackTrace()
+                emit(Resource.Error("Couldn't load shop orders"))
+                null
+
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                emit(Resource.Error("Couldn't load shop orders data"))
+                null
+            }
+
+            remoteShopOrders?.let {
+                emit(Resource.Success(remoteShopOrders.data.map { jt -> jt }))
             }
 
             emit(Resource.Loading(false))

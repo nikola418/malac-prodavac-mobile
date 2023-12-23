@@ -6,6 +6,7 @@ import com.triforce.malacprodavac.data.mappers.toShop
 import com.triforce.malacprodavac.data.remote.shops.ShopsApi
 import com.triforce.malacprodavac.data.remote.shops.dto.CreateShopDto
 import com.triforce.malacprodavac.domain.model.CreateShop
+import com.triforce.malacprodavac.domain.model.Order
 import com.triforce.malacprodavac.domain.model.shops.Shop
 import com.triforce.malacprodavac.domain.model.shops.UpdateShop
 import com.triforce.malacprodavac.domain.repository.ShopRepository
@@ -168,6 +169,34 @@ class ShopRepositoryImpl @Inject constructor(
             result?.let {
                 emit(Resource.Success(it))
             }
+            emit(Resource.Loading(false))
+        }
+    }
+
+    override suspend fun getShopOrders(
+        id: Int,
+        fetchFromRemote: Boolean
+    ): Flow<Resource<List<Order>>> {
+        return flow {
+            emit(Resource.Loading(isLoading = true))
+
+            val remoteShopOrders = try {
+                api.getShopOrders(id)
+            } catch (e: IOException) {
+                e.printStackTrace()
+                emit(Resource.Error("Couldn't load shop orders"))
+                null
+
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                emit(Resource.Error("Couldn't load shop orders data"))
+                null
+            }
+
+            remoteShopOrders?.let {
+                emit(Resource.Success(remoteShopOrders.data.map { jt -> jt }))
+            }
+
             emit(Resource.Loading(false))
         }
     }

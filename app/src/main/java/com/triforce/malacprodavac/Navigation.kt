@@ -23,8 +23,12 @@ import com.triforce.malacprodavac.presentation.home.shopHome.ShopHomeScreen
 import com.triforce.malacprodavac.presentation.login.LoginScreen
 import com.triforce.malacprodavac.presentation.maps.MapScreen
 import com.triforce.malacprodavac.presentation.myProducts.MyProductsScreen
+import com.triforce.malacprodavac.presentation.myTransactions.myDeliveries.MyDeliveriesScreen
+import com.triforce.malacprodavac.presentation.myTransactions.myPurchases.MyPurchasesScreen
+import com.triforce.malacprodavac.presentation.myTransactions.mySales.MySalesScreen
+import com.triforce.malacprodavac.presentation.myTransactions.transactionDetails.TransactionDetailsScreen
+import com.triforce.malacprodavac.presentation.myTransactions.transactionHistory.TransactionHistoryScreen
 import com.triforce.malacprodavac.presentation.notifications.NotificationsScreen
-import com.triforce.malacprodavac.presentation.orders.OrderScreen
 import com.triforce.malacprodavac.presentation.product.ProductScreen
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateScreen
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.userScreens.CourierPrivateScreen
@@ -34,7 +38,6 @@ import com.triforce.malacprodavac.presentation.profile.profilePublic.ProfilePubl
 import com.triforce.malacprodavac.presentation.registration.RegistrationScreen
 import com.triforce.malacprodavac.presentation.store.StoreScreen
 import com.triforce.malacprodavac.presentation.store.category.StoreCategoryScreen
-import com.triforce.malacprodavac.presentation.transactions.TransactionScreen
 
 @Composable
 fun Navigation() {
@@ -195,19 +198,9 @@ fun Navigation() {
         ) {
             AddProductImageScreen(navController = navController)
         }
-
-        composable(route = Screen.OrderScreen.route) {
-            OrderScreen(navController = navController)
-        }
-
         composable(route = Screen.MapScreen.route) {
             MapScreen(navController = navController)
         }
-
-        composable(route = Screen.TransactionScreen.route) {
-            TransactionScreen(navController = navController)
-        }
-
         composable(route = Screen.FavoriteProductsScreen.route) {
             FavoriteScreen(navController = navController)
         }
@@ -241,6 +234,37 @@ fun Navigation() {
 
         composable(route = Screen.CustomerPrivateScreen.route) {
             CustomerPrivateScreen(navController = navController)
+        }
+
+        // my transactions
+
+        composable(route = Screen.MySales.route) {
+            MySalesScreen(navController = navController)
+        }
+
+        composable(route = Screen.MyPurchases.route) {
+            MyPurchasesScreen(navController = navController)
+        }
+
+        composable(route = Screen.MyDeliveries.route) {
+            MyDeliveriesScreen(navController = navController)
+        }
+
+        composable(route = Screen.TransactionHistory.route) {
+            TransactionHistoryScreen(navController = navController)
+        }
+
+        composable(route = Screen.TransactionDetails.route + "?id={id}",
+            arguments = listOf(
+                navArgument(
+                    name = "id"
+                ) {
+                    type = NavType.IntType
+                    defaultValue = -1
+                }
+            )
+        ) {
+            TransactionDetailsScreen(navController = navController)
         }
 
         composable(route = Screen.AdvertisingProductScreen.route + "?productId={productId}",

@@ -1,20 +1,14 @@
 package com.triforce.malacprodavac.presentation.chat
 
-import androidx.annotation.UiThread
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.triforce.malacprodavac.domain.model.Order
-import com.triforce.malacprodavac.domain.model.products.Product
-import com.triforce.malacprodavac.domain.repository.OrderRepository
 import com.triforce.malacprodavac.domain.use_case.profile.Profile
 import com.triforce.malacprodavac.domain.util.Resource
 import com.triforce.malacprodavac.presentation.chat.components.SocketHandler
-import com.triforce.malacprodavac.presentation.home.HomeEvent
 import com.triforce.malacprodavac.presentation.home.HomeScreenState
-import com.triforce.malacprodavac.presentation.orders.OrderState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.socket.client.Socket
 import kotlinx.coroutines.launch
@@ -39,7 +33,7 @@ class ChatViewModel @Inject constructor(
         getToken()
     }
 
-    fun initSocket(){
+    fun initSocket() {
         SocketHandler.setSocket()
         mSocket = SocketHandler.getSocket()
 
@@ -59,8 +53,8 @@ class ChatViewModel @Inject constructor(
             }
 
             ChatEvent.RecieveMessage -> {
-                mSocket!!.on("recieve_msg"){ args ->
-                    if ( args[0] != null ) {
+                mSocket!!.on("recieve_msg") { args ->
+                    if (args[0] != null) {
                         val msg = args[0] as String
 
                         // msgBox.text = msg

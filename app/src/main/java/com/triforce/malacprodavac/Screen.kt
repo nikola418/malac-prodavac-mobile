@@ -15,7 +15,6 @@ sealed class Screen(val route: String) {
     data object AddProduct : Screen("add_product")
     data object EditProduct : Screen("edit_product")
     data object AddProductImage : Screen("add_product_image")
-    data object OrderScreen : Screen("order_screen")
     data object TransactionScreen : Screen("transaction_screen")
     data object FavoriteProductsScreen : Screen("favorite_products")
     data object MapScreen : Screen("map_screen")
@@ -33,6 +32,12 @@ sealed class Screen(val route: String) {
     data object CustomerPrivateScreen : Screen("customer_private_screen")
     data object AdvertisingProductScreen : Screen("advertising_product_screen")
 
+    data object MyDeliveries : Screen("my_deliveries")
+    data object MyPurchases : Screen("my_purchases")
+    data object MySales : Screen("my_sales")
+    data object TransactionDetails : Screen("transaction_details")
+    data object TransactionHistory : Screen("transaction_history")
+
     fun withArgs(vararg args: String): String {
         return buildString {
             append(route)
@@ -41,4 +46,5 @@ sealed class Screen(val route: String) {
             }
         }
     }
+
 }

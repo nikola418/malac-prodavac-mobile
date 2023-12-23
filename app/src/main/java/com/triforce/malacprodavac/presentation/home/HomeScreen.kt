@@ -8,11 +8,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DeliveryDining
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Shop
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.ShoppingCartCheckout
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -37,9 +41,9 @@ import com.triforce.malacprodavac.presentation.components.BottomNavigationMenu
 import com.triforce.malacprodavac.presentation.components.RoundedBackgroundComp
 import com.triforce.malacprodavac.presentation.home.components.GreetingSection
 import com.triforce.malacprodavac.presentation.home.components.RecommendedFeaturesSection
-import com.triforce.malacprodavac.presentation.orders.OrderViewModel
 import com.triforce.malacprodavac.ui.theme.MP_Green
 import com.triforce.malacprodavac.ui.theme.MP_GreenDark
+import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
 import com.triforce.malacprodavac.ui.theme.MP_Pink
 import com.triforce.malacprodavac.ui.theme.MP_White
 
@@ -48,7 +52,6 @@ import com.triforce.malacprodavac.ui.theme.MP_White
 fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel(),
-    viewModelOrder: OrderViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
 
@@ -93,14 +96,6 @@ fun HomeScreen(
         ),
         Feature(
             id = 1,
-            title = "Porudžbine",
-            graphicID = ImageVector.vectorResource(R.drawable.round_featured_play_list_24),
-            color1 = MP_Green,
-            color2 = MP_Green,
-            screen = Screen.OrderScreen
-        ),
-        Feature(
-            id = 1,
             title = "Omiljeni proizvodi",
             graphicID = Icons.Default.Favorite,
             color1 = MP_GreenDark,
@@ -109,11 +104,35 @@ fun HomeScreen(
         ),
         Feature(
             id = 1,
-            title = "Omiljeni prodavci",
-            graphicID = Icons.Default.Favorite,
+            title = "Moje prodaje",
+            graphicID = Icons.Default.ShoppingCartCheckout,
+            color1 = MP_Pink,
+            color2 = MP_Pink,
+            screen = Screen.MySales
+        ),
+        Feature(
+            id = 1,
+            title = "Moje dostave",
+            graphicID = Icons.Default.DeliveryDining,
+            color1 = MP_Orange_Dark,
+            color2 = MP_Orange_Dark,
+            screen = Screen.MyDeliveries
+        ),
+        Feature(
+            id = 1,
+            title = "Moje kupovine",
+            graphicID = Icons.Default.Shop,
             color1 = MP_Green,
             color2 = MP_Green,
-            screen = Screen.FavoriteShopScreen
+            screen = Screen.MyPurchases
+        ),
+        Feature(
+            id = 1,
+            title = "Istorija transakcija",
+            graphicID = Icons.Default.History,
+            color1 = MP_Green,
+            color2 = MP_Green,
+            screen = Screen.TransactionHistory
         )
     )
 
