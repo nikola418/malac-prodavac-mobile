@@ -5,7 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.triforce.malacprodavac.data.remote.orders.dto.UpdateOrderDto
 import com.triforce.malacprodavac.domain.repository.CourierRepository
+import com.triforce.malacprodavac.domain.repository.OrderRepository
 import com.triforce.malacprodavac.domain.use_case.profile.Profile
 import com.triforce.malacprodavac.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +18,8 @@ import javax.inject.Inject
 class MyDeliveriesViewModel @Inject constructor(
 
     private val profile: Profile,
-    private val courierRepository: CourierRepository
+    private val courierRepository: CourierRepository,
+    private val orderRepository: OrderRepository
 
 ) : ViewModel() {
 
@@ -28,8 +31,15 @@ class MyDeliveriesViewModel @Inject constructor(
 
     fun onEvent(event: MyDeliveriesEvent) {
         when (event) {
-            is MyDeliveriesEvent.OrderStatusChanged -> TODO()
-            is MyDeliveriesEvent.Submit -> TODO()
+            is MyDeliveriesEvent.OrderStatusChanged ->
+                state.orders.find { it.id == event.orderId }?.apply {
+                    orderStatus = event.orderStatus.toString()
+                }
+
+            is MyDeliveriesEvent.Submit ->
+                state.orders.find { it.id == event.orderId }?.orderStatus?.let { orderStatus ->
+                    updateOrder(event.orderId, orderStatus)
+                }
         }
     }
 
@@ -47,6 +57,24 @@ class MyDeliveriesViewModel @Inject constructor(
                         is Resource.Error -> handleError()
                         is Resource.Loading -> handleLoading(result.isLoading)
                     }
+                }
+            }
+        }
+    }
+
+    private fun updateOrder(orderId: Int, orderStatus: String) {
+        viewModelScope.launch {
+            orderRepository.updateOrder(
+                orderId, UpdateOrderDto(
+                    orderStatus = orderStatus,
+                    accepted = null,
+                    courierId = null
+                )
+            ).collect { result ->
+                when (result) {
+                    is Resource.Success -> getCourierOrders()
+                    is Resource.Error -> handleError()
+                    is Resource.Loading -> handleLoading(result.isLoading)
                 }
             }
         }

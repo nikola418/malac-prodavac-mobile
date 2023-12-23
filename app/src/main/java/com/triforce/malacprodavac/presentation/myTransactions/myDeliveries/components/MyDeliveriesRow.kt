@@ -1,6 +1,7 @@
 package com.triforce.malacprodavac.presentation.myTransactions.myDeliveries.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,12 +23,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.domain.model.Order
+import com.triforce.malacprodavac.presentation.myTransactions.myDeliveries.MyDeliveriesEvent
 import com.triforce.malacprodavac.presentation.myTransactions.myDeliveries.MyDeliveriesViewModel
+import com.triforce.malacprodavac.presentation.myTransactions.mySales.components.SubmitSale
 import com.triforce.malacprodavac.ui.theme.MP_Black
+import com.triforce.malacprodavac.ui.theme.MP_Green
 import com.triforce.malacprodavac.ui.theme.MP_Orange
 import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
 import com.triforce.malacprodavac.ui.theme.MP_Pink
 import com.triforce.malacprodavac.ui.theme.MP_White
+import com.triforce.malacprodavac.util.enum.OrderStatus
 
 @Composable
 fun MyDeliveriesRow(
@@ -100,6 +105,31 @@ fun MyDeliveriesRow(
                 color = MP_Pink,
                 fontWeight = FontWeight.W400
             )
+            Spacer(modifier = Modifier.padding(12.dp))
+
+            OrderStatusDropDownList(
+                orderStatusList = listOf(
+                    OrderStatus.Packaged,
+                    OrderStatus.InDelivery,
+                    OrderStatus.Received
+                ),
+                viewModel = viewModel,
+                order = order,
+                selectedStatus = order.orderStatus,
+                handleSelect = {},
+                label = "Izaberi status",
+                fill = true
+            )
+
+            Spacer(modifier = Modifier.padding(12.dp))
+            SubmitSale(
+                text = "Promeni status paketa",
+                tintColor = MP_Green,
+                modifier = Modifier.clickable {
+                    viewModel.onEvent(MyDeliveriesEvent.Submit(order.id))
+                }
+            )
+
             Spacer(modifier = Modifier.padding(12.dp))
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.logo_green),

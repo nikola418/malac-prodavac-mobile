@@ -5,7 +5,7 @@ import com.triforce.malacprodavac.domain.model.products.Product
 data class Order(
     val quantity: Double,
     val paymentMethod: String, //convert to enum
-    val orderStatus: String, //convert to enum
+    var orderStatus: String, //convert to enum
     val deliveryMethod: String, //convert to enum
     val id: Int,
     val productId: Int,

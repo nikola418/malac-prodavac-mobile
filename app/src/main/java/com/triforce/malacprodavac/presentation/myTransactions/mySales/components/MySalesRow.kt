@@ -11,8 +11,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CheckCircleOutline
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -28,6 +31,7 @@ import com.triforce.malacprodavac.presentation.myTransactions.mySales.MySalesEve
 import com.triforce.malacprodavac.presentation.myTransactions.mySales.MySalesViewModel
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Green
+import com.triforce.malacprodavac.ui.theme.MP_GreenDark
 import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
 import com.triforce.malacprodavac.ui.theme.MP_Pink
 import com.triforce.malacprodavac.ui.theme.MP_White
@@ -80,27 +84,33 @@ fun MySalesRow(
             modifier = Modifier.padding(10.dp)
         ) {
             Text(
-                text = "Dostava: " + orderDeliveryMethod,
-                style = MaterialTheme.typography.h6,
+                text = order.product.title,
+                style = MaterialTheme.typography.h4,
                 color = MP_Orange_Dark,
                 fontWeight = FontWeight.W400
             )
             Text(
-                text = "Status: " + orderStatus,
-                style = MaterialTheme.typography.body2,
+                text = "Dostava: " + orderDeliveryMethod,
+                style = MaterialTheme.typography.subtitle1,
                 color = MP_Black,
                 fontWeight = FontWeight.W300
             )
+            Text(
+                text = "Status: " + orderStatus,
+                style = MaterialTheme.typography.subtitle1,
+                color = MP_GreenDark,
+                fontWeight = FontWeight.W400
+            )
             Spacer(modifier = Modifier.padding(12.dp))
             Text(
-                text = "${order.quantity} X ${totalPrice} ${order.product.currency}",
+                text = "${order.quantity} ${order.product.unitOfMeasurement} Ukupno: ${totalPrice} ${order.product.currency}",
                 style = MaterialTheme.typography.body1,
                 color = MP_Black,
                 fontWeight = FontWeight.W300
             )
             Text(
                 text = "${date} ${time}",
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.body2,
                 color = MP_Pink,
                 fontWeight = FontWeight.W400
             )
@@ -119,14 +129,14 @@ fun MySalesRow(
                                 )
                             )
                         },
-                        label = "Izaberi kurira",
+                        label = "Izaberi kurira za dostavu",
                         fill = true,
                         order = order,
                         viewModel = viewModel
                     )
                     Spacer(modifier = Modifier.padding(12.dp))
                     SubmitSale(
-                        text = "Dodeli kurira",
+                        text = "Dodeli kurira za dostavu",
                         tintColor = MP_Orange_Dark,
                         modifier = Modifier.clickable {
                             viewModel.onEvent(MySalesEvent.Submit(order.id))
@@ -163,5 +173,16 @@ fun MySalesRow(
                     .size(30.dp)
             )
         }
+
+        if (order.accepted)
+            Icon(
+                imageVector = Icons.Outlined.CheckCircleOutline,
+                contentDescription = "Accepted",
+                tint = MP_Green,
+                modifier = Modifier
+                    .padding(top = 12.5.dp, end = 12.5.dp)
+                    .size(30.dp)
+                    .align(Alignment.TopEnd)
+            )
     }
 }
