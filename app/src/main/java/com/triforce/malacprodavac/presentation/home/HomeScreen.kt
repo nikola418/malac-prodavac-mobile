@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PersonPin
 import androidx.compose.material.icons.filled.Shop
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.ShoppingCartCheckout
@@ -33,7 +34,6 @@ import com.triforce.malacprodavac.Feature
 import com.triforce.malacprodavac.LinearGradient
 import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.Screen
-import com.triforce.malacprodavac.presentation.FavProducts.FavoriteViewModel
 import com.triforce.malacprodavac.presentation.components.BottomNavigationMenu
 import com.triforce.malacprodavac.presentation.components.RoundedBackgroundComp
 import com.triforce.malacprodavac.presentation.home.components.GreetingSection
@@ -52,13 +52,13 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state
-
     val user = state.currentUser
-    var role = "Kupac"
 
     Cordinates.isLocation = false
     Cordinates.isAvailable = false
     Cordinates.isRoute = false
+
+    var role = "Kupac"
 
     var features = listOf(
         Feature(
@@ -97,25 +97,17 @@ fun HomeScreen(
             id = 1,
             title = "Omiljeni proizvodi",
             graphicID = Icons.Default.Favorite,
-            color1 = MP_GreenDark,
-            color2 = MP_GreenDark,
+            color1 = MP_Green,
+            color2 = MP_Green,
             screen = Screen.FavoriteProductsScreen
         ),
         Feature(
             id = 1,
-            title = "Moje prodaje",
-            graphicID = Icons.Default.ShoppingCartCheckout,
-            color1 = MP_Pink,
-            color2 = MP_Pink,
-            screen = Screen.MySales
-        ),
-        Feature(
-            id = 1,
-            title = "Moje dostave",
-            graphicID = Icons.Default.DeliveryDining,
-            color1 = MP_Orange_Dark,
-            color2 = MP_Orange_Dark,
-            screen = Screen.MyDeliveries
+            title = "Omiljeni prodavci",
+            graphicID = Icons.Default.PersonPin,
+            color1 = MP_GreenDark,
+            color2 = MP_GreenDark,
+            screen = Screen.FavoriteShopScreen
         ),
         Feature(
             id = 1,
@@ -129,16 +121,27 @@ fun HomeScreen(
             id = 1,
             title = "Istorija transakcija",
             graphicID = Icons.Default.History,
-            color1 = MP_Green,
-            color2 = MP_Green,
+            color1 = MP_GreenDark,
+            color2 = MP_GreenDark,
             screen = Screen.TransactionHistory
         )
     )
 
     if (user != null) {
-        if (user.roles.contains("Shop") == false && user.roles.contains("Courier")) {
+        if (user.roles.contains("Courier")) {
             role = "Kurir"
-        } else if (user.roles.contains("Shop")) {
+            features = listOf(
+                Feature(
+                    id = 1,
+                    title = "Moje dostave",
+                    graphicID = Icons.Default.DeliveryDining,
+                    color1 = MP_Orange_Dark,
+                    color2 = MP_Orange_Dark,
+                    screen = Screen.MyDeliveries
+                )
+            ) + features
+        }
+        if (user.roles.contains("Shop")) {
             role = "Prodavac"
             features = listOf(
                 Feature(
@@ -151,6 +154,14 @@ fun HomeScreen(
                 ),
                 Feature(
                     id = 1,
+                    title = "Moje prodaje",
+                    graphicID = Icons.Default.ShoppingCartCheckout,
+                    color1 = MP_Pink,
+                    color2 = MP_Pink,
+                    screen = Screen.MySales
+                ),
+                Feature(
+                    id = 1,
                     title = "Dodaj novi proizvod",
                     graphicID = Icons.Default.Add,
                     color1 = MP_Pink,
@@ -160,6 +171,7 @@ fun HomeScreen(
             ) + features
         }
     }
+
     if (!state.isLoading) {
         Scaffold(
             modifier = Modifier
