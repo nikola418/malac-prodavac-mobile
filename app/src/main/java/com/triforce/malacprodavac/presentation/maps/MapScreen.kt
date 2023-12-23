@@ -5,12 +5,16 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -18,16 +22,18 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.Clear
-import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Style
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -90,109 +96,33 @@ fun MapScreen(
 
     Scaffold(
         scaffoldState = scaffoldState,
-        bottomBar = {
-            BottomNavigationMenu(
-                navController = navController,
-                items = listOf(
-                    BottomNavigationMenuContent(
-                        title = "Početna",
-                        graphicID = Icons.Default.Home,
-                        screen = Screen.HomeScreen,
-                        isActive = false
-                    ),
-                    BottomNavigationMenuContent(
-                        title = "Market",
-                        graphicID = ImageVector.vectorResource(R.drawable.logo_green),
-                        screen = Screen.StoreScreen,
-                        isActive = false
-                    ),
-                    BottomNavigationMenuContent(
-                        title = "Profil",
-                        graphicID = Icons.Default.Person,
-                        screen = Screen.PrivateProfile,
-                        isActive = false
-                    ),
-                    BottomNavigationMenuContent(
-                        title = "Korpa",
-                        graphicID = Icons.Default.ShoppingCart,
-                        screen = Screen.CartScreen,
-                        isActive = false
-                    )
-                )
-            )
-        },
         content = { padding ->
             Box(
                 modifier = Modifier.padding(padding)
             ) {
                 GoogleMap(
-                    cameraPositionState = CameraPositionState(
-                        position = cameraPositionState.value
-                    ),
+                    cameraPositionState = CameraPositionState(position = cameraPositionState.value),
                     properties = viewModel.state.properties,
                     uiSettings = uiSettings,
-                    modifier = Modifier
-                        .fillMaxSize(),
+                    modifier = Modifier.fillMaxSize(),
                     onMapClick = {
-                        if(Cordinates.isLocation)
-                        {
+                        if (Cordinates.isLocation) {
                             viewModel.onEvent(MapEvent.OnMapLongClick(it))
-                            Toast
-                                .makeText(
-                                    context,
-                                    "Izabrali ste lokaciju!",
-                                    Toast.LENGTH_LONG
-                                )
-                                .show()
                         }
-                        if(Cordinates.isAvailable)
-                        {
+                        if (Cordinates.isAvailable) {
                             viewModel.onEvent(MapEvent.OnMapAvailableLongClick(it))
-                            Toast
-                                .makeText(
-                                    context,
-                                    "Izabrali ste lokaciju oglašavanja proizvoda!",
-                                    Toast.LENGTH_LONG
-                                )
-                                .show()
                         }
-                        if(Cordinates.isRoute)
-                        {
-                            if(Cordinates.startRoute)
-                            {
+                        if (Cordinates.isRoute) {
+                            if (Cordinates.startRoute) {
                                 viewModel.onEvent(MapEvent.OnMapClickStartRoute(it))
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Izabrali ste početnu rutu obilaska!",
-                                        Toast.LENGTH_LONG
-                                    )
-                                    .show()
                                 Cordinates.startRoute = false
-                            }
-                            else
-                            {
+                            } else {
                                 viewModel.onEvent(MapEvent.OnMapClickEndRoute(it))
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Izabrali ste završnu rutu obilaska!",
-                                        Toast.LENGTH_LONG
-                                    )
-                                    .show()
                                 Cordinates.startRoute = true
                             }
                         }
                     }
-
                 ) {
-                    cameraPositionState.value = CameraPosition(
-                        cameraPositionState.value.target,
-                        cameraPositionState.value.zoom,
-                        cameraPositionState.value.tilt,
-                        cameraPositionState.value.bearing
-                    )
-
                     if (viewModel.state.selectedAddressLatitude != null && viewModel.state.selectedAddressLongitude != null) {
                         Marker(
                             position = LatLng(
@@ -200,21 +130,12 @@ fun MapScreen(
                                 viewModel.state.selectedAddressLongitude!!
                             ),
                             title = "Nova lokacija",
-                            snippet = "",
+                            snippet = "Nova lokacija",
                             onClick = {
-                                cameraPositionState.value = CameraPosition(
-                                    cameraPositionState.value.target,
-                                    cameraPositionState.value.zoom,
-                                    cameraPositionState.value.tilt,
-                                    cameraPositionState.value.bearing
-                                )
-
-                                //it.showInfoWindow()
                                 true
                             }
                         )
                     }
-
                     if (viewModel.state.selectedAvailableAddressLatitude != null && viewModel.state.selectedAvailableAddressLongitude != null) {
                         Marker(
                             position = LatLng(
@@ -222,21 +143,11 @@ fun MapScreen(
                                 viewModel.state.selectedAvailableAddressLongitude!!
                             ),
                             title = "Oglašavanje proizvoda",
-                            snippet = "",
                             onClick = {
-                                cameraPositionState.value = CameraPosition(
-                                    cameraPositionState.value.target,
-                                    cameraPositionState.value.zoom,
-                                    cameraPositionState.value.tilt,
-                                    cameraPositionState.value.bearing
-                                )
-
-                                //it.showInfoWindow()
                                 true
                             }
                         )
                     }
-
                     if (viewModel.state.selectedStartRouteLatitude != null && viewModel.state.selectedStartRouteLongitude != null) {
                         Marker(
                             position = LatLng(
@@ -244,65 +155,45 @@ fun MapScreen(
                                 viewModel.state.selectedStartRouteLongitude!!
                             ),
                             title = "Početna ruta",
-                            snippet = "Početna ruta",
                             onClick = {
-                                cameraPositionState.value = CameraPosition(
-                                    cameraPositionState.value.target,
-                                    cameraPositionState.value.zoom,
-                                    cameraPositionState.value.tilt,
-                                    cameraPositionState.value.bearing
-                                )
-
-                                //it.showInfoWindow()
                                 true
                             }
                         )
                     }
-
                     if (viewModel.state.selectedEndRouteLatitude != null && viewModel.state.selectedEndRouteLongitude != null) {
                         Marker(
                             position = LatLng(
                                 viewModel.state.selectedEndRouteLatitude!!,
                                 viewModel.state.selectedEndRouteLongitude!!
                             ),
-                            title = "Početna ruta",
-                            snippet = "",
+                            title = "Krajnja ruta",
                             onClick = {
-                                cameraPositionState.value = CameraPosition(
-                                    cameraPositionState.value.target,
-                                    cameraPositionState.value.zoom,
-                                    cameraPositionState.value.tilt,
-                                    cameraPositionState.value.bearing
-                                )
-
-                                //it.showInfoWindow()
                                 true
                             }
                         )
                     }
-
                     viewModel.state.shops!!.forEach { shop ->
-                        if (shop.user?.addressLatitude != null && shop.user.addressLongitude != null) {
-                            Marker(
-                                position = LatLng(
-                                    shop.user.addressLatitude,
-                                    shop.user.addressLongitude
-                                ),
-                                title = shop.businessName + "user id " + shop.user.id + " shop id " + shop.id,
-                                snippet = shop.user.firstName + " " + shop.user.lastName,
-//                                onInfoWindowLongClick = {
-//                                    viewModel.onEvent(MapEvent.OnInfoWindowLongClick(shop))
-//                                }.
-                                onClick = {
-                                    cameraPositionState.value = CameraPosition(
-                                        cameraPositionState.value.target,
-                                        cameraPositionState.value.zoom,
-                                        cameraPositionState.value.tilt,
-                                        cameraPositionState.value.bearing
-                                    )
 
+                        val shopLatLng =
+                            shop.user?.addressLatitude?.let { addressLatitude ->
+                                shop.user.addressLongitude?.let { addressLongitude ->
+                                    LatLng(addressLatitude, addressLongitude)
+                                }
+                            }
+
+                        val advertisingLatLng =
+                            shop.availableAtLatitude?.let { availableAtLatitude ->
+                                shop.availableAtLongitude?.let { availableAtLongitude ->
+                                    LatLng(availableAtLatitude, availableAtLongitude)
+                                }
+                            }
+
+                        if (shopLatLng != null) {
+                            Marker(
+                                position = shopLatLng,
+                                title = "ShopMarker",
+                                onClick = {
                                     viewModel.onEvent(MapEvent.OnInfoWindowLongClick(shop))
-                                    //it.showInfoWindow()
                                     true
                                 },
                                 icon = bitmapDescriptorFromVector(
@@ -312,31 +203,12 @@ fun MapScreen(
                             )
                         }
 
-                        if (shop.availableAtLatitude != null && shop.availableAtLongitude != null) {
+                        if (shopLatLng != null && advertisingLatLng != null && shopLatLng != advertisingLatLng) {
                             Marker(
-                                position = LatLng(
-                                    shop.availableAtLatitude,
-                                    shop.availableAtLongitude
-                                ),
-                                title = shop.businessName + "user id " + shop.user?.id + " shop id " + shop.id,
-                                snippet = if (shop.user != null) {
-                                    shop.user.firstName + " " + shop.user.lastName
-                                } else {
-                                    ""
-                                },
-                                onInfoWindowLongClick = {
-                                    viewModel.onEvent(MapEvent.OnInfoWindowLongClick(shop))
-                                },
+                                position = advertisingLatLng,
+                                title = "AdvertisingMarker",
                                 onClick = {
-                                    cameraPositionState.value = CameraPosition(
-                                        cameraPositionState.value.target,
-                                        cameraPositionState.value.zoom,
-                                        cameraPositionState.value.tilt,
-                                        cameraPositionState.value.bearing
-                                    )
-
                                     viewModel.onEvent(MapEvent.OnInfoWindowLongClick(shop))
-                                    //it.showInfoWindow()
                                     true
                                 },
                                 icon = bitmapDescriptorFromVector(
@@ -349,13 +221,6 @@ fun MapScreen(
                 }
                 FloatingActionButton(
                     onClick = {
-                        cameraPositionState.value = CameraPosition(
-                            cameraPositionState.value.target,
-                            cameraPositionState.value.zoom,
-                            cameraPositionState.value.tilt,
-                            cameraPositionState.value.bearing
-                        )
-
                         viewModel.onEvent(MapEvent.ToggleSpecialMap)
                     },
                     backgroundColor = MP_Orange_Dark,
@@ -367,60 +232,126 @@ fun MapScreen(
                         imageVector = if (viewModel.state.isSpecialMap) {
                             Icons.Outlined.Clear
                         } else {
-                            Icons.Outlined.LocationOn
+                            Icons.Outlined.Style
                         },
                         contentDescription = "Toggle Special map",
                         tint = MP_White
                     )
                 }
-                if (Cordinates.isLocation || Cordinates.isAvailable || Cordinates.isRoute) {
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.BottomCenter),
-                        onClick = {
-                            state.updateUser?.addressLatitude = Cordinates.latitude
-                            state.updateUser?.addressLongitude = Cordinates.longitude
-                            state.updateShop?.availableAtLatitude = Cordinates.availableAtLatitude
-                            state.updateShop?.availableAtLongitude = Cordinates.availableAtLongitude
-                            state.updateCourier?.routeStartLatitude = Cordinates.startRouteLatitude
-                            state.updateCourier?.routeStartLongitude = Cordinates.startRouteLongitude
-                            state.updateCourier?.routeEndLatitude = Cordinates.endRouteLatitude
-                            state.updateCourier?.routeEndLongitude = Cordinates.endRouteLongitude
-                            if (Cordinates.isLocation) {
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Postavili ste uspešno lokaciju!",
-                                        Toast.LENGTH_LONG
-                                    )
-                                    .show()
-                            } else if (Cordinates.isAvailable) {
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Postavili ste uspešno lokaciju oglašavanja proizvoda!",
-                                        Toast.LENGTH_LONG
-                                    )
-                                    .show()
-                            } else {
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Postavili ste uspešno rutu obilaska!",
-                                        Toast.LENGTH_LONG
-                                    )
-                                    .show()
+
+                Column(
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (Cordinates.isLocation || Cordinates.isAvailable || Cordinates.isRoute) {
+                        Button(
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = MP_Orange_Dark,
+                                contentColor = MP_White
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth(0.9F)
+                                .padding(bottom = 16.dp)
+                                .clip(
+                                    RoundedCornerShape(20.dp)
+                                ),
+                            onClick = {
+
+                                state.updateUser?.addressLatitude = Cordinates.latitude
+                                state.updateUser?.addressLongitude = Cordinates.longitude
+
+                                state.updateShop?.availableAtLatitude =
+                                    Cordinates.availableAtLatitude
+                                state.updateShop?.availableAtLongitude =
+                                    Cordinates.availableAtLongitude
+
+                                state.updateCourier?.routeStartLatitude =
+                                    Cordinates.startRouteLatitude
+                                state.updateCourier?.routeStartLongitude =
+                                    Cordinates.startRouteLongitude
+
+                                state.updateCourier?.routeEndLatitude = Cordinates.endRouteLatitude
+                                state.updateCourier?.routeEndLongitude =
+                                    Cordinates.endRouteLongitude
+
+                                if (Cordinates.isLocation) {
+                                    Toast
+                                        .makeText(
+                                            context,
+                                            "Postavili ste uspešno lokaciju!",
+                                            Toast.LENGTH_LONG
+                                        )
+                                        .show()
+                                } else if (Cordinates.isAvailable) {
+                                    Toast
+                                        .makeText(
+                                            context,
+                                            "Postavili ste uspešno lokaciju oglašavanja proizvoda!",
+                                            Toast.LENGTH_LONG
+                                        )
+                                        .show()
+                                } else {
+                                    Toast
+                                        .makeText(
+                                            context,
+                                            "Postavili ste uspešno rutu obilaska!",
+                                            Toast.LENGTH_LONG
+                                        )
+                                        .show()
+                                }
+
+                                viewModelProfilePrivate.onEvent(ProfilePrivateEvent.SubmitEdit)
+                                navController.popBackStack()
                             }
-                            viewModelProfilePrivate.onEvent(ProfilePrivateEvent.SubmitEdit)
-                        }) {
-                        if (Cordinates.isLocation)
-                            Text("Postavi lokaciju")
-                        else if (Cordinates.isAvailable)
-                            Text("Postavi lokaciju izlaganja proizvoda")
-                        else if (Cordinates.isRoute)
-                            Text("Postavi rutu obilaska")
+
+                        ) {
+                            var text = "Missing Text"
+
+                            if (Cordinates.isLocation)
+                                text = "Postavi svoju lokaciju"
+                            else if (Cordinates.isAvailable)
+                                text = "Postavi lokaciju izlaganja proizvoda"
+                            else if (Cordinates.isRoute)
+                                text = "Postavi rutu obilaska"
+
+                            Text(
+                                text = text,
+                                style = MaterialTheme.typography.body1,
+                                fontWeight = FontWeight.W500,
+                                modifier = Modifier.padding(vertical = 6.dp)
+                            )
+                        }
                     }
+
+                    BottomNavigationMenu(
+                        navController = navController,
+                        items = listOf(
+                            BottomNavigationMenuContent(
+                                title = "Početna",
+                                graphicID = Icons.Default.Home,
+                                screen = Screen.HomeScreen,
+                                isActive = false
+                            ),
+                            BottomNavigationMenuContent(
+                                title = "Market",
+                                graphicID = ImageVector.vectorResource(R.drawable.logo_green),
+                                screen = Screen.StoreScreen,
+                                isActive = false
+                            ),
+                            BottomNavigationMenuContent(
+                                title = "Profil",
+                                graphicID = Icons.Default.Person,
+                                screen = Screen.PrivateProfile,
+                                isActive = false
+                            ),
+                            BottomNavigationMenuContent(
+                                title = "Korpa",
+                                graphicID = Icons.Default.ShoppingCart,
+                                screen = Screen.CartScreen,
+                                isActive = false
+                            )
+                        )
+                    )
                 }
             }
 

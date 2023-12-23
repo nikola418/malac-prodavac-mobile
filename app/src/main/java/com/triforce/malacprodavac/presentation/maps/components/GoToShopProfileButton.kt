@@ -48,8 +48,7 @@ fun GoToShopProfileButton(
             .clip(RoundedCornerShape(20.dp))
             .background(MP_White)
             .padding(
-                bottom = 70.dp,
-                top = 10.dp
+                vertical = 10.dp
             )
     ) {
         Icon(

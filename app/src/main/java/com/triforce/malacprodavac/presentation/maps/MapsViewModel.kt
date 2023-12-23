@@ -1,25 +1,16 @@
 package com.triforce.malacprodavac.presentation.maps
 
-import android.graphics.Color
-import android.location.Location
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.PolylineOptions
-import com.triforce.malacprodavac.domain.util.filter.Filter
-import com.triforce.malacprodavac.domain.util.filter.FilterBuilder
 import com.triforce.malacprodavac.domain.model.shops.Shop
-import com.triforce.malacprodavac.domain.repository.CourierRepository
 import com.triforce.malacprodavac.domain.repository.ShopRepository
 import com.triforce.malacprodavac.domain.util.Resource
+import com.triforce.malacprodavac.domain.util.filter.Filter
+import com.triforce.malacprodavac.domain.util.filter.FilterBuilder
 import com.triforce.malacprodavac.presentation.maps.components.Cordinates
 import com.triforce.malacprodavac.presentation.maps.styles.MapStyle
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,32 +21,22 @@ import javax.inject.Inject
 @HiltViewModel
 class MapsViewModel @Inject constructor(
 
-    private val repository: ShopRepository,
-    savedStateHandle: SavedStateHandle
+    private val repository: ShopRepository
 
-): ViewModel() {
+) : ViewModel() {
 
     var state by mutableStateOf(MapState())
-
-    var pathPoints: MutableList<LatLng> = mutableListOf()
 
     init {
         getShops(true)
     }
 
-    private fun addPathPoint(location: Location) {
-        location?.let {
-            val pos = LatLng(location.latitude, location.longitude)
-            pathPoints.add(pos)
-        }
-    }
-
-    fun onEvent(event: MapEvent){
-        when(event){
+    fun onEvent(event: MapEvent) {
+        when (event) {
             MapEvent.ToggleSpecialMap -> {
                 state = state.copy(
                     properties = state.properties.copy(
-                        mapStyleOptions = if(state.isSpecialMap) {
+                        mapStyleOptions = if (state.isSpecialMap) {
                             null
                         } else {
                             MapStyleOptions(MapStyle.json)
@@ -107,7 +88,8 @@ class MapsViewModel @Inject constructor(
                 Cordinates.endRouteLatitude = state.selectedEndRouteLatitude
                 Cordinates.endRouteLongitude = state.selectedEndRouteLongitude
             }
-            else -> { }
+
+            is MapEvent.OnMapClick -> TODO()
         }
     }
 
@@ -116,7 +98,7 @@ class MapsViewModel @Inject constructor(
         viewModelScope.launch {
 
             val query = FilterBuilder.buildFilterQueryMap(
-                Filter(filter = null, order = null, limit = null, offset = null )
+                Filter(filter = null, order = null, limit = null, offset = null)
             )
 
             repository.getShops(fetchFromRemote, query).collectLatest { result ->

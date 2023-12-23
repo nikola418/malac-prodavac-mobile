@@ -14,10 +14,6 @@ import com.triforce.malacprodavac.data.mappers.toUpdateShop
 import com.triforce.malacprodavac.data.mappers.users.toUpdateUser
 import com.triforce.malacprodavac.data.services.SessionManager
 import com.triforce.malacprodavac.domain.use_case.profile.Profile
-import com.triforce.malacprodavac.domain.use_case.validate.ValidateAddress
-import com.triforce.malacprodavac.domain.use_case.validate.ValidateFirstName
-import com.triforce.malacprodavac.domain.use_case.validate.ValidateLastName
-import com.triforce.malacprodavac.domain.use_case.validate.ValidatePhoneNumber
 import com.triforce.malacprodavac.domain.util.Resource
 import com.triforce.malacprodavac.domain.util.compressedFileFromUri
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,15 +23,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfilePrivateViewModel @Inject constructor(
+
     private val profile: Profile,
     private val sessionManager: SessionManager
+
 ) : ViewModel() {
     var state by mutableStateOf(ProfilePrivateState())
-
-    private val validateStringFirstName = ValidateFirstName()
-    private val validateStringLastName = ValidateLastName()
-    private val validatePhoneNumber = ValidatePhoneNumber()
-    private val validateAdress = ValidateAddress()
 
     init {
         me()
@@ -44,88 +37,65 @@ class ProfilePrivateViewModel @Inject constructor(
 
     fun onEvent(event: ProfilePrivateEvent) {
         when (event) {
-            is ProfilePrivateEvent.Logout -> {
-                logout()
-            }
 
-            is ProfilePrivateEvent.ChangeProfilePicture -> {
-                setProfilePicture(event.context, event.uri)
-            }
+            is ProfilePrivateEvent.Logout -> logout()
 
-            ProfilePrivateEvent.Refresh -> {
-                me()
-            }
+            is ProfilePrivateEvent.ChangeProfilePicture -> setProfilePicture(
+                event.context,
+                event.uri
+            )
 
-            ProfilePrivateEvent.Edit -> {
-                state = state.copy(isEditing = !state.isEditing)
-            }
+            ProfilePrivateEvent.Refresh -> me()
 
-            is ProfilePrivateEvent.AddressChanged -> {
-                state = state.copy(updateUser = state.updateUser?.copy(address = event.address))
-            }
+            ProfilePrivateEvent.Edit -> state = state.copy(isEditing = !state.isEditing)
 
-            is ProfilePrivateEvent.FirstNameChanged -> {
-                state =
-                    state.copy(updateUser = state.updateUser?.copy(firstName = event.firstName))
-            }
+            is ProfilePrivateEvent.AddressChanged -> state =
+                state.copy(updateUser = state.updateUser?.copy(address = event.address))
 
-            is ProfilePrivateEvent.LastNameChanged -> {
-                state = state.copy(updateUser = state.updateUser?.copy(lastName = event.lastName))
-            }
+            is ProfilePrivateEvent.FirstNameChanged -> state =
+                state.copy(updateUser = state.updateUser?.copy(firstName = event.firstName))
 
-            is ProfilePrivateEvent.PhoneNumberChanged -> {
-                state =
-                    state.copy(updateUser = state.updateUser?.copy(phoneNumber = event.phoneNumber))
-            }
+            is ProfilePrivateEvent.LastNameChanged -> state =
+                state.copy(updateUser = state.updateUser?.copy(lastName = event.lastName))
 
-            is ProfilePrivateEvent.BusinessNameChanged -> {
-                state = state.copy(
-                    updateShop = state.updateShop?.copy(
-                        businessName = event.businessName
-                    )
+            is ProfilePrivateEvent.PhoneNumberChanged -> state =
+                state.copy(updateUser = state.updateUser?.copy(phoneNumber = event.phoneNumber))
+
+            is ProfilePrivateEvent.BusinessNameChanged -> state = state.copy(
+                updateShop = state.updateShop?.copy(
+                    businessName = event.businessName
                 )
-            }
+            )
 
-            is ProfilePrivateEvent.AvailableAtChanged -> {
-                state = state.copy(
-                    updateShop = state.updateShop?.copy(
-                        availableAt = event.availableAt
-                    )
+            is ProfilePrivateEvent.AvailableAtChanged -> state = state.copy(
+                updateShop = state.updateShop?.copy(
+                    availableAt = event.availableAt
                 )
-            }
+            )
 
-
-            is ProfilePrivateEvent.OpenFromChanged -> {
-                state = state.copy(
-                    updateShop = state.updateShop?.copy(
-                        openFrom = event.openFrom.toString()
-                    )
+            is ProfilePrivateEvent.OpenFromChanged -> state = state.copy(
+                updateShop = state.updateShop?.copy(
+                    openFrom = event.openFrom.toString()
                 )
-            }
+            )
 
-            is ProfilePrivateEvent.OpenTillChanged -> {
-                state = state.copy(
-                    updateShop = state.updateShop?.copy(
-                        openTill = event.openTill.toString()
-                    )
+            is ProfilePrivateEvent.OpenTillChanged -> state = state.copy(
+                updateShop = state.updateShop?.copy(
+                    openTill = event.openTill.toString()
                 )
-            }
+            )
 
-            is ProfilePrivateEvent.OpenFromDaysChanged -> {
-                state = state.copy(
-                    updateShop = state.updateShop?.copy(
-                        openFromDays = event.openFromDays.toText()
-                    )
+            is ProfilePrivateEvent.OpenFromDaysChanged -> state = state.copy(
+                updateShop = state.updateShop?.copy(
+                    openFromDays = event.openFromDays.toText()
                 )
-            }
+            )
 
-            is ProfilePrivateEvent.OpenTillDaysChanged -> {
-                state = state.copy(
-                    updateShop = state.updateShop?.copy(
-                        openTillDays = event.openTillDays.toText()
-                    )
+            is ProfilePrivateEvent.OpenTillDaysChanged -> state = state.copy(
+                updateShop = state.updateShop?.copy(
+                    openTillDays = event.openTillDays.toText()
                 )
-            }
+            )
 
             ProfilePrivateEvent.SubmitEdit -> {
                 updateCustomer()
