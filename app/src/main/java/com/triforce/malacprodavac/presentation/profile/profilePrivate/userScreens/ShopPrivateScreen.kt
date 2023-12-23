@@ -28,15 +28,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.android.gms.maps.model.LatLng
 import com.triforce.malacprodavac.BottomNavigationMenuContent
 import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.domain.util.enum.DaysOfTheWeek
-import com.triforce.malacprodavac.domain.util.enum.UserRole
 import com.triforce.malacprodavac.domain.util.enum.WorkTimeEnd
 import com.triforce.malacprodavac.domain.util.enum.WorkTimeStart
 import com.triforce.malacprodavac.presentation.add_edit_product.components.AddEditTextField
@@ -51,8 +50,6 @@ import com.triforce.malacprodavac.presentation.profile.profilePrivate.components
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.components.DropDownListWorkTime
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.components.MyProductsButton
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.components.ProductOptions
-import com.triforce.malacprodavac.presentation.registration.RegistrationFormEvent
-import com.triforce.malacprodavac.presentation.registration.components.DropDownList
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Green
 import com.triforce.malacprodavac.ui.theme.MP_White
@@ -191,6 +188,7 @@ fun ShopPrivateScreen(
                         onClick = {
                             Cordinates.isLocation = true
                             Cordinates.isAvailable = false
+                            Cordinates.isRoute = false
                             navController.navigate(Screen.MapScreen.route) },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -200,7 +198,12 @@ fun ShopPrivateScreen(
                     }
                     Spacer(Modifier.height(8.dp))
                     Button(
-                        onClick = { navController.navigate(Screen.MapScreen.route) },
+                        onClick = {
+                            Cordinates.isLocation = false
+                            Cordinates.isAvailable = false
+                            Cordinates.isRoute = true
+                            navController.navigate(Screen.MapScreen.route)
+                                  },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
@@ -276,6 +279,7 @@ fun ShopPrivateScreen(
                         onClick = {
                             Cordinates.isLocation = false
                             Cordinates.isAvailable = true
+                            Cordinates.isRoute = false
                             navController.navigate(Screen.MapScreen.route) },
                         modifier = Modifier
                             .fillMaxWidth()

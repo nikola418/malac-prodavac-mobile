@@ -16,5 +16,13 @@ data class MapState(
     val selectedAddressLatitude: Double? = null,
     val selectedAddressLongitude: Double? = null,
     val selectedAvailableAddressLatitude: Double? = null,
-    val selectedAvailableAddressLongitude: Double? = null
+    val selectedAvailableAddressLongitude: Double? = null,
+    val selectedStartRouteLatitude: Double? = null,
+    val selectedStartRouteLongitude: Double? = null,
+    val selectedEndRouteLatitude: Double? = null,
+    val selectedEndRouteLongitude: Double? = null,
+
+    val isLocation: Boolean = false,
+    val isAvailable: Boolean = false,
+    val isRoute: Boolean = false
 )

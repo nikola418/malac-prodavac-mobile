@@ -9,5 +9,7 @@ sealed class MapEvent {
     data class OnMapClick(val latLng: LatLng): MapEvent()
     data class OnMapLongClick(val latLng: LatLng): MapEvent()
     data class OnMapAvailableLongClick(val latLng: LatLng): MapEvent()
+    data class OnMapClickStartRoute(val latLngStart: LatLng): MapEvent()
+    data class OnMapClickEndRoute(val latLngEnd: LatLng): MapEvent()
     data class OnInfoWindowLongClick(val shop: Shop): MapEvent()
 }
