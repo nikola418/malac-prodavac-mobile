@@ -169,6 +169,19 @@ fun CourierPrivateScreen(
                     Spacer(Modifier.height(8.dp))
                     Button(
                         onClick = {
+                            Cordinates.isLocation = false
+                            Cordinates.isAvailable = false
+                            Cordinates.isRoute = true
+                            navController.navigate(Screen.MapScreen.route)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(text = "Postavite Rutu Obilaska")
+                    }
+                    Button(
+                        onClick = {
                             state.updateUser?.addressLatitude = Cordinates.latitude
                             state.updateUser?.addressLongitude = Cordinates.longitude
                             viewModel.onEvent(ProfilePrivateEvent.SubmitEdit)

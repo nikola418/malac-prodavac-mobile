@@ -1,17 +1,23 @@
 package com.triforce.malacprodavac.presentation.maps
 
-import android.widget.Toast
+import android.graphics.Color
+import android.location.Location
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.triforce.malacprodavac.domain.util.filter.Filter
 import com.triforce.malacprodavac.domain.util.filter.FilterBuilder
 import com.triforce.malacprodavac.domain.model.shops.Shop
+import com.triforce.malacprodavac.domain.repository.CourierRepository
 import com.triforce.malacprodavac.domain.repository.ShopRepository
 import com.triforce.malacprodavac.domain.util.Resource
 import com.triforce.malacprodavac.presentation.maps.components.Cordinates
@@ -31,8 +37,17 @@ class MapsViewModel @Inject constructor(
 
     var state by mutableStateOf(MapState())
 
+    var pathPoints: MutableList<LatLng> = mutableListOf()
+
     init {
         getShops(true)
+    }
+
+    private fun addPathPoint(location: Location) {
+        location?.let {
+            val pos = LatLng(location.latitude, location.longitude)
+            pathPoints.add(pos)
+        }
     }
 
     fun onEvent(event: MapEvent){
@@ -73,6 +88,24 @@ class MapsViewModel @Inject constructor(
                 )
                 Cordinates.availableAtLatitude = state.selectedAvailableAddressLatitude
                 Cordinates.availableAtLongitude = state.selectedAvailableAddressLongitude
+            }
+
+            is MapEvent.OnMapClickStartRoute -> {
+                state = state.copy(
+                    selectedStartRouteLatitude = event.latLngStart.latitude,
+                    selectedStartRouteLongitude = event.latLngStart.longitude
+                )
+                Cordinates.startRouteLatitude = state.selectedStartRouteLatitude
+                Cordinates.startRouteLongitude = state.selectedStartRouteLongitude
+            }
+
+            is MapEvent.OnMapClickEndRoute -> {
+                state = state.copy(
+                    selectedEndRouteLatitude = event.latLngEnd.latitude,
+                    selectedEndRouteLongitude = event.latLngEnd.longitude
+                )
+                Cordinates.endRouteLatitude = state.selectedEndRouteLatitude
+                Cordinates.endRouteLongitude = state.selectedEndRouteLongitude
             }
             else -> { }
         }

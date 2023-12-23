@@ -74,8 +74,6 @@ fun MapScreen(
         mutableStateOf(initialCameraPosition)
     }
 
-//    val shopIconVector: ImageVector = ImageVector.vectorResource(id = R.drawable.shop_icon)
-
     val uiSettings = remember {
         MapUiSettings(zoomControlsEnabled = false)
     }
@@ -158,6 +156,33 @@ fun MapScreen(
                                 )
                                 .show()
                         }
+                        if(Cordinates.isRoute)
+                        {
+                            if(Cordinates.startRoute)
+                            {
+                                viewModel.onEvent(MapEvent.OnMapClickStartRoute(it))
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Izabrali ste početnu rutu obilaska!",
+                                        Toast.LENGTH_LONG
+                                    )
+                                    .show()
+                                Cordinates.startRoute = false
+                            }
+                            else
+                            {
+                                viewModel.onEvent(MapEvent.OnMapClickEndRoute(it))
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Izabrali ste završnu rutu obilaska!",
+                                        Toast.LENGTH_LONG
+                                    )
+                                    .show()
+                                Cordinates.startRoute = true
+                            }
+                        }
                     }
 
                 ) {
@@ -212,6 +237,49 @@ fun MapScreen(
                         )
                     }
 
+                    if (viewModel.state.selectedStartRouteLatitude != null && viewModel.state.selectedStartRouteLongitude != null) {
+                        Marker(
+                            position = LatLng(
+                                viewModel.state.selectedStartRouteLatitude!!,
+                                viewModel.state.selectedStartRouteLongitude!!
+                            ),
+                            title = "Početna ruta",
+                            snippet = "Početna ruta",
+                            onClick = {
+                                cameraPositionState.value = CameraPosition(
+                                    cameraPositionState.value.target,
+                                    cameraPositionState.value.zoom,
+                                    cameraPositionState.value.tilt,
+                                    cameraPositionState.value.bearing
+                                )
+
+                                //it.showInfoWindow()
+                                true
+                            }
+                        )
+                    }
+
+                    if (viewModel.state.selectedEndRouteLatitude != null && viewModel.state.selectedEndRouteLongitude != null) {
+                        Marker(
+                            position = LatLng(
+                                viewModel.state.selectedEndRouteLatitude!!,
+                                viewModel.state.selectedEndRouteLongitude!!
+                            ),
+                            title = "Početna ruta",
+                            snippet = "",
+                            onClick = {
+                                cameraPositionState.value = CameraPosition(
+                                    cameraPositionState.value.target,
+                                    cameraPositionState.value.zoom,
+                                    cameraPositionState.value.tilt,
+                                    cameraPositionState.value.bearing
+                                )
+
+                                //it.showInfoWindow()
+                                true
+                            }
+                        )
+                    }
 
                     viewModel.state.shops!!.forEach { shop ->
                         if (shop.user?.addressLatitude != null && shop.user.addressLongitude != null) {
@@ -305,41 +373,54 @@ fun MapScreen(
                         tint = MP_White
                     )
                 }
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter),
-                    onClick = {
-                        state.updateUser?.addressLatitude = Cordinates.latitude
-                        state.updateUser?.addressLongitude = Cordinates.longitude
-                        state.updateShop?.availableAtLatitude = Cordinates.availableAtLatitude
-                        state.updateShop?.availableAtLongitude = Cordinates.availableAtLongitude
-                        if(Cordinates.isLocation)
-                        {
-                            Toast
-                                .makeText(
-                                    context,
-                                    "Postavili ste uspešno lokaciju!",
-                                    Toast.LENGTH_LONG
-                                )
-                                .show()
-                        }
-                        else if(Cordinates.isAvailable)
-                        {
-                            Toast
-                                .makeText(
-                                    context,
-                                    "Postavili ste uspešno lokaciju oglašavanja proizvoda!",
-                                    Toast.LENGTH_LONG
-                                )
-                                .show()
-                        }
-                        viewModelProfilePrivate.onEvent(ProfilePrivateEvent.SubmitEdit)
-                    }) {
-                    if(Cordinates.isLocation)
-                        Text("Postavi lokaciju")
-                    else if(Cordinates.isAvailable)
-                        Text("Postavi lokaciju izlaganja proizvoda")
+                if (Cordinates.isLocation || Cordinates.isAvailable || Cordinates.isRoute) {
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter),
+                        onClick = {
+                            state.updateUser?.addressLatitude = Cordinates.latitude
+                            state.updateUser?.addressLongitude = Cordinates.longitude
+                            state.updateShop?.availableAtLatitude = Cordinates.availableAtLatitude
+                            state.updateShop?.availableAtLongitude = Cordinates.availableAtLongitude
+                            state.updateCourier?.routeStartLatitude = Cordinates.startRouteLatitude
+                            state.updateCourier?.routeStartLongitude = Cordinates.startRouteLongitude
+                            state.updateCourier?.routeEndLatitude = Cordinates.endRouteLatitude
+                            state.updateCourier?.routeEndLongitude = Cordinates.endRouteLongitude
+                            if (Cordinates.isLocation) {
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Postavili ste uspešno lokaciju!",
+                                        Toast.LENGTH_LONG
+                                    )
+                                    .show()
+                            } else if (Cordinates.isAvailable) {
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Postavili ste uspešno lokaciju oglašavanja proizvoda!",
+                                        Toast.LENGTH_LONG
+                                    )
+                                    .show()
+                            } else {
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Postavili ste uspešno rutu obilaska!",
+                                        Toast.LENGTH_LONG
+                                    )
+                                    .show()
+                            }
+                            viewModelProfilePrivate.onEvent(ProfilePrivateEvent.SubmitEdit)
+                        }) {
+                        if (Cordinates.isLocation)
+                            Text("Postavi lokaciju")
+                        else if (Cordinates.isAvailable)
+                            Text("Postavi lokaciju izlaganja proizvoda")
+                        else if (Cordinates.isRoute)
+                            Text("Postavi rutu obilaska")
+                    }
                 }
             }
 
