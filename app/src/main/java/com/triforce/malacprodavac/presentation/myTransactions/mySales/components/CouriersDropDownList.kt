@@ -30,6 +30,7 @@ import com.triforce.malacprodavac.domain.model.Order
 import com.triforce.malacprodavac.presentation.myTransactions.mySales.MySalesEvent
 import com.triforce.malacprodavac.presentation.myTransactions.mySales.MySalesViewModel
 import com.triforce.malacprodavac.ui.theme.MP_Black
+import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
 import com.triforce.malacprodavac.ui.theme.MP_White
 
 @SuppressLint("UnrememberedMutableState")
@@ -39,15 +40,15 @@ fun CouriersDropDownList(
     viewModel: MySalesViewModel,
     order: Order,
     couriers: List<Courier> = emptyList(),
-    selectedCourier: String? = null,
     handleSelect: (Any) -> Unit,
     label: String,
     fill: Boolean
 ) {
     var isExpanded by remember { mutableStateOf(false) }
-    var selected by if (selectedCourier != null)
-        remember { mutableStateOf(selectedCourier) }
-    else mutableStateOf("")
+
+    val initiallySelectedCourier =
+        couriers.firstOrNull()?.let { "${it.user?.firstName} ${it.user?.lastName}" }
+    var selected by remember { mutableStateOf(initiallySelectedCourier) }
 
     Column(
         modifier = if (fill) {
@@ -72,17 +73,20 @@ fun CouriersDropDownList(
         ExposedDropdownMenuBox(expanded = isExpanded, onExpandedChange = {
             isExpanded = it
         }) {
-            TextField(
-                value = selected,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .menuAnchor()
-                    .clip(RoundedCornerShape(10.dp)),
-                readOnly = true,
-                onValueChange = { },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(),
-            )
+            selected?.let {
+                TextField(
+                    value = it,
+                    textStyle = MaterialTheme.typography.body2,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor()
+                        .clip(RoundedCornerShape(10.dp)),
+                    readOnly = true,
+                    onValueChange = { },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                )
+            }
             ExposedDropdownMenu(
                 expanded = isExpanded, onDismissRequest = {
                     isExpanded = false
@@ -93,18 +97,25 @@ fun CouriersDropDownList(
                 couriers.forEach { courier ->
                     DropdownMenuItem(
                         text = {
-                            Column {
+                            if (viewModel.state.user?.courier?.id != courier.id)
+                                Column {
+                                    Text(
+                                        text = "${courier.user?.firstName} ${courier.user?.lastName}",
+                                        color = MP_Black,
+                                        style = MaterialTheme.typography.body2,
+                                    )
+                                    Text(
+                                        text = courier.user?.phoneNumber ?: "",
+                                        color = MP_Black,
+                                        style = MaterialTheme.typography.caption
+                                    )
+                                }
+                            else
                                 Text(
-                                    text = "${courier.user?.firstName} ${courier.user?.lastName}",
-                                    color = MP_Black,
-                                    style = MaterialTheme.typography.body1,
+                                    text = "Ja sam dostavljač",
+                                    color = MP_Orange_Dark,
+                                    style = MaterialTheme.typography.h6,
                                 )
-                                Text(
-                                    text = courier.user?.phoneNumber ?: "",
-                                    color = MP_Black,
-                                    style = MaterialTheme.typography.caption
-                                )
-                            }
                         },
                         onClick = {
                             selected = "${courier.user?.firstName} ${courier.user?.lastName}"

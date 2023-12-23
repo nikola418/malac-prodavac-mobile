@@ -30,7 +30,7 @@ fun TransactionHistoryContentScreen(
         ) {
             items(viewModel.state.orders.size) {
                 if (viewModel.state.orders[it].orderStatus == OrderStatus.Received.toString())
-                    TransactionHistoryRow(navController, viewModel.state.orders[it], it + 1)
+                    TransactionHistoryRow(navController, viewModel.state.orders[it])
             }
         }
     }

@@ -30,7 +30,7 @@ fun MySalesContentScreen(
         ) {
             items(viewModel.state.orders.size) {
                 if (viewModel.state.orders[it].orderStatus != OrderStatus.Received.toString())
-                    MySalesRow(navController, viewModel, viewModel.state.orders[it], it + 1)
+                    MySalesRow(navController, viewModel, viewModel.state.orders[it])
             }
         }
     }

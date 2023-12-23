@@ -41,7 +41,7 @@ class MySalesViewModel @Inject constructor(
 
             is MySalesEvent.Submit ->
                 state.orders.find { it.id == event.orderId }?.courierId?.let { courierId ->
-                    updateOrder(event.orderId, courierId)
+                    updateOrderCourier(event.orderId, courierId)
                 }
 
             is MySalesEvent.AcceptOrder -> acceptOrder(event.orderId)
@@ -77,6 +77,24 @@ class MySalesViewModel @Inject constructor(
                 )
             ).collect { result ->
                 when (result) {
+                    is Resource.Success -> updateOrderStatus(orderId)
+                    is Resource.Error -> handleError()
+                    is Resource.Loading -> handleLoading(result.isLoading)
+                }
+            }
+        }
+    }
+
+    private fun updateOrderStatus(orderId: Int) {
+        viewModelScope.launch {
+            orderRepository.updateOrder(
+                orderId, UpdateOrderDto(
+                    orderStatus = OrderStatus.Packaged.toString(),
+                    accepted = null,
+                    courierId = null
+                )
+            ).collect { result ->
+                when (result) {
                     is Resource.Success -> getShopOrders()
                     is Resource.Error -> handleError()
                     is Resource.Loading -> handleLoading(result.isLoading)
@@ -85,11 +103,11 @@ class MySalesViewModel @Inject constructor(
         }
     }
 
-    private fun updateOrder(orderId: Int, courierId: Int) {
+    private fun updateOrderCourier(orderId: Int, courierId: Int) {
         viewModelScope.launch {
             orderRepository.updateOrder(
                 orderId, UpdateOrderDto(
-                    orderStatus = OrderStatus.Packaged.toString(),
+                    orderStatus = null,
                     accepted = null,
                     courierId = courierId
                 )

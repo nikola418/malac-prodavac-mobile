@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -41,8 +42,7 @@ import com.triforce.malacprodavac.util.enum.OrderStatus
 fun MySalesRow(
     navController: NavController,
     viewModel: MySalesViewModel,
-    order: Order,
-    id: Int,
+    order: Order
 ) {
     val totalPrice = String.format("%.2f", order.product?.price!! * order.quantity)
 
@@ -108,19 +108,12 @@ fun MySalesRow(
                 color = MP_Black,
                 fontWeight = FontWeight.W300
             )
-            Text(
-                text = "${date} ${time}",
-                style = MaterialTheme.typography.body2,
-                color = MP_Pink,
-                fontWeight = FontWeight.W400
-            )
 
             if (order.accepted) {
-                if (order.orderStatus == OrderStatus.Ordered.toString()) {
+                if (order.orderStatus == OrderStatus.Packaged.toString()) {
                     Spacer(modifier = Modifier.padding(12.dp))
                     CouriersDropDownList(
                         couriers = viewModel.state.couriers,
-                        selectedCourier = "----",
                         handleSelect = { courier ->
                             viewModel.onEvent(
                                 MySalesEvent.CourierIdChanged(
@@ -165,13 +158,25 @@ fun MySalesRow(
                 Spacer(modifier = Modifier.padding(12.dp))
             }
 
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.logo_green),
-                contentDescription = "DeleteOrder",
-                tint = MP_Green,
-                modifier = Modifier
-                    .size(30.dp)
-            )
+            Spacer(modifier = Modifier.padding(12.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.logo_green),
+                    contentDescription = "DeleteOrder",
+                    tint = MP_Pink,
+                    modifier = Modifier
+                        .size(30.dp)
+                )
+                Text(
+                    text = "${date} ${time}",
+                    style = MaterialTheme.typography.body2,
+                    color = MP_Pink,
+                    fontWeight = FontWeight.W400,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
         }
 
         if (order.accepted)

@@ -51,20 +51,14 @@ class MyPurchasesViewModel @Inject constructor(
         viewModelScope.launch {
             repository.deleteOrder(orderId).collect { result ->
                 when (result) {
-                    is Resource.Success -> updateOrdersAfterDeletion(orderId)
+                    is Resource.Success -> getOrders()
                     is Resource.Error -> handleError()
                     is Resource.Loading -> handleLoading(result.isLoading)
                 }
             }
         }
     }
-
-    private fun updateOrdersAfterDeletion(orderId: Int) {
-        val updatedList = state.orders.toMutableList()
-        updatedList.removeIf { it.id == orderId }
-        state = state.copy(orders = updatedList)
-    }
-
+    
     private fun handleError() {}
 
     private fun handleLoading(isLoading: Boolean) {

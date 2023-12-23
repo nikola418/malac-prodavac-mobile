@@ -2,7 +2,6 @@ package com.triforce.malacprodavac.presentation.myTransactions.myPurchases.compo
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,17 +23,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.domain.model.Order
 import com.triforce.malacprodavac.presentation.myTransactions.myPurchases.MyPurchasesEvent
 import com.triforce.malacprodavac.presentation.myTransactions.myPurchases.MyPurchasesViewModel
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Green
+import com.triforce.malacprodavac.ui.theme.MP_GreenDark
 import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
 import com.triforce.malacprodavac.ui.theme.MP_Pink
 import com.triforce.malacprodavac.ui.theme.MP_Pink_Dark
@@ -45,16 +49,17 @@ import com.triforce.malacprodavac.util.enum.DeliveryMethod
 fun MyPurchasesRow(
     navController: NavController,
     viewModel: MyPurchasesViewModel,
-    order: Order,
-    id: Int,
+    order: Order
 ) {
     var showDialog by remember { mutableStateOf(false) }
+
+    val totalPrice = String.format("%.2f", order.product?.price!! * order.quantity)
 
     val date: String = order.updatedAt.split("T")[0]
     val time: String = order.updatedAt.split("T")[1].split(".")[0]
 
     val statusMap = mapOf(
-        "Ordered" to "Na čekanju...",
+        "Ordered" to "Na čekanju",
         "Packaged" to "Potvrđeno",
         "InDelivery" to "U isporuci",
         "Received" to "Primljeno"
@@ -80,88 +85,98 @@ fun MyPurchasesRow(
             .clip(RoundedCornerShape(10.dp))
             .fillMaxWidth()
             .padding(10.dp)
-            .clickable {
-                //navController.navigate(Screen.DetailsOrderScreen.route)
-            }
+        /*.clickable {
+            navController.navigate(Screen.DetailsOrderScreen.route)
+        }*/
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
+        Column(
+            modifier = Modifier.padding(10.dp)
         ) {
             Text(
-                text = "#" + id,
-                style = MaterialTheme.typography.h3,
-                color = MP_Pink,
+                text = order.product.title,
+                style = MaterialTheme.typography.h4,
+                color = MP_Orange_Dark,
                 fontWeight = FontWeight.W400
             )
 
-            Column(
-                modifier = Modifier.padding(vertical = 20.dp, horizontal = 10.dp)
-            ) {
+            Text(
+                text = "Status: " + orderStatus,
+                style = MaterialTheme.typography.subtitle1,
+                color = MP_GreenDark,
+                fontWeight = FontWeight.W400
+            )
+            Spacer(modifier = Modifier.padding(12.dp))
 
+            Text(
+                text = "Dostava: " + orderDeliveryMethod,
+                style = MaterialTheme.typography.subtitle1,
+                color = MP_Black,
+                fontWeight = FontWeight.W300
+            )
+            if (order.deliveryMethod == DeliveryMethod.ByCourier.toString()) {
+                if (order.courier == null)
+                    Text(
+                        text = "Kurir nije dodeljen",
+                        style = MaterialTheme.typography.body1,
+                        color = MP_Black,
+                        fontWeight = FontWeight.W300
+                    )
+                else {
+                    Text(
+                        text = "Kurir ${order.courier.user?.firstName} ${order.courier.user?.lastName}",
+                        style = MaterialTheme.typography.body1,
+                        color = MP_Black,
+                        fontWeight = FontWeight.W300
+                    )
+                    Text(
+                        text = "Kontakt: ${order.courier.user?.phoneNumber}",
+                        style = MaterialTheme.typography.body1,
+                        color = MP_Black,
+                        fontWeight = FontWeight.W300
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.padding(12.dp))
+            Text(
+                text = "${order.quantity} ${order.product.unitOfMeasurement} Ukupno: ${totalPrice} ${order.product.currency}",
+                style = MaterialTheme.typography.body1,
+                color = MP_Black,
+                fontWeight = FontWeight.W300
+            )
+
+            Spacer(modifier = Modifier.padding(12.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.logo_green),
+                    contentDescription = "DeleteOrder",
+                    tint = MP_Green,
+                    modifier = Modifier
+                        .size(30.dp)
+                )
                 Text(
                     text = "${date} ${time}",
-                    style = MaterialTheme.typography.body1,
-                    color = MP_Pink,
-                    fontWeight = FontWeight.W400
-                )
-                Spacer(modifier = Modifier.padding(12.dp))
-                Text(
-                    text = orderDeliveryMethod,
-                    style = MaterialTheme.typography.body1,
-                    color = MP_Black,
-                    fontWeight = FontWeight.W300
-                )
-                if (order.deliveryMethod == DeliveryMethod.ByCourier.toString()) {
-                    if (order.courier == null)
-                        Text(
-                            text = "Kurir nije dodeljen",
-                            style = MaterialTheme.typography.body2,
-                            color = MP_Black,
-                            fontWeight = FontWeight.W300
-                        )
-                    else {
-                        Text(
-                            text = "Kurir ${order.courier.user?.firstName} ${order.courier.user?.lastName}",
-                            style = MaterialTheme.typography.body2,
-                            color = MP_Black,
-                            fontWeight = FontWeight.W300
-                        )
-                        Text(
-                            text = "Kontakt: ${order.courier.user?.phoneNumber}",
-                            style = MaterialTheme.typography.body2,
-                            color = MP_Black,
-                            fontWeight = FontWeight.W300
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.padding(12.dp))
-                Text(
-                    text = orderStatus,
-                    style = MaterialTheme.typography.h6,
-                    color = MP_Orange_Dark,
-                    fontWeight = FontWeight.W500
-                )
-                Spacer(modifier = Modifier.padding(12.dp))
-                Text(
-                    text = "${order.quantity} X ${order.product?.title}\n${order.product?.price!! * order.quantity} rsd",
-                    style = MaterialTheme.typography.body1,
-                    color = MP_Black,
-                    fontWeight = FontWeight.W300
+                    style = MaterialTheme.typography.body2,
+                    color = MP_Green,
+                    fontWeight = FontWeight.W400,
+                    modifier = Modifier.padding(start = 16.dp)
                 )
             }
-
-            Icon(
-                imageVector = Icons.Default.DeleteOutline,
-                contentDescription = "DeleteOrder",
-                tint = MP_Pink,
-                modifier = Modifier
-                    .padding(top = 12.5.dp)
-                    .size(30.dp)
-                    .clickable { showDialog = true }
-            )
         }
+
+        Icon(
+            imageVector = Icons.Default.DeleteOutline,
+            contentDescription = "DeleteOrder",
+            tint = MP_Black,
+            modifier = Modifier
+                .padding(top = 12.5.dp, end = 12.5.dp)
+                .size(30.dp)
+                .align(Alignment.TopEnd)
+                .clickable {
+                    showDialog = true
+                }
+        )
     }
 
     if (showDialog) {
@@ -180,7 +195,7 @@ fun MyPurchasesRow(
             },
             text = {
                 Text(
-                    text = "Da li ste sigurni da želite da obrišete porudžbinu #${id}?",
+                    text = "Da li ste sigurni da želite da obrišete porudžbinu za proizvod ${order.product?.title}?",
                     style = MaterialTheme.typography.body1,
                     color = MP_Black,
                     fontWeight = FontWeight.W300

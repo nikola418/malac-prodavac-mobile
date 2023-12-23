@@ -30,7 +30,7 @@ fun MyDeliveriesContentScreen(
         ) {
             items(viewModel.state.orders.size) {
                 if (viewModel.state.orders[it].orderStatus != OrderStatus.Received.toString())
-                    MyDeliveriesRow(navController, viewModel, viewModel.state.orders[it], it + 1)
+                    MyDeliveriesRow(navController, viewModel, viewModel.state.orders[it])
             }
         }
     }

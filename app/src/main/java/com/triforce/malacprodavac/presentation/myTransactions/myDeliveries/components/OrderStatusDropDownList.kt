@@ -38,9 +38,8 @@ import com.triforce.malacprodavac.util.enum.OrderStatus
 fun OrderStatusDropDownList(
     viewModel: MyDeliveriesViewModel,
     order: Order,
-    orderStatusList: List<OrderStatus> = emptyList(),
+    orderStatusMap: Map<OrderStatus, String>,
     selectedStatus: String? = null,
-    handleSelect: (Any) -> Unit,
     label: String,
     fill: Boolean
 ) {
@@ -90,25 +89,24 @@ fun OrderStatusDropDownList(
                     .fillMaxWidth()
                     .background(MP_White)
             ) {
-                orderStatusList.forEach { orderStatus ->
+                orderStatusMap.forEach { (orderStatusKey, orderStatusValue) ->
                     DropdownMenuItem(
                         text = {
                             Column {
                                 Text(
-                                    text = orderStatus.toString(),
+                                    text = orderStatusValue,
                                     color = MP_Black,
                                     style = MaterialTheme.typography.body1,
                                 )
                             }
                         },
                         onClick = {
-                            selected = orderStatus.toString()
+                            selected = orderStatusValue
                             isExpanded = false
-                            handleSelect(orderStatus)
                             viewModel.onEvent(
                                 MyDeliveriesEvent.OrderStatusChanged(
                                     order.id,
-                                    orderStatus
+                                    orderStatusKey
                                 )
                             )
                         },

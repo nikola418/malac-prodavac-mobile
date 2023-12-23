@@ -1,31 +1,35 @@
 package com.triforce.malacprodavac.presentation.myTransactions.transactionHistory.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.domain.model.Order
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Green
+import com.triforce.malacprodavac.ui.theme.MP_GreenDark
+import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
 import com.triforce.malacprodavac.ui.theme.MP_Pink
 import com.triforce.malacprodavac.ui.theme.MP_White
 
@@ -33,13 +37,14 @@ import com.triforce.malacprodavac.ui.theme.MP_White
 fun TransactionHistoryRow(
     navController: NavController,
     order: Order,
-    id: Int,
 ) {
+    val totalPrice = String.format("%.2f", order.product?.price!! * order.quantity)
+
     val date: String = order.updatedAt.split("T")[0]
     val time: String = order.updatedAt.split("T")[1].split(".")[0]
 
     val statusMap = mapOf(
-        "Ordered" to "Na čekanju...",
+        "Ordered" to "Na čekanju",
         "Packaged" to "Potvrđeno",
         "InDelivery" to "U isporuci",
         "Received" to "Primljeno"
@@ -52,10 +57,9 @@ fun TransactionHistoryRow(
     )
     val orderDeliveryMethod = deliveryMethodMap.getOrDefault(order.deliveryMethod, "Nepoznato")
 
-
     BoxWithConstraints(
         modifier = Modifier
-            .padding(horizontal = 20.dp, vertical = 10.dp)
+            .padding(horizontal = 10.dp, vertical = 10.dp)
             .shadow(
                 elevation = 5.dp,
                 spotColor = MP_Black,
@@ -65,49 +69,69 @@ fun TransactionHistoryRow(
             .background(MP_White)
             .clip(RoundedCornerShape(10.dp))
             .fillMaxWidth()
-            .requiredHeight(100.dp)
-            .clickable {
-                //navController.navigate(Screen.DetailsOrderScreen.route)
-            }
+            .padding(10.dp)
+        /*.clickable {
+            navController.navigate(Screen.DetailsOrderScreen.route)
+        }*/
     ) {
-        Row() {
+        Column(
+            modifier = Modifier.padding(10.dp)
+        ) {
 
             Text(
-                text = "#" + id,
-                style = MaterialTheme.typography.h3,
-                color = MP_Pink,
+                text = order.product.title,
+                style = MaterialTheme.typography.h6,
+                color = MP_Orange_Dark,
                 fontWeight = FontWeight.W400
             )
+            Text(
+                text = "Status: " + orderStatus,
+                style = MaterialTheme.typography.body2,
+                color = MP_GreenDark,
+                fontWeight = FontWeight.W300
+            )
+            Spacer(modifier = Modifier.padding(6.dp))
+            Text(
+                text = "Dostava: " + orderDeliveryMethod,
+                style = MaterialTheme.typography.body2,
+                color = MP_Black,
+                fontWeight = FontWeight.W300
+            )
+            Text(
+                text = "${order.quantity} ${order.product.unitOfMeasurement} Ukupno: ${totalPrice} ${order.product.currency}",
+                style = MaterialTheme.typography.body2,
+                color = MP_Black,
+                fontWeight = FontWeight.W300
+            )
+            Spacer(modifier = Modifier.padding(6.dp))
 
-            Column() {
-
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.logo_green),
+                    contentDescription = "DeleteOrder",
+                    tint = MP_Pink,
+                    modifier = Modifier
+                        .size(30.dp)
+                )
                 Text(
                     text = "${date} ${time}",
-                    style = MaterialTheme.typography.body1,
-                    color = MP_Black
+                    style = MaterialTheme.typography.body2,
+                    color = MP_Pink,
+                    fontWeight = FontWeight.W400,
+                    modifier = Modifier.padding(start = 16.dp)
                 )
-                Text(
-                    text = orderDeliveryMethod,
-                    style = MaterialTheme.typography.body1,
-                    color = MP_Black
-                )
-                Text(
-                    text = orderStatus,
-                    style = MaterialTheme.typography.body1,
-                    color = MP_Black
-                )
-
             }
         }
-
         Icon(
-            imageVector = Icons.Default.CheckCircle,
-            contentDescription = "Complete",
+            imageVector = Icons.Outlined.CheckCircle,
+            contentDescription = "Completed",
             tint = MP_Green,
             modifier = Modifier
+                .padding(top = 12.5.dp, end = 12.5.dp)
+                .size(30.dp)
                 .align(Alignment.TopEnd)
-                .size(36.dp)
         )
-
     }
 }

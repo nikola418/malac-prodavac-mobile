@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,8 +12,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.DeliveryDining
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -28,9 +32,9 @@ import com.triforce.malacprodavac.presentation.myTransactions.myDeliveries.MyDel
 import com.triforce.malacprodavac.presentation.myTransactions.mySales.components.SubmitSale
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Green
+import com.triforce.malacprodavac.ui.theme.MP_GreenDark
 import com.triforce.malacprodavac.ui.theme.MP_Orange
 import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
-import com.triforce.malacprodavac.ui.theme.MP_Pink
 import com.triforce.malacprodavac.ui.theme.MP_White
 import com.triforce.malacprodavac.util.enum.OrderStatus
 
@@ -38,8 +42,7 @@ import com.triforce.malacprodavac.util.enum.OrderStatus
 fun MyDeliveriesRow(
     navController: NavController,
     viewModel: MyDeliveriesViewModel,
-    order: Order,
-    id: Int,
+    order: Order
 ) {
     val totalPrice = String.format("%.2f", order.product?.price!! * order.quantity)
 
@@ -81,43 +84,42 @@ fun MyDeliveriesRow(
             modifier = Modifier.padding(10.dp)
         ) {
             Text(
-                text = "Dostava: " + orderDeliveryMethod,
-                style = MaterialTheme.typography.h6,
+                text = order.product.title,
+                style = MaterialTheme.typography.h4,
                 color = MP_Orange_Dark,
                 fontWeight = FontWeight.W400
             )
             Text(
-                text = "Status: " + orderStatus,
-                style = MaterialTheme.typography.body2,
+                text = "Dostava: " + orderDeliveryMethod,
+                style = MaterialTheme.typography.subtitle1,
                 color = MP_Black,
                 fontWeight = FontWeight.W300
+            )
+            Text(
+                text = "Status: " + orderStatus,
+                style = MaterialTheme.typography.subtitle1,
+                color = MP_GreenDark,
+                fontWeight = FontWeight.W400
             )
             Spacer(modifier = Modifier.padding(12.dp))
             Text(
-                text = "${order.quantity} X ${totalPrice} ${order.product.currency}",
+                text = "${order.quantity} ${order.product.unitOfMeasurement} Ukupno: ${totalPrice} ${order.product.currency}",
                 style = MaterialTheme.typography.body1,
                 color = MP_Black,
                 fontWeight = FontWeight.W300
-            )
-            Text(
-                text = "${date} ${time}",
-                style = MaterialTheme.typography.body1,
-                color = MP_Pink,
-                fontWeight = FontWeight.W400
             )
             Spacer(modifier = Modifier.padding(12.dp))
 
             OrderStatusDropDownList(
-                orderStatusList = listOf(
-                    OrderStatus.Packaged,
-                    OrderStatus.InDelivery,
-                    OrderStatus.Received
+                orderStatusMap = mapOf(
+                    OrderStatus.Packaged to "Potvrđeno",
+                    OrderStatus.InDelivery to "U isporuci",
+                    OrderStatus.Received to "Primljeno"
                 ),
                 viewModel = viewModel,
                 order = order,
-                selectedStatus = order.orderStatus,
-                handleSelect = {},
-                label = "Izaberi status",
+                selectedStatus = orderStatus,
+                label = "Promeni status paketa",
                 fill = true
             )
 
@@ -131,13 +133,35 @@ fun MyDeliveriesRow(
             )
 
             Spacer(modifier = Modifier.padding(12.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.logo_green),
+                    contentDescription = "DeleteOrder",
+                    tint = MP_Orange_Dark,
+                    modifier = Modifier
+                        .size(30.dp)
+                )
+                Text(
+                    text = "${date} ${time}",
+                    style = MaterialTheme.typography.body2,
+                    color = MP_Orange_Dark,
+                    fontWeight = FontWeight.W400,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+        }
+
+        if (order.accepted)
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.logo_green),
-                contentDescription = "DeleteOrder",
+                imageVector = Icons.Outlined.DeliveryDining,
+                contentDescription = "Accepted",
                 tint = MP_Orange,
                 modifier = Modifier
+                    .padding(top = 12.5.dp, end = 12.5.dp)
                     .size(30.dp)
+                    .align(Alignment.TopEnd)
             )
-        }
     }
 }
