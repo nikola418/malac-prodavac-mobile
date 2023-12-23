@@ -64,9 +64,7 @@ class OrderRepositoryImpl @Inject constructor(
             }
 
             remoteOrders?.let {
-
-                Log.d("ORDERS:", it.toString())
-                emit(Resource.Success(remoteOrders.data.map { jt -> jt.toOrder() }))
+                emit(Resource.Success(remoteOrders.data.map { jt -> jt }))
             }
 
             emit(Resource.Loading(false))
@@ -112,7 +110,7 @@ class OrderRepositoryImpl @Inject constructor(
             remoteOrders?.let {
 
                 Log.d("PRODUCTS:", it.toString())
-                emit(Resource.Success(remoteOrders.toOrder()))
+                emit(Resource.Success(remoteOrders))
 
             }
 
@@ -135,7 +133,7 @@ class OrderRepositoryImpl @Inject constructor(
                 null
             }
             deleteOrder?.let {
-                emit(Resource.Success(it.toOrder()))
+                emit(Resource.Success(it))
             }
             emit(Resource.Loading(false))
         }
@@ -156,7 +154,7 @@ class OrderRepositoryImpl @Inject constructor(
                 null
             }
             updateOrder?.let {
-                emit(Resource.Success(it.toOrder()))
+                emit(Resource.Success(it))
             }
 
             emit(Resource.Loading(false))
@@ -178,7 +176,7 @@ class OrderRepositoryImpl @Inject constructor(
                 null
             }
             updateOrder?.let {
-                emit(Resource.Success(it.toOrder()))
+                emit(Resource.Success(it))
             }
 
             emit(Resource.Loading(false))

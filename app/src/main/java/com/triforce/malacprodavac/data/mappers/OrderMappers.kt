@@ -17,5 +17,6 @@ fun OrderEntity.toOrder(): Order = Order(
     createdAt = createdAt,
 
     product = null,
+    customer = null,
     courier = null
 )

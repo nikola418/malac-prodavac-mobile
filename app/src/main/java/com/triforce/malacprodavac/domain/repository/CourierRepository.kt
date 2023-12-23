@@ -2,6 +2,7 @@ package com.triforce.malacprodavac.domain.repository
 
 import com.triforce.malacprodavac.domain.model.Courier
 import com.triforce.malacprodavac.domain.model.CreateCourier
+import com.triforce.malacprodavac.domain.model.Order
 import com.triforce.malacprodavac.domain.model.couriers.UpdateCourier
 import com.triforce.malacprodavac.domain.model.pagination.PaginationResult
 import com.triforce.malacprodavac.domain.util.Resource
@@ -24,4 +25,6 @@ interface CourierRepository {
         courierId: Int,
         dto: UpdateCourier
     ): Flow<Resource<Courier>>
+
+    suspend fun getCourierOrders(id: Int, fetchFromRemote: Boolean): Flow<Resource<List<Order>>>
 }
