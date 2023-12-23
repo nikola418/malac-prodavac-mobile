@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -18,11 +19,11 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -31,7 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.google.android.gms.maps.model.LatLng
 import com.triforce.malacprodavac.BottomNavigationMenuContent
 import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.Screen
@@ -46,12 +46,13 @@ import com.triforce.malacprodavac.presentation.profile.components.ProfilePrivate
 import com.triforce.malacprodavac.presentation.profile.components.ShopDescComp
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateEvent
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateViewModel
-import com.triforce.malacprodavac.presentation.profile.profilePrivate.components.AdvertisingProductButton
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.components.DropDownListWorkTime
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.components.MyProductsButton
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.components.ProductOptions
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Green
+import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
+import com.triforce.malacprodavac.ui.theme.MP_Pink
 import com.triforce.malacprodavac.ui.theme.MP_White
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,6 +65,7 @@ fun ShopPrivateScreen(
     val user = state.currentUser
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+    val spaceBetween = 16.dp
 
     if (!viewModel.isLoggedIn()) {
         LaunchedEffect(key1 = viewModel.isLoggedIn())
@@ -118,19 +120,111 @@ fun ShopPrivateScreen(
                 .padding(it)
         ) {
             if (!state.isEditing) {
-                Column {
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(state = scrollState)
+                        .padding(horizontal = spaceBetween)
+                        .height(760.dp)
+                ) {
                     ShopDescComp(user)
-                    Spacer(modifier = Modifier.padding(16.dp))
+                    Spacer(Modifier.height(spaceBetween))
+
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MP_Orange_Dark,
+                            contentColor = MP_White
+                        ),
+                        onClick = {
+                            Cordinates.isLocation = false
+                            Cordinates.isAvailable = false
+                            Cordinates.isRoute = true
+                            navController.navigate(Screen.MapScreen.route)
+                        },
+                        modifier = Modifier
+                            .width(300.dp)
+                            .padding(start = 20.dp)
+                    ) {
+                        Text(
+                            text = "Postavite rutu obilaska",
+                            style = androidx.compose.material.MaterialTheme.typography.body1,
+                            fontWeight = FontWeight.W400,
+                            modifier = Modifier.padding(vertical = 6.dp)
+                        )
+                    }
+                    Spacer(Modifier.height(spaceBetween))
 
                     ProductOptions(null, navController, false)
-                    Spacer(modifier = Modifier.padding(12.dp))
+                    Spacer(Modifier.height(spaceBetween))
 
                     MyProductsButton(navController)
-                    Spacer(modifier = Modifier.padding(16.dp))
+                    Spacer(Modifier.height(spaceBetween))
 
-                    AdvertisingProductButton(Modifier, null, navController, false, false)
-                    Spacer(modifier = Modifier.padding(16.dp))
+                    AddEditTextField(
+                        text = state.updateShop?.availableAt ?: "",
+                        isError = false,
+                        onTextValueChange = {
+                            viewModel.onEvent(ProfilePrivateEvent.AvailableAtChanged(it))
+                        },
+                        placeholder = "Lokacija izlaganja proizvoda",
+                        label = "Naziv lokacije za izlaganja:"
+                    )
+                    Spacer(Modifier.height(spaceBetween))
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MP_Pink,
+                            contentColor = MP_White
+                        ),
+                        onClick = {
+                            Cordinates.isLocation = false
+                            Cordinates.isAvailable = true
+                            Cordinates.isRoute = false
+                            navController.navigate(Screen.MapScreen.route)
+                        },
+                        modifier = Modifier
+                            .width(300.dp)
+                            .padding(start = 20.dp)
+                    ) {
+                        Text(
+                            text = "Postavite lokaciju izlaganja",
+                            style = androidx.compose.material.MaterialTheme.typography.body1,
+                            fontWeight = FontWeight.W400,
+                            modifier = Modifier
+                                .padding(vertical = 6.dp)
+                        )
+                    }
+                    Spacer(Modifier.height(spaceBetween))
+                    Button(
+                        onClick = {
+                            state.updateUser?.addressLatitude = Cordinates.latitude
+                            state.updateUser?.addressLongitude = Cordinates.longitude
+                            state.updateShop?.availableAtLatitude = Cordinates.availableAtLatitude
+                            state.updateShop?.availableAtLongitude = Cordinates.availableAtLongitude
 
+                            viewModel.onEvent(ProfilePrivateEvent.SubmitEdit)
+                            Toast
+                                .makeText(
+                                    context,
+                                    "Uspešno ste postavili lokaciju izlaganja!",
+                                    Toast.LENGTH_LONG
+                                )
+                                .show()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MP_Green,
+                            contentColor = MP_White
+                        ),
+                        modifier = Modifier
+                            .padding(start = 20.dp)
+                            .width(300.dp)
+                    ) {
+                        Text(
+                            text = "Potvrdi izlaganje proizvoda",
+                            style = androidx.compose.material.MaterialTheme.typography.body1,
+                            fontWeight = FontWeight.W500,
+                            modifier = Modifier.padding(vertical = 6.dp)
+                        )
+                    }
+                    Spacer(Modifier.height(spaceBetween))
                     if (user?.shop?.products != null) {
                         ShowHighlightSectionComp(
                             navController = navController,
@@ -138,155 +232,200 @@ fun ShopPrivateScreen(
                             title = "Naši proizvodi",
                             route = Screen.HighlightSection.route
                         )
-                        Spacer(modifier = Modifier.padding(16.dp))
+                        Spacer(Modifier.height(spaceBetween))
                     }
                 }
             } else {
                 Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .verticalScroll(state = scrollState)
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = spaceBetween)
                 ) {
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(spaceBetween))
                     AddEditTextField(
                         text = state.updateUser?.firstName ?: "",
                         isError = false,
                         onTextValueChange = {
                             viewModel.onEvent(ProfilePrivateEvent.FirstNameChanged(it))
                         },
-                        placeholder = "Ime"
+                        placeholder = "Ime",
+                        label = "Ime:"
                     )
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(spaceBetween))
                     AddEditTextField(
                         text = state.updateUser?.lastName ?: "",
                         isError = false,
                         onTextValueChange = {
                             viewModel.onEvent(ProfilePrivateEvent.LastNameChanged(it))
                         },
-                        placeholder = "Prezime"
+                        placeholder = "Prezime",
+                        label = "Prezime:"
                     )
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(spaceBetween))
                     AddEditTextField(
                         text = state.updateUser?.address ?: "",
                         isError = false,
                         onTextValueChange = {
                             viewModel.onEvent(ProfilePrivateEvent.AddressChanged(it))
                         },
-                        placeholder = "Adresa"
+                        placeholder = "Adresa",
+                        label = "Adresa:"
                     )
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(spaceBetween))
                     AddEditTextField(
                         text = state.updateUser?.phoneNumber ?: "",
                         isError = false,
                         onTextValueChange = {
                             viewModel.onEvent(ProfilePrivateEvent.PhoneNumberChanged(it))
                         },
-                        placeholder = "Kontakt telefon"
+                        placeholder = "Kontakt telefon",
+                        label = "Kontakt telefon:"
                     )
-                    Spacer(Modifier.height(8.dp))
-                    Button(
-                        onClick = {
-                            Cordinates.isLocation = true
-                            Cordinates.isAvailable = false
-                            Cordinates.isRoute = false
-                            navController.navigate(Screen.MapScreen.route) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    ) {
-                        Text(text = "Postavite Vašu Lokaciju")
-                    }
-                    Spacer(Modifier.height(8.dp))
-                    Button(
-                        onClick = {
-                            Cordinates.isLocation = false
-                            Cordinates.isAvailable = false
-                            Cordinates.isRoute = true
-                            navController.navigate(Screen.MapScreen.route)
-                                  },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    ) {
-                        Text(text = "Postavite Rutu Obilaska")
-                    }
+                    Spacer(Modifier.height(spaceBetween))
                     AddEditTextField(
                         text = state.updateShop?.businessName ?: "",
                         isError = false,
                         onTextValueChange = {
                             viewModel.onEvent(ProfilePrivateEvent.BusinessNameChanged(it))
                         },
-                        placeholder = "Ime prodavnice"
+                        placeholder = "Ime prodavnice",
+                        label = "Ime prodavnice:"
                     )
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = "Radni dani:",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MP_Black
-                    )
-                    DropDownListWorkTime(
-                        entries = enumValues<DaysOfTheWeek>().toList(),
-                        handleSelect = { nzm ->
-                            viewModel.onEvent(
-                                ProfilePrivateEvent.OpenFromDaysChanged(nzm as DaysOfTheWeek))
+                    Spacer(Modifier.height(spaceBetween))
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MP_Pink,
+                            contentColor = MP_White
+                        ),
+                        onClick = {
+                            Cordinates.isLocation = true
+                            Cordinates.isAvailable = false
+                            Cordinates.isRoute = false
+                            navController.navigate(Screen.MapScreen.route)
                         },
-                        label = "Prvi radni dan",
-                        first = true)
-                    Spacer(Modifier.height(8.dp))
-                    DropDownListWorkTime(
-                        entries = enumValues<DaysOfTheWeek>().toList(),
-                        handleSelect = { nzm ->
-                            viewModel.onEvent(
-                                ProfilePrivateEvent.OpenTillDaysChanged(nzm as DaysOfTheWeek))
-                        },
-                        label = "Zadnji radni dan",
-                        first = false)
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = "Radno vreme:",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold, color = MP_Black
-                    )
-                    DropDownListWorkTime(
-                        entries = enumValues<WorkTimeStart>().toList(),
-                        handleSelect = { nzm ->
-                            viewModel.onEvent(
-                                ProfilePrivateEvent.OpenFromChanged(nzm as WorkTimeStart))
-                        },
-                        label = "Od",
-                        first = true)
-                    Spacer(Modifier.height(8.dp))
-                    DropDownListWorkTime(
-                        entries = enumValues<WorkTimeEnd>().toList(),
-                        handleSelect = { nzm ->
-                            viewModel.onEvent(
-                                ProfilePrivateEvent.OpenTillChanged(nzm as WorkTimeEnd))
-                        },
-                        label = "Do",
-                        first = true)
-                    Spacer(Modifier.height(8.dp))
+                        modifier = Modifier.width(300.dp)
+                    ) {
+                        Text(
+                            text = "Postavite Vašu lokaciju",
+                            style = androidx.compose.material.MaterialTheme.typography.body1,
+                            fontWeight = FontWeight.W400,
+                            modifier = Modifier.padding(vertical = 6.dp)
+                        )
+                    }
+                    Spacer(Modifier.height(spaceBetween))
                     AddEditTextField(
                         text = state.updateShop?.availableAt ?: "",
                         isError = false,
                         onTextValueChange = {
                             viewModel.onEvent(ProfilePrivateEvent.AvailableAtChanged(it))
                         },
-                        placeholder = "Lokacija izlaganja proizvoda"
+                        placeholder = "Lokacija izlaganja proizvoda",
+                        label = "Naziv lokacije za izlaganja:"
                     )
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(spaceBetween))
                     Button(
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MP_Pink,
+                            contentColor = MP_White
+                        ),
                         onClick = {
                             Cordinates.isLocation = false
                             Cordinates.isAvailable = true
                             Cordinates.isRoute = false
-                            navController.navigate(Screen.MapScreen.route) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
+                            navController.navigate(Screen.MapScreen.route)
+                        },
+                        modifier = Modifier.width(300.dp)
                     ) {
-                        Text(text = "Postavite Lokaciju Izlaganja")
+                        Text(
+                            text = "Postavite lokaciju izlaganja",
+                            style = androidx.compose.material.MaterialTheme.typography.body1,
+                            fontWeight = FontWeight.W400,
+                            modifier = Modifier.padding(vertical = 6.dp)
+                        )
                     }
+                    Spacer(Modifier.height(spaceBetween))
+                    Text(
+                        text = "Radni dani:",
+                        style = androidx.compose.material.MaterialTheme.typography.body1,
+                        fontWeight = FontWeight.W400,
+                        color = MP_Black,
+                        modifier = Modifier.padding(start = 20.dp)
+                    )
+                    Spacer(Modifier.height(spaceBetween))
+                    DropDownListWorkTime(
+                        entries = enumValues<DaysOfTheWeek>().toList(),
+                        handleSelect = { nzm ->
+                            viewModel.onEvent(
+                                ProfilePrivateEvent.OpenFromDaysChanged(nzm as DaysOfTheWeek)
+                            )
+                        },
+                        label = "Prvi radni dan",
+                        first = true
+                    )
+                    Spacer(Modifier.height(spaceBetween))
+                    DropDownListWorkTime(
+                        entries = enumValues<DaysOfTheWeek>().toList(),
+                        handleSelect = { nzm ->
+                            viewModel.onEvent(
+                                ProfilePrivateEvent.OpenTillDaysChanged(nzm as DaysOfTheWeek)
+                            )
+                        },
+                        label = "Zadnji radni dan",
+                        first = false
+                    )
+                    Spacer(Modifier.height(spaceBetween))
+                    Text(
+                        text = "Radno vreme:",
+                        style = androidx.compose.material.MaterialTheme.typography.body1,
+                        fontWeight = FontWeight.W400,
+                        color = MP_Black,
+                        modifier = Modifier.padding(start = 20.dp)
+                    )
+                    Spacer(Modifier.height(spaceBetween))
+                    DropDownListWorkTime(
+                        entries = enumValues<WorkTimeStart>().toList(),
+                        handleSelect = { nzm ->
+                            viewModel.onEvent(
+                                ProfilePrivateEvent.OpenFromChanged(nzm as WorkTimeStart)
+                            )
+                        },
+                        label = "Od",
+                        first = true
+                    )
+                    Spacer(Modifier.height(spaceBetween))
+                    DropDownListWorkTime(
+                        entries = enumValues<WorkTimeEnd>().toList(),
+                        handleSelect = { nzm ->
+                            viewModel.onEvent(
+                                ProfilePrivateEvent.OpenTillChanged(nzm as WorkTimeEnd)
+                            )
+                        },
+                        label = "Do",
+                        first = true
+                    )
+                    Spacer(Modifier.height(spaceBetween))
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MP_Pink,
+                            contentColor = MP_White
+                        ),
+                        onClick = {
+                            Cordinates.isLocation = false
+                            Cordinates.isAvailable = false
+                            Cordinates.isRoute = true
+                            navController.navigate(Screen.MapScreen.route)
+                        },
+                        modifier = Modifier.width(300.dp)
+                    ) {
+                        Text(
+                            text = "Postavite rutu obilaska",
+                            style = androidx.compose.material.MaterialTheme.typography.body1,
+                            fontWeight = FontWeight.W400,
+                            modifier = Modifier.padding(vertical = 6.dp)
+                        )
+                    }
+                    Spacer(Modifier.height(spaceBetween))
                     Button(
                         onClick = {
                             state.updateUser?.addressLatitude = Cordinates.latitude
@@ -303,14 +442,17 @@ fun ShopPrivateScreen(
                                 )
                                 .show()
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = MP_Green),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MP_Green,
+                            contentColor = MP_White
+                        ),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
                             text = "Potvrdi izmene",
-                            style = MaterialTheme.typography.bodyLarge
+                            style = androidx.compose.material.MaterialTheme.typography.body1,
+                            fontWeight = FontWeight.W500,
+                            modifier = Modifier.padding(vertical = 6.dp)
                         )
                     }
                 }

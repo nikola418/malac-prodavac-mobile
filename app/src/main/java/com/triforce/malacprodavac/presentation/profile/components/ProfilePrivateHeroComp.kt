@@ -23,7 +23,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AddCircle
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.Message
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -49,6 +48,8 @@ import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.domain.model.User
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateEvent
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateViewModel
+import com.triforce.malacprodavac.ui.theme.MP_Black
+import com.triforce.malacprodavac.ui.theme.MP_Green
 import com.triforce.malacprodavac.ui.theme.MP_GreenDark
 import com.triforce.malacprodavac.ui.theme.MP_GreenLight
 import com.triforce.malacprodavac.ui.theme.MP_Orange
@@ -129,9 +130,10 @@ fun ProfilePrivateHeroComp(
                                 style = MaterialTheme.typography.body2,
                                 color = MP_White,
                                 fontWeight = FontWeight.W500,
+                                modifier = Modifier.width(150.dp)
                             )
                             Text(
-                                text = "${user.email}",
+                                text = user.email,
                                 style = MaterialTheme.typography.body2,
                                 color = MP_White,
                                 fontWeight = FontWeight.W500
@@ -139,23 +141,9 @@ fun ProfilePrivateHeroComp(
                         }
 
                         Row(
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.width(
-                                if (user.roles.first()
-                                        .equals("Shop", ignoreCase = true) && private
-                                ) 120.dp
-                                else 75.dp
-                            )
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Icon(imageVector = Icons.Rounded.Message,
-                                contentDescription = "Poruka",
-                                tint = MP_White,
-                                modifier = Modifier
-                                    .size(30.dp)
-                                    .clickable { })
-
                             if (private) {
-
                                 if (user.roles.first().equals("Shop", ignoreCase = true)) {
                                     Icon(imageVector = Icons.Rounded.AddCircle,
                                         contentDescription = "Dodaj",
@@ -166,27 +154,25 @@ fun ProfilePrivateHeroComp(
                                                 navController.navigate(Screen.AddProduct.route)
                                             })
                                 }
-
                                 Icon(imageVector = Icons.Rounded.Edit,
                                     contentDescription = "Izmeni",
                                     tint = MP_White,
                                     modifier = Modifier
+                                        .padding(start = 16.dp)
                                         .size(30.dp)
                                         .clickable { viewModel.onEvent(ProfilePrivateEvent.Edit) }
                                         .then(
                                             if (state.isEditing) Modifier.background(
-                                                MP_GreenDark,
-                                                RoundedCornerShape(4.dp)
+                                                MP_Black,
+                                                RoundedCornerShape(10.dp)
                                             ) else Modifier.background(
                                                 Color.Unspecified
                                             )
                                         )
-
                                 )
                             }
                         }
                     }
-
 
                     val launcher = LocalContext.current.let { it ->
                         rememberLauncherForActivityResult(
@@ -205,7 +191,6 @@ fun ProfilePrivateHeroComp(
                         }
                     }
 
-
                     val placeholder = coil.base.R.drawable.notify_panel_notification_icon_bg
                     val imageRequest = ImageRequest.Builder(LocalContext.current)
                         .data(state.profileImageUrl)
@@ -216,7 +201,6 @@ fun ProfilePrivateHeroComp(
                         .error(placeholder)
                         .fallback(placeholder)
                         .build()
-
 
                     if (private) {
                         AsyncImage(

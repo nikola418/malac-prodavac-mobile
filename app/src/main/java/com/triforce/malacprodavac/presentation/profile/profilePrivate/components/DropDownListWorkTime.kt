@@ -1,6 +1,8 @@
 package com.triforce.malacprodavac.presentation.profile.profilePrivate.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -13,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,21 +28,21 @@ fun DropDownListWorkTime(
     var isExpanded by remember { mutableStateOf(false) }
     var selectedEntry by remember { mutableStateOf(entries.first().toString()) }
 
-    if(!first)
+    if (!first)
         selectedEntry = entries.get(4).toString()
-    // menu box
+
     ExposedDropdownMenuBox(
         expanded = isExpanded,
         onExpandedChange = {
             isExpanded = it
         },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.padding(start = 20.dp).width(200.dp)
     ) {
         TextField(
             value = selectedEntry,
             modifier = Modifier
                 .fillMaxWidth()
-                .menuAnchor(), // menuAnchor modifier must be passed to the text field for correctness.
+                .menuAnchor(),
             readOnly = true,
             onValueChange = { },
             label = { Text(label) },
@@ -51,7 +54,7 @@ fun DropDownListWorkTime(
             expanded = isExpanded,
             onDismissRequest = {
                 isExpanded = false
-            }, modifier = Modifier.fillMaxWidth()
+            }, modifier = Modifier.width(200.dp)
         ) {
             entries.forEach { entry ->
                 DropdownMenuItem(

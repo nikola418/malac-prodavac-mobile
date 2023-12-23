@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -41,6 +43,7 @@ import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePri
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateViewModel
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.components.CourierDescComp
 import com.triforce.malacprodavac.ui.theme.MP_Green
+import com.triforce.malacprodavac.ui.theme.MP_Pink
 import com.triforce.malacprodavac.ui.theme.MP_White
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,6 +56,7 @@ fun CustomerPrivateScreen(
     val user = state.currentUser
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+    val spaceBetween = 16.dp
 
     if (!viewModel.isLoggedIn()) {
         LaunchedEffect(key1 = viewModel.isLoggedIn())
@@ -106,40 +110,44 @@ fun CustomerPrivateScreen(
                 .background(MP_White)
                 .padding(it)
         ) {
-            Spacer(modifier = Modifier.padding(16.dp))
             if (!state.isEditing) {
                 Column {
+                    Spacer(Modifier.height(spaceBetween))
                     CourierDescComp(user)
                 }
             } else {
                 Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .verticalScroll(state = scrollState)
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = spaceBetween)
                 ) {
+                    Spacer(Modifier.height(spaceBetween))
                     AddEditTextField(
                         text = state.updateUser?.firstName ?: "",
                         isError = state.firstNameError != null,
                         onTextValueChange = {
                             viewModel.onEvent(ProfilePrivateEvent.FirstNameChanged(it))
                         },
-                        placeholder = "Ime"
+                        placeholder = "Ime",
+                        label = "Ime:"
                     )
                     if (state.firstNameError != null) {
-                    Text(
-                        text = state.firstNameError,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.align(Alignment.End)
-                    )
-                }
-                    Spacer(Modifier.height(8.dp))
+                        Text(
+                            text = state.firstNameError,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.align(Alignment.End)
+                        )
+                    }
+                    Spacer(Modifier.height(spaceBetween))
                     AddEditTextField(
                         text = state.updateUser?.lastName ?: "",
                         isError = state.lastNameError != null,
                         onTextValueChange = {
                             viewModel.onEvent(ProfilePrivateEvent.LastNameChanged(it))
                         },
-                        placeholder = "Prezime"
+                        placeholder = "Prezime",
+                        label = "Prezime:"
                     )
                     if (state.lastNameError != null) {
                         Text(
@@ -148,23 +156,25 @@ fun CustomerPrivateScreen(
                             modifier = Modifier.align(Alignment.End)
                         )
                     }
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(spaceBetween))
                     AddEditTextField(
                         text = state.updateUser?.address ?: "",
                         isError = false,
                         onTextValueChange = {
                             viewModel.onEvent(ProfilePrivateEvent.AddressChanged(it))
                         },
-                        placeholder = "Adresa"
+                        placeholder = "Adresa",
+                        label = "Adresa:"
                     )
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(spaceBetween))
                     AddEditTextField(
                         text = state.updateUser?.phoneNumber ?: "",
                         isError = state.phoneNumberError != null,
                         onTextValueChange = {
                             viewModel.onEvent(ProfilePrivateEvent.PhoneNumberChanged(it))
                         },
-                        placeholder = "Kontakt telefon"
+                        placeholder = "Kontakt telefon",
+                        label = "Kontakt telefon:"
                     )
                     if (state.phoneNumberError != null) {
                         Text(
@@ -173,18 +183,27 @@ fun CustomerPrivateScreen(
                             modifier = Modifier.align(Alignment.End)
                         )
                     }
+                    Spacer(Modifier.height(spaceBetween))
                     Button(
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MP_Pink,
+                            contentColor = MP_White
+                        ),
                         onClick = {
                             Cordinates.isLocation = true
                             Cordinates.isAvailable = false
-                            navController.navigate(Screen.MapScreen.route) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
+                            navController.navigate(Screen.MapScreen.route)
+                        },
+                        modifier = Modifier.width(300.dp)
                     ) {
-                        Text(text = "Postavite Lokaciju")
+                        Text(
+                            text = "Postavite Lokaciju",
+                            style = androidx.compose.material.MaterialTheme.typography.body1,
+                            fontWeight = FontWeight.W400,
+                            modifier = Modifier.padding(vertical = 6.dp)
+                        )
                     }
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(spaceBetween))
                     Button(
                         onClick = {
                             state.updateUser?.addressLatitude = Cordinates.latitude
@@ -197,18 +216,23 @@ fun CustomerPrivateScreen(
                                     Toast.LENGTH_LONG
                                 )
                                 .show()
-                                  },
-                        colors = ButtonDefaults.buttonColors(containerColor = MP_Green),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MP_Green,
+                            contentColor = MP_White
+                        ),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = "Potvrdi izmene", style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            text = "Potvrdi izmene",
+                            style = androidx.compose.material.MaterialTheme.typography.body1,
+                            fontWeight = FontWeight.W500,
+                            modifier = Modifier.padding(vertical = 6.dp)
+                        )
                     }
                 }
             }
 
         }
     }
-
 }

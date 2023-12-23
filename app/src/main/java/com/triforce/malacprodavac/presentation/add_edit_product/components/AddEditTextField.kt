@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Pink_Dark
@@ -37,12 +36,12 @@ fun AddEditTextField(
                 style = MaterialTheme.typography.body1,
                 color = MP_Black,
                 fontWeight = FontWeight.W400,
-                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 20.dp, end = 20.dp, bottom = 10.dp),
             )
         OutlinedTextField(
+            textStyle = MaterialTheme.typography.body2,
             value = text,
             isError = isError,
             onValueChange = { value -> onTextValueChange(value) },
