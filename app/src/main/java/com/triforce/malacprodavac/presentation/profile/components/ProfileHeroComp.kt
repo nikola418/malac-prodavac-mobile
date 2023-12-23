@@ -1,26 +1,24 @@
 package com.triforce.malacprodavac.presentation.profile.components
 
-import androidx.compose.foundation.Image
+import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.AddCircle
-import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,24 +27,31 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
+import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.domain.model.User
-import com.triforce.malacprodavac.presentation.profile.PhotoUrl
 import com.triforce.malacprodavac.presentation.store.components.GoBackComp
 import com.triforce.malacprodavac.ui.theme.MP_GreenDark
 import com.triforce.malacprodavac.ui.theme.MP_GreenLight
 import com.triforce.malacprodavac.ui.theme.MP_Orange
 import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
 import com.triforce.malacprodavac.ui.theme.MP_White
+import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun ProfileHeroComp(
     user: User?,
     navController: NavController,
-    private: Boolean
+    private: Boolean,
+    modifier: Modifier = Modifier,
+    imageUrl: String? = null,
+    imageKey: String? = null
 ) {
     if (user != null) {
         Column {
@@ -156,38 +161,41 @@ fun ProfileHeroComp(
 
                                 }
                             }
-
-                            Icon(
-                                imageVector = Icons.Rounded.Email,
-                                contentDescription = "Poruka",
-                                tint = MP_White,
-                                modifier = Modifier
-                                    .size(35.dp)
-                                    .clickable { }
-                            )
                         }
 
                     }
 
-                    if (PhotoUrl.changed == true) {
-                        Image(
-                            bitmap = PhotoUrl.photoBitMap,
-                            contentDescription = "Round Image",
-                            contentScale = ContentScale.Crop,
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .height(150.dp)
+                            .padding(start = 20.dp, end = 20.dp)
+                            .background(MP_White, RoundedCornerShape(150.dp))
+                            .padding(5.dp)
+                    ) {
+
+                        val placeholder = R.drawable.logo_green
+                        val imageRequest = ImageRequest.Builder(LocalContext.current)
+                            .data(imageUrl)
+                            .dispatcher(Dispatchers.IO)
+                            .memoryCachePolicy(CachePolicy.ENABLED)
+                            .memoryCacheKey(imageKey)
+                            .placeholder(placeholder)
+                            .error(placeholder)
+                            .fallback(placeholder)
+                            .build()
+
+                        Log.d("IMAGE_KEY", imageKey.toString())
+                        Log.d("IMAGE_URL", imageUrl.toString())
+
+                        AsyncImage(
+                            model = imageRequest,
+                            contentDescription = "Profile Picture",
+                            contentScale = ContentScale.FillWidth,
                             modifier = Modifier
-                                .size(150.dp)
-                                .clip(CircleShape)
-                                .border(3.dp, MP_White, CircleShape)
-                        )
-                    } else {
-                        Image(
-                            painter = painterResource(androidx.customview.R.drawable.notify_panel_notification_icon_bg),
-                            contentDescription = "Round Image",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(150.dp)
-                                .clip(CircleShape)
-                                .border(3.dp, MP_White, CircleShape)
+                                .fillMaxSize()
                         )
                     }
                 }

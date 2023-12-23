@@ -1,5 +1,6 @@
 package com.triforce.malacprodavac.presentation.myTransactions.mySales
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,6 +12,7 @@ import com.triforce.malacprodavac.domain.repository.OrderRepository
 import com.triforce.malacprodavac.domain.repository.ShopRepository
 import com.triforce.malacprodavac.domain.use_case.profile.Profile
 import com.triforce.malacprodavac.domain.util.Resource
+import com.triforce.malacprodavac.util.enum.DeliveryMethod
 import com.triforce.malacprodavac.util.enum.OrderStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -40,11 +42,16 @@ class MySalesViewModel @Inject constructor(
                 }
 
             is MySalesEvent.Submit ->
-                state.orders.find { it.id == event.orderId }?.courierId?.let { courierId ->
-                    updateOrderCourier(event.orderId, courierId)
-                }
-
-            is MySalesEvent.AcceptOrder -> acceptOrder(event.orderId)
+                if (event.order.deliveryMethod == DeliveryMethod.ByCourier.toString())
+                    state.orders.find { it.id == event.order.id }?.courierId?.let { courierId ->
+                        updateOrderCourier(event.order.id, courierId, event.orderStatus)
+                    }
+                else if (event.order.deliveryMethod == DeliveryMethod.SelfPickup.toString())
+                    state.user?.courier?.let { iCourier ->
+                        updateOrderCourier(event.order.id, iCourier.id, event.orderStatus)
+                    }
+            
+            is MySalesEvent.AcceptOrder -> acceptOrder(event.order.id)
         }
     }
 
@@ -77,7 +84,7 @@ class MySalesViewModel @Inject constructor(
                 )
             ).collect { result ->
                 when (result) {
-                    is Resource.Success -> updateOrderStatus(orderId)
+                    is Resource.Success -> updateOrderStatus(orderId, OrderStatus.Packaged)
                     is Resource.Error -> handleError()
                     is Resource.Loading -> handleLoading(result.isLoading)
                 }
@@ -85,11 +92,11 @@ class MySalesViewModel @Inject constructor(
         }
     }
 
-    private fun updateOrderStatus(orderId: Int) {
+    private fun updateOrderStatus(orderId: Int, orderStatus: OrderStatus) {
         viewModelScope.launch {
             orderRepository.updateOrder(
                 orderId, UpdateOrderDto(
-                    orderStatus = OrderStatus.Packaged.toString(),
+                    orderStatus = orderStatus.toString(),
                     accepted = null,
                     courierId = null
                 )
@@ -103,7 +110,7 @@ class MySalesViewModel @Inject constructor(
         }
     }
 
-    private fun updateOrderCourier(orderId: Int, courierId: Int) {
+    private fun updateOrderCourier(orderId: Int, courierId: Int, orderStatus: OrderStatus) {
         viewModelScope.launch {
             orderRepository.updateOrder(
                 orderId, UpdateOrderDto(
@@ -113,7 +120,7 @@ class MySalesViewModel @Inject constructor(
                 )
             ).collect { result ->
                 when (result) {
-                    is Resource.Success -> getShopOrders()
+                    is Resource.Success -> updateOrderStatus(orderId, orderStatus)
                     is Resource.Error -> handleError()
                     is Resource.Loading -> handleLoading(result.isLoading)
                 }

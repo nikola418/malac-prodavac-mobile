@@ -55,7 +55,13 @@ fun ProfilePublicScreen(
                 modifier = Modifier
                     .height(heightWindow)
             ) {
-                ProfileHeroComp(user, navController, false)
+                ProfileHeroComp(
+                    user,
+                    navController,
+                    false,
+                    imageUrl = state.profileImageUrl,
+                    imageKey = state.profileImageKey
+                )
                 Spacer(modifier = Modifier.padding(16.dp))
 
                 ShopDescComp(user, shop)

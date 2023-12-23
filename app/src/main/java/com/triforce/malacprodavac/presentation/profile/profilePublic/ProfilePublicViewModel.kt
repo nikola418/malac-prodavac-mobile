@@ -1,13 +1,13 @@
 package com.triforce.malacprodavac.presentation.profile.profilePublic
 
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.triforce.malacprodavac.domain.model.shops.Shop
 import com.triforce.malacprodavac.domain.repository.ShopRepository
 import com.triforce.malacprodavac.domain.use_case.profile.Profile
 import com.triforce.malacprodavac.domain.util.Resource
@@ -29,14 +29,11 @@ class ProfilePublicViewModel @Inject constructor(
 
     init {
         state = state.copy(isLoading = true)
-
         savedStateHandle.get<Int>("id")?.let { id ->
             if (id != -1) {
                 savedStateHandle.get<Int>("role")?.let { role ->
                     if (role == 1) {
-
                         state = state.copy(role = 1)
-
                         getShop(id)
                     }
                 }
@@ -58,18 +55,12 @@ class ProfilePublicViewModel @Inject constructor(
             profile.getMe().collect { result ->
                 when (result) {
                     is Resource.Error -> {}
-
                     is Resource.Loading -> {
                         state = state.copy(isLoading = result.isLoading)
                     }
 
                     is Resource.Success -> {
-                        state = state.copy(
-                            user = result.data,
-                            profileImageUrl = "http://softeng.pmf.kg.ac.rs:10010/users/${result.data?.profilePicture?.userId}/medias/${result.data?.profilePicture?.id}",
-                            profileImageKey = result.data?.profilePicture?.key
-                        )
-
+                        state = state.copy(user = result.data)
                         state.user?.shop?.id?.let { getShop(it) }
                     }
                 }
@@ -82,11 +73,23 @@ class ProfilePublicViewModel @Inject constructor(
             repositoryShop.getShop(fetchFromRemote = true, id = shopId)
                 .collectLatest { result ->
                     when (result) {
-
                         is Resource.Success -> {
-                            if (result.data is Shop) {
-                                state = state.copy(shop = result.data, isLoading = false)
-                            }
+                            if (result.data != null)
+                                state = state.copy(
+                                    shop = result.data,
+                                    isLoading = false,
+                                    profileImageKey = result.data.user?.profilePicture?.key,
+                                    profileImageUrl = "http://softeng.pmf.kg.ac.rs:10010/users/${result.data.user?.profilePicture?.userId}/medias/${result.data.user?.profilePicture?.id}"
+                                )
+
+                            Log.d("RADI_SVE_TI_JEBEM_1", state.profileImageUrl.toString())
+                            Log.d("RADI_SVE_TI_JEBEM_2", state.profileImageKey.toString())
+                            Log.d("RADI_SVE_TI_JEBEM_3", state.shop?.user.toString())
+                            Log.d(
+                                "RADI_SVE_TI_JEBEM_4",
+                                state.shop?.user?.profilePicture.toString()
+                            )
+                            Log.d("RADI_SVE_TI_JEBEM_5", state.shop.toString())
                         }
 
                         is Resource.Error -> {

@@ -84,7 +84,12 @@ fun MySalesRow(
             modifier = Modifier.padding(10.dp)
         ) {
             Text(
-                text = order.product.title,
+                text = if (order.product.title.length > 14) "${
+                    order.product.title.subSequence(
+                        0,
+                        14
+                    )
+                }.." else order.product.title,
                 style = MaterialTheme.typography.h4,
                 color = MP_Orange_Dark,
                 fontWeight = FontWeight.W400
@@ -109,56 +114,57 @@ fun MySalesRow(
                 fontWeight = FontWeight.W300
             )
 
-            if (order.deliveryMethod == DeliveryMethod.ByCourier.toString()) {
-                if (order.orderStatus == OrderStatus.Packaged.toString()) {
-                    Spacer(modifier = Modifier.padding(12.dp))
-                    CouriersDropDownList(
-                        couriers = viewModel.state.couriers,
-                        handleSelect = { courier ->
-                            viewModel.onEvent(
-                                MySalesEvent.CourierIdChanged(
-                                    (courier as Courier).id,
-                                    order.id
-                                )
-                            )
-                        },
-                        label = "Izaberi kurira za dostavu",
-                        fill = true,
-                        order = order,
-                        viewModel = viewModel
-                    )
-                    Spacer(modifier = Modifier.padding(12.dp))
-                    SubmitSale(
-                        text = "Dodeli kurira za dostavu",
-                        tintColor = MP_Orange_Dark,
-                        modifier = Modifier.clickable {
-                            viewModel.onEvent(MySalesEvent.Submit(order.id))
-                        }
-                    )
-                    Spacer(modifier = Modifier.padding(12.dp))
-                } else {
-                    Spacer(modifier = Modifier.padding(6.dp))
-                    Text(
-                        text = "Dodeljen kurir #${order.courierId}",
-                        style = MaterialTheme.typography.body1,
-                        color = MP_Black,
-                        fontWeight = FontWeight.W300
-                    )
-                    Spacer(modifier = Modifier.padding(12.dp))
-                }
-            } else {
-                Spacer(modifier = Modifier.padding(12.dp))
+            Spacer(modifier = Modifier.padding(12.dp))
+            if (order.orderStatus == OrderStatus.Ordered.toString()) {
                 SubmitSale(
                     text = "Potvrdi porudžbinu",
                     tintColor = MP_Green,
                     modifier = Modifier.clickable {
-                        viewModel.onEvent(MySalesEvent.AcceptOrder(order.id))
+                        viewModel.onEvent(MySalesEvent.AcceptOrder(order))
                     }
                 )
+            } else if (order.orderStatus == OrderStatus.Packaged.toString() && order.deliveryMethod == DeliveryMethod.ByCourier.toString()) {
+                CouriersDropDownList(
+                    couriers = viewModel.state.couriers,
+                    handleSelect = { courier ->
+                        viewModel.onEvent(
+                            MySalesEvent.CourierIdChanged(
+                                (courier as Courier).id,
+                                order.id
+                            )
+                        )
+                    },
+                    label = "Izaberi kurira za dostavu",
+                    fill = true,
+                    order = order,
+                    viewModel = viewModel
+                )
                 Spacer(modifier = Modifier.padding(12.dp))
+                SubmitSale(
+                    text = "Dodeli kurira za dostavu",
+                    tintColor = MP_Orange_Dark,
+                    modifier = Modifier.clickable {
+                        viewModel.onEvent(MySalesEvent.Submit(order, OrderStatus.InDelivery))
+                    }
+                )
+            } else if (order.orderStatus == OrderStatus.InDelivery.toString() && order.deliveryMethod == DeliveryMethod.ByCourier.toString()) {
+                Text(
+                    text = "Dodeljen kurir: ${order.courier?.user?.firstName} ${order.courier?.user?.lastName} - ${order.courier?.user?.phoneNumber}",
+                    style = MaterialTheme.typography.body1,
+                    color = MP_Black,
+                    fontWeight = FontWeight.W300
+                )
+            } else if (order.orderStatus == OrderStatus.Packaged.toString() && order.deliveryMethod == DeliveryMethod.SelfPickup.toString()) {
+                SubmitSale(
+                    text = "Porudžbina je izvršena",
+                    tintColor = MP_Green,
+                    modifier = Modifier.clickable {
+                        viewModel.onEvent(MySalesEvent.Submit(order, OrderStatus.Received))
+                    }
+                )
             }
-
             Spacer(modifier = Modifier.padding(12.dp))
+
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
