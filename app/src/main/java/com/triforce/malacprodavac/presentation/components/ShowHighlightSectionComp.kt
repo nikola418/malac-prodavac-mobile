@@ -191,7 +191,7 @@ fun HighlightSectionProduct(
                         AsyncImage(
                             model = imageRequest,
                             contentDescription = "Profile Picture",
-                            contentScale = ContentScale.FillWidth,
+                            contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .fillMaxSize()
                         )

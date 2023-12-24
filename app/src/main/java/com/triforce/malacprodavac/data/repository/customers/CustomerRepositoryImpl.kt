@@ -6,6 +6,7 @@ import com.triforce.malacprodavac.data.remote.customers.dto.CreateFavoriteProduc
 import com.triforce.malacprodavac.data.repository.customers.favoriteShops.dto.CreateFavoriteShopDto
 import com.triforce.malacprodavac.domain.model.CreateCustomer
 import com.triforce.malacprodavac.domain.model.Customer
+import com.triforce.malacprodavac.domain.model.Order
 import com.triforce.malacprodavac.domain.model.customers.FavoriteProduct
 import com.triforce.malacprodavac.domain.model.customers.FavoriteShop
 import com.triforce.malacprodavac.domain.model.customers.UpdateCustomer
@@ -248,6 +249,34 @@ class CustomerRepositoryImpl @Inject constructor(
                 emit(Resource.Success(data = it))
             }
             emit(Resource.Loading(isLoading = false))
+        }
+    }
+
+    override suspend fun getUserOrders(
+        id: Int,
+        fetchFromRemote: Boolean
+    ): Flow<Resource<List<Order>>> {
+        return flow {
+            emit(Resource.Loading(isLoading = true))
+
+            val remoteCustomerOrders = try {
+                api.getUserOrders(id)
+            } catch (e: IOException) {
+                e.printStackTrace()
+                emit(Resource.Error("Couldn't load shop orders"))
+                null
+
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                emit(Resource.Error("Couldn't load shop orders data"))
+                null
+            }
+
+            remoteCustomerOrders?.let {
+                emit(Resource.Success(remoteCustomerOrders.data.map { jt -> jt }))
+            }
+
+            emit(Resource.Loading(false))
         }
     }
 

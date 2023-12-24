@@ -141,7 +141,7 @@ class ShopRepositoryImpl @Inject constructor(
 
             remoteShop?.let {
 
-                Log.d("SHOP:", it.toString())
+                Log.d("HEDOVI", it.toString())
                 emit(Resource.Success(remoteShop))
 
             }

@@ -13,7 +13,7 @@ fun MySalesScreen(
 ) {
     Scaffold(
         topBar = {
-            GoBackComp("Moje Prodaje", navController, true)
+            GoBackComp("Moje prodaje", navController, true)
         },
         content = { padding ->
             MySalesContentScreen(navController, padding)

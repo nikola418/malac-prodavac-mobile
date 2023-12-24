@@ -3,8 +3,10 @@ package com.triforce.malacprodavac.data.remote.customers
 
 import com.triforce.malacprodavac.data.remote.customers.dto.CreateCustomerDto
 import com.triforce.malacprodavac.data.remote.customers.dto.CreateFavoriteProductDto
+import com.triforce.malacprodavac.data.remote.dto.PaginationResponse
 import com.triforce.malacprodavac.data.repository.customers.favoriteShops.dto.CreateFavoriteShopDto
 import com.triforce.malacprodavac.domain.model.Customer
+import com.triforce.malacprodavac.domain.model.Order
 import com.triforce.malacprodavac.domain.model.SchedulePickup
 import com.triforce.malacprodavac.domain.model.customers.FavoriteProduct
 import com.triforce.malacprodavac.domain.model.customers.FavoriteShop
@@ -84,6 +86,10 @@ interface CustomersApi {
         @Path("id") customerId: Int,
         @Path("favoriteShopId") favoriteShopId: Int
     ): FavoriteShop
+
+
+    @GET("${ROUTE}/{id}/orders")
+    suspend fun getUserOrders(@Path("id") id: Int): PaginationResponse<Order>
 
     companion object {
         const val ROUTE = "/customers"

@@ -13,7 +13,7 @@ fun MyDeliveriesScreen(
 ) {
     Scaffold(
         topBar = {
-            GoBackComp("Moje Dostave", navController, true)
+            GoBackComp("Moje dostave", navController, true)
         },
         content = { padding ->
             MyDeliveriesContentScreen(navController, padding)

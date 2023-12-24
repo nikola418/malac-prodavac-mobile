@@ -4,6 +4,7 @@ import com.triforce.malacprodavac.data.remote.customers.dto.CreateFavoriteProduc
 import com.triforce.malacprodavac.data.repository.customers.favoriteShops.dto.CreateFavoriteShopDto
 import com.triforce.malacprodavac.domain.model.CreateCustomer
 import com.triforce.malacprodavac.domain.model.Customer
+import com.triforce.malacprodavac.domain.model.Order
 import com.triforce.malacprodavac.domain.model.customers.FavoriteProduct
 import com.triforce.malacprodavac.domain.model.customers.FavoriteShop
 import com.triforce.malacprodavac.domain.model.customers.UpdateCustomer
@@ -44,4 +45,6 @@ interface CustomerRepository {
     ): Flow<Resource<FavoriteShop>>
 
     suspend fun deleteFavoriteShop(id: Int, favoriteShopId: Int): Flow<Resource<FavoriteShop>>
+
+    suspend fun getUserOrders(id: Int, fetchFromRemote: Boolean): Flow<Resource<List<Order>>>
 }

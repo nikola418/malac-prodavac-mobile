@@ -61,6 +61,7 @@ class ProfilePublicViewModel @Inject constructor(
 
                     is Resource.Success -> {
                         state = state.copy(user = result.data)
+                        Log.d("JEBEM_PRODUCTS", state.user?.shop?.products.toString())
                         state.user?.shop?.id?.let { getShop(it) }
                     }
                 }
@@ -76,20 +77,19 @@ class ProfilePublicViewModel @Inject constructor(
                         is Resource.Success -> {
                             if (result.data != null)
                                 state = state.copy(
+
+
                                     shop = result.data,
                                     isLoading = false,
                                     profileImageKey = result.data.user?.profilePicture?.key,
                                     profileImageUrl = "http://softeng.pmf.kg.ac.rs:10010/users/${result.data.user?.profilePicture?.userId}/medias/${result.data.user?.profilePicture?.id}"
                                 )
-
-                            Log.d("RADI_SVE_TI_JEBEM_1", state.profileImageUrl.toString())
-                            Log.d("RADI_SVE_TI_JEBEM_2", state.profileImageKey.toString())
-                            Log.d("RADI_SVE_TI_JEBEM_3", state.shop?.user.toString())
                             Log.d(
-                                "RADI_SVE_TI_JEBEM_4",
-                                state.shop?.user?.profilePicture.toString()
+                                "PROVILE_IMAGE_KEY",
+                                result.data?.user?.profilePicture?.key.toString()
                             )
-                            Log.d("RADI_SVE_TI_JEBEM_5", state.shop.toString())
+                            result.data?.user?.toString()?.let { Log.d("PROVILE_USER", it) }
+
                         }
 
                         is Resource.Error -> {
