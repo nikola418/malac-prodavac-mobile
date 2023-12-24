@@ -68,7 +68,7 @@ fun ProfilePublicScreen(
                 Spacer(modifier = Modifier.padding(16.dp))
 
                 CallToActionFavourite(
-                    shop = shop,
+                    profileViewModel = viewModel,
                     "Ukoliko želite da pratite naš rad, kako bi znali kada smo u Vašoj okolini:"
                 )
                 Spacer(modifier = Modifier.padding(16.dp))

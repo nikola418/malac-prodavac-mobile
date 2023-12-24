@@ -61,7 +61,6 @@ fun GoBackComp(
                         .size(25.dp)
                         .clickable {
                             navController.popBackStack()
-                            //navController.navigate(Screen.HomeScreen.route)
                         }
                 )
 

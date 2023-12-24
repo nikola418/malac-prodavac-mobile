@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -36,6 +37,7 @@ import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.domain.model.customers.FavoriteProduct
 import com.triforce.malacprodavac.presentation.FavProducts.FavoriteEvent
 import com.triforce.malacprodavac.presentation.FavProducts.FavoriteViewModel
+import com.triforce.malacprodavac.presentation.myTransactions.components.ProductImage
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Gray
 import com.triforce.malacprodavac.ui.theme.MP_Green
@@ -63,114 +65,123 @@ fun FavProductItem(
             .background(MP_Gray)
             .requiredHeight(160.dp)
     ) {
-
-        Box(
+        Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(20.dp)
+                .fillMaxWidth()
                 .clickable {
                     navController.navigate(Screen.ProductScreen.route + "?productId=${favoriteProduct.product!!.id}")
-                }
+                },
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-
-            Row(
+            Spacer(Modifier.padding(6.dp))
+            ProductImage(product = favoriteProduct.product, width = 75.dp, height = 120.dp)
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-
+                    .fillMaxSize()
+                    .padding(20.dp)
             ) {
-                Text(
-                    text = favoriteProduct.product!!.title,
-                    style = MaterialTheme.typography.h6,
-                    color = MP_Black
-                )
 
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "Delete one",
-                    tint = MP_Pink,
+                Row(
                     modifier = Modifier
-                        .size(36.dp)
-                        .clickable {
-                            showDialog = true
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+
+                ) {
+                    Text(
+                        text = favoriteProduct.product!!.title,
+                        style = MaterialTheme.typography.h6,
+                        color = MP_Black
+                    )
+
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "Delete one",
+                        tint = MP_Pink,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clickable {
+                                showDialog = true
+                            }
+                    )
+                }
+
+
+                if (showDialog) {
+                    AlertDialog(
+                        containerColor = MP_White,
+                        onDismissRequest = {
+                            showDialog = false
+                        },
+                        title = {
+                            Text(
+                                text = "Obriši proizvod iz liste omiljenih",
+                                style = MaterialTheme.typography.h5,
+                                color = MP_Pink_Dark,
+                                fontWeight = FontWeight.W300
+                            )
+                        },
+                        text = {
+                            Text(
+                                text = "Da li ste sigurni da želite da obrišete ${favoriteProduct.product!!.title} iz liste omiljenih proizvoda?",
+                                style = MaterialTheme.typography.body1,
+                                color = MP_Black,
+                                fontWeight = FontWeight.W300
+                            )
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    viewModel.onEvent(FavoriteEvent.DeleteFavProduct(favoriteProduct.productId))
+                                    showDialog = false
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MP_Green
+                                )
+                            ) {
+                                Text(
+                                    text = "Da",
+                                    style = MaterialTheme.typography.body1,
+                                    color = MP_White
+                                )
+                            }
+                        },
+                        dismissButton = {
+                            Button(
+                                onClick = {
+                                    showDialog = false
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MP_Pink
+                                )
+                            ) {
+                                Text(
+                                    text = "Ne",
+                                    style = MaterialTheme.typography.body1,
+                                    color = MP_White
+                                )
+                            }
                         }
+                    )
+                }
+
+                Text(
+                    text = favoriteProduct.product!!.desc,
+                    maxLines = 3,
+                    style = MaterialTheme.typography.body2,
+                    color = MP_Black,
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                )
+
+                Text(
+                    text = favoriteProduct.product.price.toString() + " " + favoriteProduct.product.currency,
+                    style = MaterialTheme.typography.body2,
+                    color = MP_Green,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
                 )
             }
-
-            if (showDialog) {
-                AlertDialog(
-                    containerColor = MP_White,
-                    onDismissRequest = {
-                        showDialog = false
-                    },
-                    title = {
-                        Text(
-                            text = "Obriši proizvod iz liste omiljenih",
-                            style = MaterialTheme.typography.h5,
-                            color = MP_Pink_Dark,
-                            fontWeight = FontWeight.W300
-                        )
-                    },
-                    text = {
-                        Text(
-                            text = "Da li ste sigurni da želite da obrišete ${favoriteProduct.product!!.title} iz liste omiljenih proizvoda?",
-                            style = MaterialTheme.typography.body1,
-                            color = MP_Black,
-                            fontWeight = FontWeight.W300
-                        )
-                    },
-                    confirmButton = {
-                        Button(
-                            onClick = {
-                                viewModel.onEvent(FavoriteEvent.DeleteFavProduct(favoriteProduct.productId))
-                                showDialog = false
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MP_Green
-                            )
-                        ) {
-                            Text(
-                                text = "Da",
-                                style = MaterialTheme.typography.body1,
-                                color = MP_White
-                            )
-                        }
-                    },
-                    dismissButton = {
-                        Button(
-                            onClick = {
-                                showDialog = false
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MP_Pink
-                            )
-                        ) {
-                            Text(
-                                text = "Ne",
-                                style = MaterialTheme.typography.body1,
-                                color = MP_White
-                            )
-                        }
-                    }
-                )
-            }
-
-            Text(
-                text = favoriteProduct.product!!.desc,
-                maxLines = 3,
-                style = MaterialTheme.typography.body2,
-                color = MP_Black,
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-            )
-
-            Text(
-                text = favoriteProduct.product.price.toString() + " " + favoriteProduct.product.currency,
-                style = MaterialTheme.typography.body2,
-                color = MP_Green,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-            )
         }
     }
 }

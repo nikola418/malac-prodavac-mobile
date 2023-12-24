@@ -10,8 +10,6 @@ import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -32,7 +30,7 @@ fun CartDetailsScreenContent(
     navController: NavController,
     viewModel: CartViewModel = hiltViewModel()
 ) {
-    val totalPrice = viewModel.cartState.totalPrice
+    val totalPrice = String.format("%.2f", viewModel.cartState.totalPrice)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -66,12 +64,10 @@ fun CartDetailsScreenContent(
 
         Button(
             onClick = {
-                if (CartRepository.getShipping() == DeliveryMethod.ByCourier)
-                {
+                if (CartRepository.getShipping() == DeliveryMethod.ByCourier) {
                     viewModel.onEvent(CartEvent.makeOrder)
                     navController.navigate(Screen.DetailsOrderScreen.route)
-                }
-                else
+                } else
                     navController.navigate(Screen.SchedulingScreen.route)
             },
             colors = ButtonDefaults.buttonColors(MP_Green)
