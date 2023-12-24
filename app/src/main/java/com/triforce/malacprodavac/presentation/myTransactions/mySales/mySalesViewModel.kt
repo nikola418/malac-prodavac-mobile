@@ -1,6 +1,5 @@
 package com.triforce.malacprodavac.presentation.myTransactions.mySales
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -50,8 +49,9 @@ class MySalesViewModel @Inject constructor(
                     state.user?.courier?.let { iCourier ->
                         updateOrderCourier(event.order.id, iCourier.id, event.orderStatus)
                     }
-            
+
             is MySalesEvent.AcceptOrder -> acceptOrder(event.order.id)
+            is MySalesEvent.DeleteOrder -> deleteOrder(event.order.id)
         }
     }
 
@@ -85,6 +85,18 @@ class MySalesViewModel @Inject constructor(
             ).collect { result ->
                 when (result) {
                     is Resource.Success -> updateOrderStatus(orderId, OrderStatus.Packaged)
+                    is Resource.Error -> handleError()
+                    is Resource.Loading -> handleLoading(result.isLoading)
+                }
+            }
+        }
+    }
+    
+    private fun deleteOrder(orderId: Int) {
+        viewModelScope.launch {
+            orderRepository.deleteOrder(orderId).collect { result ->
+                when (result) {
+                    is Resource.Success -> getShopOrders()
                     is Resource.Error -> handleError()
                     is Resource.Loading -> handleLoading(result.isLoading)
                 }

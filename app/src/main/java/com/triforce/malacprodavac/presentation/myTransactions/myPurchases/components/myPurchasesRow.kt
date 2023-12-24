@@ -97,9 +97,11 @@ fun MyPurchasesRow(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 ProductImage(product = order.product, width = 100.dp, height = 140.dp)
-                Column(modifier = Modifier
-                    .padding(start = 12.dp)
-                    .width(160.dp)) {
+                Column(
+                    modifier = Modifier
+                        .padding(start = 12.dp)
+                        .width(160.dp)
+                ) {
                     Text(
                         text = order.product.title,
                         style = MaterialTheme.typography.h4,
@@ -208,7 +210,7 @@ fun MyPurchasesRow(
             },
             title = {
                 Text(
-                    text = "Obriši prodavca iz liste omiljenih",
+                    text = "Obriši porudžbinu",
                     style = MaterialTheme.typography.h5,
                     color = MP_Pink_Dark,
                     fontWeight = FontWeight.W300
@@ -216,7 +218,7 @@ fun MyPurchasesRow(
             },
             text = {
                 Text(
-                    text = "Da li ste sigurni da želite da obrišete porudžbinu za proizvod ${order.product?.title}?",
+                    text = "Da li ste sigurni da želite da obrišete porudžbinu za proizvod ${order.product.title}?",
                     style = MaterialTheme.typography.body1,
                     color = MP_Black,
                     fontWeight = FontWeight.W300

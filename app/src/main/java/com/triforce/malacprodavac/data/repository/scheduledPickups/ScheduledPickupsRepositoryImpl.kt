@@ -7,7 +7,6 @@ import com.triforce.malacprodavac.data.remote.orders.OrderApi
 import com.triforce.malacprodavac.data.remote.orders.dto.CreateSchedulePickupDto
 import com.triforce.malacprodavac.data.remote.orders.dto.UpdateScheduledPickupDto
 import com.triforce.malacprodavac.data.remote.shops.ShopsApi
-import com.triforce.malacprodavac.domain.model.CreateSchedulePickup
 import com.triforce.malacprodavac.domain.model.SchedulePickup
 import com.triforce.malacprodavac.domain.model.UpdateScheduledPickup
 import com.triforce.malacprodavac.domain.repository.ScheduledPickupRepository
@@ -128,25 +127,23 @@ class ScheduledPickupsRepositoryImpl @Inject constructor(
 
     override suspend fun insertScheduledPickup(
         id: Int,
-        createSchedulePickup: CreateSchedulePickup
+        createSchedulePickup: CreateSchedulePickupDto
     ): Flow<Resource<SchedulePickup>> {
+
         return flow {
             emit(Resource.Loading(isLoading = true))
             val insertSchedule = try {
-                orderApi.createSchedulePickups(id, createSchedulePickup as CreateSchedulePickupDto)
+                orderApi.insertScheduledPickup(id, createSchedulePickup)
             } catch (e: IOException) {
                 e.printStackTrace()
-                emit(Resource.Error("Couldn't create Schedule"))
                 null
             } catch (e: HttpException) {
                 e.printStackTrace()
-                emit(Resource.Error("Couldn't create Schedule"))
                 null
             }
             insertSchedule?.let {
                 emit(Resource.Success(it.toSchedulePickups()))
             }
-
             emit(Resource.Loading(false))
         }
     }
@@ -159,7 +156,11 @@ class ScheduledPickupsRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading(isLoading = true))
             val updateSchedule = try {
-                orderApi.updateSchedulePickups(id, scheduledPickupId, updateSchedulePickup as UpdateScheduledPickupDto)
+                orderApi.updateSchedulePickups(
+                    id,
+                    scheduledPickupId,
+                    updateSchedulePickup as UpdateScheduledPickupDto
+                )
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(Resource.Error("Couldn't update Schedule"))

@@ -37,9 +37,9 @@ interface OrderApi {
     ): Order
 
     @POST("${ROUTE}/{id}/scheduledPickups")
-    suspend fun createSchedulePickups(
+    suspend fun insertScheduledPickup(
         @Path("id") id: Int,
-        @Body() createSchedulePickupDto: CreateSchedulePickupDto
+        @Body() CreateSchedulePickupDto: CreateSchedulePickupDto
     ): ScheduledPickupEntity
 
     @PATCH("${ROUTE}/{id}/scheduledPickups/{scheduledPickupId}")

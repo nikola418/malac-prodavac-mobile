@@ -11,6 +11,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.Clear
+import androidx.compose.material.icons.outlined.DeleteForever
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,7 +30,8 @@ import com.triforce.malacprodavac.ui.theme.MP_White
 fun SubmitSale(
     text: String,
     tintColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isDelete: Boolean = false
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -54,7 +57,7 @@ fun SubmitSale(
             textAlign = TextAlign.Center,
         )
         Icon(
-            imageVector = Icons.Outlined.Check,
+            imageVector = if(isDelete) Icons.Outlined.Clear else Icons.Outlined.Check,
             contentDescription = "FavoriteBorder",
             tint = MP_White,
             modifier = Modifier

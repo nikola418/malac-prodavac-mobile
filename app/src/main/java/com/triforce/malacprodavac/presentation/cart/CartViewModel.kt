@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.triforce.malacprodavac.data.remote.orders.dto.CreateOrderDto
 import com.triforce.malacprodavac.data.remote.orders.dto.CreateSchedulePickupDto
 import com.triforce.malacprodavac.data.repository.cart.CartRepository
+import com.triforce.malacprodavac.domain.model.Order
 import com.triforce.malacprodavac.domain.model.products.Product
 import com.triforce.malacprodavac.domain.model.shops.Shop
 import com.triforce.malacprodavac.domain.repository.OrderRepository
@@ -39,8 +40,6 @@ class CartViewModel @Inject constructor(
 
     init {
         me()
-        getToken()
-        fetchCartItems()
     }
 
     private fun fetchCartItems() {
@@ -81,15 +80,41 @@ class CartViewModel @Inject constructor(
             CartEvent.quantityChange -> recalculateTotalPrice()
             CartEvent.makeOrder ->
                 for (cartItem in _cartItems.value)
-                    makeOrder(cartItem)
+                    if (CartRepository.getShipping() == DeliveryMethod.ByCourier)
+                        makeCourierOrder(cartItem)
+                    else if (CartRepository.getShipping() == DeliveryMethod.SelfPickup)
+                        makeScheduleOrder(cartItem)
         }
     }
 
-    private fun makeOrder(
+    private fun makeCourierOrder(
         cartItem: CartItem
     ) {
-        cartState = cartState.copy(isSuccessful = false)
+        viewModelScope.launch {
+            repositoryOrder.insertOrder(
+                createOrder = CreateOrderDto(
+                    deliveryMethod = CartRepository.getShipping(),
+                    paymentMethod = CartRepository.getPayment(),
+                    productId = cartItem.product.id,
+                    quantity = cartItem.quantity.value
+                )
+            ).collect { result ->
+                when (result) {
+                    is Resource.Success ->
+                        result.data?.let {
+                            cartState = cartState.copy(isSuccessful = true)
+                        }
 
+                    is Resource.Error -> handleError()
+                    is Resource.Loading -> handleLoading(result.isLoading)
+                }
+            }
+        }
+    }
+
+    private fun makeScheduleOrder(
+        cartItem: CartItem
+    ) {
         viewModelScope.launch {
             repositoryOrder.insertOrder(
                 createOrder = CreateOrderDto(
@@ -101,36 +126,28 @@ class CartViewModel @Inject constructor(
             ).collect { result ->
                 when (result) {
                     is Resource.Success -> {
-                        result.data?.let {
-
-                            if (CartRepository.getShipping() == DeliveryMethod.SelfPickup)
-                                scheduleProducts(cartItem)
-                            else
-                                cartState = cartState.copy(isSuccessful = true)
+                        result.data?.let { order ->
+                            scheduleOrder(order)
                         }
                     }
 
-                    is Resource.Error -> {
-                        Unit
-                    }
-
-                    is Resource.Loading -> {
-                        cartState = cartState.copy(
-                            isLoading = result.isLoading
-                        )
-                    }
+                    is Resource.Error -> handleError()
+                    is Resource.Loading -> handleLoading(result.isLoading)
                 }
             }
         }
     }
 
-    private fun scheduleProducts(
-        cartItem: CartItem
+    private fun scheduleOrder(
+        order: Order
     ) {
         viewModelScope.launch {
             repositorySchedule.insertScheduledPickup(
-                id = cartItem.orderId,
-                createSchedulePickup = CreateSchedulePickupDto(date = CartRepository.getScheduleDate(), timeOfDay = CartRepository.getScheduleTime())
+                id = order.id,
+                createSchedulePickup = CreateSchedulePickupDto(
+                    date = CartRepository.getScheduleDate(),
+                    timeOfDay = CartRepository.getScheduleTime()
+                )
             ).collect { result ->
                 when (result) {
                     is Resource.Success -> {
@@ -139,15 +156,30 @@ class CartViewModel @Inject constructor(
                         }
                     }
 
-                    is Resource.Error -> {
-                        Unit
+                    is Resource.Error -> handleError()
+                    is Resource.Loading -> handleLoading(result.isLoading)
+                }
+            }
+        }
+    }
+
+    private fun me() {
+        viewModelScope.launch {
+            profile.getMe().collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        cartState = cartState.copy(
+                            user = result.data,
+                            profileImageUrl = "http://softeng.pmf.kg.ac.rs:10010/users/${result.data?.profilePicture?.userId}/medias/${result.data?.profilePicture?.id}",
+                            profileImageKey = result.data?.profilePicture?.key
+                        )
+
+                        getToken()
+                        fetchCartItems()
                     }
 
-                    is Resource.Loading -> {
-                        cartState = cartState.copy(
-                            isLoading = result.isLoading
-                        )
-                    }
+                    is Resource.Error -> handleError()
+                    is Resource.Loading -> handleLoading(result.isLoading)
                 }
             }
         }
@@ -159,26 +191,9 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    private fun me() {
-        viewModelScope.launch {
-            profile.getMe().collect { result ->
-                when (result) {
-                    is Resource.Error -> {}
+    private fun handleError() {}
 
-                    is Resource.Loading -> {
-                        cartState = cartState.copy(isLoading = result.isLoading)
-                    }
-
-                    is Resource.Success -> {
-                        cartState = cartState.copy(
-                            user = result.data,
-                            profileImageUrl = "http://softeng.pmf.kg.ac.rs:10010/users/${result.data?.profilePicture?.userId}/medias/${result.data?.profilePicture?.id}",
-                            profileImageKey = result.data?.profilePicture?.key
-                        )
-
-                    }
-                }
-            }
-        }
+    private fun handleLoading(isLoading: Boolean) {
+        cartState = cartState.copy(isLoading = isLoading)
     }
 }

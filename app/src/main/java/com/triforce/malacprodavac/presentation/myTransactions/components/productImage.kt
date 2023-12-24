@@ -36,8 +36,6 @@ fun ProductImage(
         val imageUrl =
             if (product.productMedia != null) "http://softeng.pmf.kg.ac.rs:10010/products/${product.productMedia.productId}/medias/${product.productMedia.id}" else null
 
-        Log.d("SLIKA_PROIZVODA_URL", imageUrl.toString())
-
         val placeholder = R.drawable.logo_green
 
         val imageRequest = ImageRequest.Builder(LocalContext.current)

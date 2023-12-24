@@ -137,6 +137,15 @@ fun MySalesRow(
                         viewModel.onEvent(MySalesEvent.AcceptOrder(order))
                     }
                 )
+                Spacer(modifier = Modifier.padding(6.dp))
+                SubmitSale(
+                    text = "Odbij porudžbinu",
+                    tintColor = MP_Pink,
+                    modifier = Modifier.clickable {
+                        viewModel.onEvent(MySalesEvent.DeleteOrder(order))
+                    },
+                    isDelete = true
+                )
             } else if (order.orderStatus == OrderStatus.Packaged.toString() && order.deliveryMethod == DeliveryMethod.ByCourier.toString()) {
                 CouriersDropDownList(
                     couriers = viewModel.state.couriers,
