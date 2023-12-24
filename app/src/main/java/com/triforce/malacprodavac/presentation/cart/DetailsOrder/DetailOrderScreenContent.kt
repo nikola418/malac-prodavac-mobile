@@ -174,8 +174,9 @@ fun DetailsOrderScreenContent(
                         val productPrice = String.format("%.2f", cartItem.product.price)
 
                         Text(
-                            text = "${cartItem.product.title}, ${cartItem.quantity.value}x $productPrice rsd",
-                            style = MaterialTheme.typography.body1,
+                            text = "${cartItem.product.title},\n${cartItem.quantity.value}x $productPrice rsd",
+                            style = MaterialTheme.typography.body2,
+                            textAlign = TextAlign.Center,
                             color = MP_Black,
                             modifier = Modifier.padding(start = 6.dp)
                         )

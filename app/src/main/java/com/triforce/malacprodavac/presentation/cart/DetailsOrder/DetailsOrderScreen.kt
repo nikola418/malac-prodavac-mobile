@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.data.repository.cart.CartRepository
+import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Green
 import com.triforce.malacprodavac.ui.theme.MP_White
 
@@ -35,10 +36,10 @@ fun DetailsOrderScreen(
                     .padding(bottom = 16.dp)
             ) {
                 Text(
-                    text = "Vrati se na početnu",
-                    color = MP_Green,
+                    text = "Vrati se na naslovnu stranu",
+                    color = MP_Black,
                     style = MaterialTheme.typography.body1,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.W400,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
