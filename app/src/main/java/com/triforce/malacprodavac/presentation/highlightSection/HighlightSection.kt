@@ -1,6 +1,7 @@
 package com.triforce.malacprodavac.presentation.highlightSection
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -60,7 +61,10 @@ fun HighlightSection(
 
         Column {
 
-            GoBackComp("Više od ${shop?.businessName}", navController)
+            GoBackComp("Više od ${shop?.businessName}",
+                navController = navController,
+                modifier = Modifier.clickable { navController.popBackStack() }
+            )
 
             TitleDescComp(
                 title = "${shop?.businessName} za Vaš užitak!",

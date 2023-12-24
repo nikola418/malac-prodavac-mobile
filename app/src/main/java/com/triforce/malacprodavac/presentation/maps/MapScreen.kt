@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -54,6 +55,7 @@ import com.triforce.malacprodavac.presentation.maps.components.BottomMapShopDeta
 import com.triforce.malacprodavac.presentation.maps.components.Cordinates
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateEvent
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateViewModel
+import com.triforce.malacprodavac.presentation.store.components.GoBackComp
 import com.triforce.malacprodavac.ui.theme.MP_Orange_Dark
 import com.triforce.malacprodavac.ui.theme.MP_White
 
@@ -96,6 +98,14 @@ fun MapScreen(
 
     Scaffold(
         scaffoldState = scaffoldState,
+        topBar = {
+            GoBackComp(
+                "Pretraži mape",
+                navController = navController,
+                modifier = Modifier.clickable { navController.navigate(Screen.HomeScreen.route) },
+                isLight = true
+            )
+        },
         content = { padding ->
             Box(
                 modifier = Modifier.padding(padding)

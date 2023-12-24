@@ -1,6 +1,7 @@
 package com.triforce.malacprodavac.presentation.notifications
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -39,7 +40,11 @@ fun NotificationsScreen(
         modifier = Modifier
             .background(MP_GreenDark),
         topBar = {
-            GoBackComp("Notifikacije", navController)
+            GoBackComp("Notifikacije",
+                navController = navController,
+                modifier = Modifier.clickable { navController.navigate(Screen.HomeScreen.route) },
+                isLight = true
+            )
         },
         bottomBar = {
             BottomNavigationMenu(

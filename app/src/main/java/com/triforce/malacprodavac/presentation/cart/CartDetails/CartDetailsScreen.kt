@@ -1,11 +1,13 @@
 package com.triforce.malacprodavac.presentation.cart.CartDetails
 
+import androidx.compose.foundation.clickable
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
@@ -22,7 +24,11 @@ fun CartDetailsScreen(
 ) {
     Scaffold(
         topBar = {
-            GoBackComp("Plaćanje", navController, true)
+            GoBackComp("Plaćanje",
+                navController = navController,
+                modifier = Modifier.clickable { navController.popBackStack() },
+                isLight = true
+            )
         },
         content = { padding ->
             CartDetailsScreenContent(navController)

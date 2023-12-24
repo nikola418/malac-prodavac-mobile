@@ -1,6 +1,7 @@
 package com.triforce.malacprodavac.presentation.FavProducts
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,7 +46,10 @@ fun FavoriteScreen(navController: NavController, viewModel: FavoriteViewModel = 
     ) {
         LinearGradient(color1 = MP_Pink_Dark, color2 = MP_Pink)
         RoundedBackgroundComp(top = 65.dp, color = MP_White)
-        GoBackComp("Omiljeni", navController)
+        GoBackComp(
+            msg = "Omiljeni",
+            navController = navController,
+            modifier = Modifier.clickable { navController.navigate(Screen.HomeScreen.route) })
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

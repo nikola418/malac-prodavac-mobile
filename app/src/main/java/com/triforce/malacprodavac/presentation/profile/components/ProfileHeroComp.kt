@@ -79,7 +79,10 @@ fun ProfileHeroComp(
                         }
                     )
             ) {
-                GoBackComp(msg = "Profil", navController = navController)
+                GoBackComp("Profil",
+                    navController = navController,
+                    modifier = Modifier.clickable { navController.popBackStack() }
+                )
 
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
