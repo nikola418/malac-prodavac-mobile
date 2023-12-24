@@ -12,8 +12,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -21,9 +24,6 @@ import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.presentation.cart.CartViewModel
 import com.triforce.malacprodavac.ui.theme.MP_Green
 import com.triforce.malacprodavac.ui.theme.MP_White
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun CartScreenContent(
@@ -31,7 +31,7 @@ fun CartScreenContent(
     viewModel: CartViewModel = hiltViewModel()
 ) {
     val cartItems by viewModel.cartItems.collectAsState()
-    val totalPrice = viewModel.cartState.totalPrice
+    val totalPrice = String.format("%.2f", viewModel.cartState.totalPrice)
     val context = LocalContext.current
 
     Column(
@@ -62,7 +62,8 @@ fun CartScreenContent(
                             Toast.LENGTH_LONG
                         )
                         .show()
-                } },
+                }
+            },
             colors = ButtonDefaults.buttonColors(MP_Green)
         ) {
             Text(

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,15 +23,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.Screen
-import com.triforce.malacprodavac.ui.theme.MP_Black
-import com.triforce.malacprodavac.ui.theme.MP_Green
-import com.triforce.malacprodavac.ui.theme.MP_GreenDark
 import com.triforce.malacprodavac.ui.theme.MP_White
 
 @Composable
 fun GoBackComp(
     msg: String,
     navController: NavController,
+    modifier: Modifier,
     isLight: Boolean = false,
 ) {
     var color = MP_White
@@ -57,12 +54,8 @@ fun GoBackComp(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Search",
                     tint = color,
-                    modifier = Modifier
+                    modifier = modifier
                         .size(25.dp)
-                        .clickable {
-                            navController.popBackStack()
-                            //navController.navigate(Screen.HomeScreen.route)
-                        }
                 )
 
                 Text(

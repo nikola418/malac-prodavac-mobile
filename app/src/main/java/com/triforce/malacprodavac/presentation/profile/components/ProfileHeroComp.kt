@@ -1,18 +1,18 @@
 package com.triforce.malacprodavac.presentation.profile.components
 
-import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -34,7 +34,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.domain.model.User
 import com.triforce.malacprodavac.presentation.store.components.GoBackComp
 import com.triforce.malacprodavac.ui.theme.MP_GreenDark
@@ -80,7 +79,10 @@ fun ProfileHeroComp(
                         }
                     )
             ) {
-                GoBackComp(msg = "Profil", navController = navController)
+                GoBackComp("Profil",
+                    navController = navController,
+                    modifier = Modifier.clickable { navController.popBackStack() }
+                )
 
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -165,39 +167,26 @@ fun ProfileHeroComp(
 
                     }
 
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceAround,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .height(150.dp)
-                            .padding(start = 20.dp, end = 20.dp)
-                            .background(MP_White, RoundedCornerShape(150.dp))
-                            .padding(5.dp)
-                    ) {
+                    val placeholder = coil.base.R.drawable.notify_panel_notification_icon_bg
+                    val imageRequest = ImageRequest.Builder(LocalContext.current)
+                        .data(imageUrl)
+                        .dispatcher(Dispatchers.IO)
+                        .memoryCachePolicy(CachePolicy.ENABLED)
+                        .memoryCacheKey(imageKey)
+                        .placeholder(placeholder)
+                        .error(placeholder)
+                        .fallback(placeholder)
+                        .build()
 
-                        val placeholder = R.drawable.logo_green
-                        val imageRequest = ImageRequest.Builder(LocalContext.current)
-                            .data(imageUrl)
-                            .dispatcher(Dispatchers.IO)
-                            .memoryCachePolicy(CachePolicy.ENABLED)
-                            .memoryCacheKey(imageKey)
-                            .placeholder(placeholder)
-                            .error(placeholder)
-                            .fallback(placeholder)
-                            .build()
-
-                        Log.d("IMAGE_KEY", imageKey.toString())
-                        Log.d("IMAGE_URL", imageUrl.toString())
-
-                        AsyncImage(
-                            model = imageRequest,
-                            contentDescription = "Profile Picture",
-                            contentScale = ContentScale.FillWidth,
-                            modifier = Modifier
-                                .fillMaxSize()
-                        )
-                    }
+                    AsyncImage(
+                        model = imageRequest,
+                        contentDescription = "Profile Picture",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(150.dp)
+                            .clip(CircleShape)
+                            .border(3.dp, MP_White, CircleShape)
+                    )
                 }
             }
         }

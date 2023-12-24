@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.triforce.malacprodavac.R
+import com.triforce.malacprodavac.presentation.myTransactions.components.ProductImage
 import com.triforce.malacprodavac.presentation.myTransactions.transactionDetails.TransactionDetailsViewModel
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_GreenDark
@@ -83,13 +84,14 @@ fun TransactionDetailsContentScreen(
                         .padding(10.dp)
                         .align(Alignment.Center)
                 ) {
+                    ProductImage(product = order.product, width = 300.dp, height = 150.dp)
+                    Spacer(modifier = Modifier.padding(12.dp))
                     Text(
                         text = order.product.title,
-                        style = MaterialTheme.typography.h3,
+                        style = MaterialTheme.typography.h5,
                         color = MP_Orange_Dark,
                         fontWeight = FontWeight.W400
                     )
-
                     Spacer(modifier = Modifier.padding(12.dp))
                     Text(
                         text = "Dostava: " + orderDeliveryMethod,

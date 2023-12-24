@@ -171,9 +171,12 @@ fun DetailsOrderScreenContent(
                                     .fillMaxSize()
                             )
                         }
+                        val productPrice = String.format("%.2f", cartItem.product.price)
+
                         Text(
-                            text = "${cartItem.product.title}, ${cartItem.quantity.value}x ${cartItem.product.price} rsd",
-                            style = MaterialTheme.typography.body1,
+                            text = "${cartItem.product.title},\n${cartItem.quantity.value}x $productPrice rsd",
+                            style = MaterialTheme.typography.body2,
+                            textAlign = TextAlign.Center,
                             color = MP_Black,
                             modifier = Modifier.padding(start = 6.dp)
                         )
@@ -181,10 +184,11 @@ fun DetailsOrderScreenContent(
                 }
             }
 
+            val totalPrice = String.format("%.2f", viewModel.cartState.totalPrice)
             Spacer(modifier = Modifier.padding(6.dp))
 
             Text(
-                text = "Ukupan iznos:\n${cartState.totalPrice} rsd",
+                text = "Ukupan iznos:\n${totalPrice} rsd",
                 style = MaterialTheme.typography.h6,
                 color = MP_Pink_Dark,
                 fontWeight = FontWeight.W400,

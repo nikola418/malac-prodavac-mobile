@@ -29,6 +29,7 @@ import androidx.navigation.NavController
 import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.domain.model.Order
+import com.triforce.malacprodavac.presentation.myTransactions.components.ProductImage
 import com.triforce.malacprodavac.ui.theme.MP_Black
 import com.triforce.malacprodavac.ui.theme.MP_Green
 import com.triforce.malacprodavac.ui.theme.MP_GreenDark
@@ -77,19 +78,27 @@ fun TransactionHistoryRow(
         Column(
             modifier = Modifier.padding(10.dp)
         ) {
-
-            Text(
-                text = order.product.title,
-                style = MaterialTheme.typography.h6,
-                color = MP_Orange_Dark,
-                fontWeight = FontWeight.W400
-            )
-            Text(
-                text = "Status: " + orderStatus,
-                style = MaterialTheme.typography.body2,
-                color = MP_GreenDark,
-                fontWeight = FontWeight.W300
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ProductImage(product = order.product, width = 75.dp, height = 75.dp)
+                Column(
+                    modifier = Modifier.padding(start = 16.dp)
+                ) {
+                    Text(
+                        text = order.product.title,
+                        style = MaterialTheme.typography.h6,
+                        color = MP_Orange_Dark,
+                        fontWeight = FontWeight.W400
+                    )
+                    Text(
+                        text = "Status: " + orderStatus,
+                        style = MaterialTheme.typography.body2,
+                        color = MP_GreenDark,
+                        fontWeight = FontWeight.W300
+                    )
+                }
+            }
             Spacer(modifier = Modifier.padding(6.dp))
             Text(
                 text = "Dostava: " + orderDeliveryMethod,

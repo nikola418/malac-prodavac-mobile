@@ -10,7 +10,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateEvent
 import com.triforce.malacprodavac.presentation.profile.profilePrivate.ProfilePrivateViewModel
 import com.triforce.malacprodavac.ui.theme.MP_White
@@ -49,8 +49,8 @@ fun GoBackCompLogout(
                 modifier = Modifier
                     .size(25.dp)
                     .clickable {
-                        navController.popBackStack()
-                        //navController.navigate(Screen.HomeScreen.route)
+                        //navController.popBackStack()
+                        navController.navigate(Screen.HomeScreen.route)
                     }
             )
 

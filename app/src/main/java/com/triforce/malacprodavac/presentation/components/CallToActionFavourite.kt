@@ -22,18 +22,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.triforce.malacprodavac.domain.model.shops.Shop
 import com.triforce.malacprodavac.presentation.FavShops.FavoriteShopEvent
 import com.triforce.malacprodavac.presentation.FavShops.FavoriteShopViewModel
+import com.triforce.malacprodavac.presentation.profile.profilePublic.ProfilePublicViewModel
 import com.triforce.malacprodavac.ui.theme.MP_Pink
 import com.triforce.malacprodavac.ui.theme.MP_White
 
 @Composable
 fun CallToActionFavourite(
-    shop: Shop?,
+    profileViewModel: ProfilePublicViewModel,
     content: String,
     viewModelFavShop: FavoriteShopViewModel = hiltViewModel()
 ) {
+    val shop = profileViewModel.state.shop
+
     val isFavorite = remember { mutableStateOf(shop?.isFavored ?: false) }
 
     Row(

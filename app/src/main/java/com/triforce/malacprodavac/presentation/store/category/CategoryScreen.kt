@@ -7,6 +7,7 @@ package com.triforce.malacprodavac.presentation.store.category
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -98,7 +99,11 @@ fun StoreCategoryScreen(
         RoundedBackgroundComp(top = 250.dp, color = MP_White)
 
         Column {
-            GoBackComp("Malac Pijaca", navController)
+            GoBackComp("Malac Pijaca",
+                navController = navController,
+                modifier = Modifier.clickable { navController.navigate(Screen.StoreScreen.route) }
+            )
+
             CategorySectionHeader(
                 titleState.title,
                 "Podržite zajednicu, podržavajte lokalno preduzetništvo. Vaša podrška čini razliku!",

@@ -108,7 +108,11 @@ fun StoreScreen(navController: NavController) {
         RoundedBackgroundComp(top = 65.dp, color = MP_White)
 
         Column {
-            GoBackComp("Malac prodavnica", navController)
+            GoBackComp("Malac prodavnica",
+                navController = navController,
+                modifier = Modifier.clickable { navController.navigate(Screen.HomeScreen.route) }
+            )
+
             TitleTextContentSection(
                 sectionTitle = "Podržite lokalnu ekonomiju",
                 sectionText = "Pronađite najbolje proizvode od malih proizvođača. Pratite svoje omiljene proizvođače i podržite lokalnu ekonomiju!",

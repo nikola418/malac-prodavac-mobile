@@ -63,7 +63,7 @@ fun HomeScreen(
     var features = listOf(
         Feature(
             id = 1,
-            title = "Otvori Market",
+            title = "Otvori market",
             graphicID = ImageVector.vectorResource(R.drawable.logo_green),
             color1 = MP_Green,
             color2 = MP_Green,
@@ -79,7 +79,7 @@ fun HomeScreen(
         ),
         Feature(
             id = 1,
-            title = "Pretraži Mape",
+            title = "Pretraži mape",
             graphicID = Icons.Default.LocationOn,
             color1 = MP_Green,
             color2 = MP_Green,
@@ -111,7 +111,7 @@ fun HomeScreen(
         ),
         Feature(
             id = 1,
-            title = "Moje kupovine",
+            title = "Moje porudžbine",
             graphicID = Icons.Default.Shop,
             color1 = MP_Green,
             color2 = MP_Green,
