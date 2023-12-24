@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -29,6 +30,7 @@ import androidx.navigation.NavController
 import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.domain.model.Order
+import com.triforce.malacprodavac.presentation.myTransactions.components.ProductImage
 import com.triforce.malacprodavac.presentation.myTransactions.myDeliveries.MyDeliveriesEvent
 import com.triforce.malacprodavac.presentation.myTransactions.myDeliveries.MyDeliveriesViewModel
 import com.triforce.malacprodavac.presentation.myTransactions.mySales.components.SubmitSale
@@ -82,12 +84,29 @@ fun MyDeliveriesRow(
         Column(
             modifier = Modifier.padding(10.dp)
         ) {
-            Text(
-                text = order.product.title,
-                style = MaterialTheme.typography.h4,
-                color = MP_Orange_Dark,
-                fontWeight = FontWeight.W400
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ProductImage(product = order.product, width = 75.dp, height = 75.dp)
+                Column(
+                    modifier = Modifier
+                        .padding(start = 12.dp)
+                        .width(175.dp)
+                ) {
+                    Text(
+                        text = if (order.product.title.length > 20) "${
+                            order.product.title.subSequence(
+                                0,
+                                20
+                            )
+                        }.." else order.product.title,
+                        style = MaterialTheme.typography.h4,
+                        color = MP_Orange_Dark,
+                        fontWeight = FontWeight.W400,
+                    )
+                }
+            }
+
             Text(
                 text = "Dostava: " + orderDeliveryMethod,
                 style = MaterialTheme.typography.subtitle1,

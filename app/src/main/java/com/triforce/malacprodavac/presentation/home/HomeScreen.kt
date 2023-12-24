@@ -111,7 +111,7 @@ fun HomeScreen(
         ),
         Feature(
             id = 1,
-            title = "Moje kupovine",
+            title = "Moje porudžbine",
             graphicID = Icons.Default.Shop,
             color1 = MP_Green,
             color2 = MP_Green,

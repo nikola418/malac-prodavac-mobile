@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -36,6 +37,7 @@ import androidx.navigation.NavController
 import com.triforce.malacprodavac.R
 import com.triforce.malacprodavac.Screen
 import com.triforce.malacprodavac.domain.model.Order
+import com.triforce.malacprodavac.presentation.myTransactions.components.ProductImage
 import com.triforce.malacprodavac.presentation.myTransactions.myPurchases.MyPurchasesEvent
 import com.triforce.malacprodavac.presentation.myTransactions.myPurchases.MyPurchasesViewModel
 import com.triforce.malacprodavac.ui.theme.MP_Black
@@ -91,19 +93,28 @@ fun MyPurchasesRow(
         Column(
             modifier = Modifier.padding(10.dp)
         ) {
-            Text(
-                text = order.product.title,
-                style = MaterialTheme.typography.h4,
-                color = MP_Orange_Dark,
-                fontWeight = FontWeight.W400
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ProductImage(product = order.product, width = 100.dp, height = 140.dp)
+                Column(modifier = Modifier
+                    .padding(start = 12.dp)
+                    .width(160.dp)) {
+                    Text(
+                        text = order.product.title,
+                        style = MaterialTheme.typography.h4,
+                        color = MP_Orange_Dark,
+                        fontWeight = FontWeight.W400
+                    )
 
-            Text(
-                text = "Status: " + orderStatus,
-                style = MaterialTheme.typography.subtitle1,
-                color = MP_GreenDark,
-                fontWeight = FontWeight.W400
-            )
+                    Text(
+                        text = "Status: " + orderStatus,
+                        style = MaterialTheme.typography.subtitle1,
+                        color = MP_GreenDark,
+                        fontWeight = FontWeight.W400
+                    )
+                }
+            }
             Spacer(modifier = Modifier.padding(12.dp))
 
             Text(
